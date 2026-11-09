@@ -64,6 +64,15 @@ An Azure VM cannot exist in a vacuum. If you move a VM across resource groups or
 * **NEVER.** Moving a resource to a new Resource Group in another region does **NOT** migrate or move the underlying physical hardware.
 * An App Service Plan in `Central US` moved to an `East US` Resource Group **remains in `Central US`**.
 
+### Virtual Machine Scale Sets (VMSS): Flexible Mode Attachment Rules (Q32 Trap)
+* **Uniform Orchestration Mode:** Traditional scale set where all VMs are identical clones deployed by the scale set itself from one model. You **cannot** attach an existing standalone VM to a Uniform scale set.
+* **Flexible Orchestration Mode:** Modern scale set that supports mixing VM sizes, availability models, and attaching existing standalone VMs.
+* **The Strict Attachment Prerequisites (The Exam Rule):**
+  To attach an existing standalone Virtual Machine to a Flexible VMSS:
+  1. **SAME Region:** The VM must reside in the exact same Azure Region as the VMSS.
+  2. **SAME Resource Group:** The VM **must reside in the exact same Resource Group** as the VMSS. (Even within the same subscription, if the VM is in `rg-app` and the VMSS is in `rg-scale`, the VM cannot be attached).
+  3. **SAME Virtual Network / Subnet:** The VM's network interface must connect to the same VNet and subnet configured for the scale set.
+
 ---
 
 ## 3. Deep Dive: Dedicated Subnet Name Constraints

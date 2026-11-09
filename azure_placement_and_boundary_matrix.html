@@ -355,6 +355,16 @@
 <li><strong>NEVER.</strong> Moving a resource to a new Resource Group in another region does <strong>NOT</strong> migrate or move the underlying physical hardware.</li>
 <li>An App Service Plan in <code>Central US</code> moved to an <code>East US</code> Resource Group <strong>remains in <code>Central US</code></strong>.</li>
 </ul>
+<h3 id="virtual-machine-scale-sets-vmss-flexible-mode-attachment-rules-q32-trap">Virtual Machine Scale Sets (VMSS): Flexible Mode Attachment Rules (Q32 Trap)</h3>
+<ul>
+<li><strong>Uniform Orchestration Mode:</strong> Traditional scale set where all VMs are identical clones deployed by the scale set itself from one model. You <strong>cannot</strong> attach an existing standalone VM to a Uniform scale set.</li>
+<li><strong>Flexible Orchestration Mode:</strong> Modern scale set that supports mixing VM sizes, availability models, and attaching existing standalone VMs.</li>
+<li><strong>The Strict Attachment Prerequisites (The Exam Rule):</strong>
+  To attach an existing standalone Virtual Machine to a Flexible VMSS:</li>
+<li><strong>SAME Region:</strong> The VM must reside in the exact same Azure Region as the VMSS.</li>
+<li><strong>SAME Resource Group:</strong> The VM <strong>must reside in the exact same Resource Group</strong> as the VMSS. (Even within the same subscription, if the VM is in <code>rg-app</code> and the VMSS is in <code>rg-scale</code>, the VM cannot be attached).</li>
+<li><strong>SAME Virtual Network / Subnet:</strong> The VM's network interface must connect to the same VNet and subnet configured for the scale set.</li>
+</ul>
 <hr />
 <h2 id="3-deep-dive-dedicated-subnet-name-constraints">3. Deep Dive: Dedicated Subnet Name Constraints</h2>
 <p>Several Azure PaaS and networking services require strict, hardcoded subnet names. Using any alternative name causes immediate deployment failure:</p>
@@ -451,19 +461,19 @@
 <h2 id="5-high-yield-exam-traps-heuristics-summary">5. High-Yield Exam Traps &amp; Heuristics Summary</h2>
 <ol>
 <li><strong>"Can VM1 in East US be backed up to RSV1 in West US?"</strong><br />
-   → <strong>NO.</strong> Recovery Services Vaults are region-locked. Deploy a second vault in East US.</li>
+   $\rightarrow$ <strong>NO.</strong> Recovery Services Vaults are region-locked. Deploy a second vault in East US.</li>
 <li><strong>"Can an NSG created in West Europe be linked to a subnet in North Europe?"</strong><br />
-   → <strong>NO.</strong> NSGs are strictly regional. Create an NSG in North Europe.</li>
+   $\rightarrow$ <strong>NO.</strong> NSGs are strictly regional. Create an NSG in North Europe.</li>
 <li><strong>"Can an Application Security Group (ASG) contain VMs from two peered VNets?"</strong><br />
-   → <strong>NO.</strong> ASGs cannot cross VNet boundaries. All NICs must reside in the same VNet.</li>
+   $\rightarrow$ <strong>NO.</strong> ASGs cannot cross VNet boundaries. All NICs must reside in the same VNet.</li>
 <li><strong>"Can we add an existing production VM to a newly created Availability Set?"</strong><br />
-   → <strong>NO.</strong> Availability Sets are an immutable property set only at VM creation time.</li>
+   $\rightarrow$ <strong>NO.</strong> Availability Sets are an immutable property set only at VM creation time.</li>
 <li><strong>"Can we move a VM with a ReadOnly lock to another Resource Group?"</strong><br />
-   → <strong>YES.</strong> Management locks do not prevent cross-RG moves.</li>
+   $\rightarrow$ <strong>YES.</strong> Management locks do not prevent cross-RG moves.</li>
 <li><strong>"If we move an App Service from a West US RG to an East US RG, does its region change?"</strong><br />
-   → <strong>NO.</strong> Resource location is permanent and independent of Resource Group location.</li>
+   $\rightarrow$ <strong>NO.</strong> Resource location is permanent and independent of Resource Group location.</li>
 <li><strong>"Can VMs in 5 different regions stream syslog to 1 Log Analytics workspace?"</strong><br />
-   → <strong>YES.</strong> Azure Monitor Log Analytics workspaces support global multi-region ingestion.</li>
+   $\rightarrow$ <strong>YES.</strong> Azure Monitor Log Analytics workspaces support global multi-region ingestion.</li>
 </ol>
     </div>
   </div>

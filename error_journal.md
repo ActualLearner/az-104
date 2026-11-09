@@ -709,6 +709,7 @@
     * **The 4 Cardinal Placement Axioms:**
         1. **Resource Groups are purely logical metadata containers:** A Resource Group's location has **zero** technical impact on where resources inside it can be deployed. An RG in `East US` can hold VMs, Storage, and VNets in `West Europe`.
         2. **VMs are regional composite assemblies:** A VM's Network Interface (NIC), OS disk, Data disks, and Public IP must all reside in the **exact same Azure Region** as the VM.
+            - **VMSS Flexible Mode Attachment (Q32 Trap):** To attach an existing standalone VM into a Flexible Virtual Machine Scale Set, the VM **MUST be in the SAME Region AND the SAME Resource Group** as the VMSS. Different RG = attachment blocked.
         3. **Security & Routing are strictly localized:**
             - **NSG ↔ Subnet/NIC:** Must be in the **same region**.
             - **ASG ↔ NIC:** Must be in the **same region AND same Virtual Network**. (Cannot span across peered VNets).
@@ -726,4 +727,4 @@
     * *Use 1 Recovery Services Vault to back up VMs in East US and West Europe:* False; Recovery Services Vaults are strictly regional.
     * *Put NICs from two peered VNets in the same Application Security Group (ASG):* False; ASGs are bound to a single VNet.
 * **6. Exam Heuristic:**
-    * **"RG location never limits resource region. VM + NIC + Disks = Same Region. NSG = Same Region. ASG = Same VNet. Backup Vault = Same Region. Log Analytics = Any Region. Moving an RG never changes a resource's region."**
+    * **"RG location never limits resource region. VM + NIC + Disks = Same Region. VMSS Flexible Attach = Same Region + Same Resource Group. NSG = Same Region. ASG = Same VNet. Backup Vault = Same Region. Log Analytics = Any Region. Moving an RG never changes a resource's region."**
