@@ -328,7 +328,7 @@
 <li><em>One plan:</em> Cannot mix Windows and Linux web apps inside the same App Service Plan.</li>
 <li><em>Five plans:</em> Redundant; apps sharing the same OS can share the same underlying plan.</li>
 <li><strong>6. Exam Heuristic:</strong></li>
-<li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux → Minimum 2 plans."</strong></li>
+<li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux $\rightarrow$ Minimum 2 plans."</strong></li>
 </ul>
 <hr />
 <h3 id="domain-3-compute-regional-vcpu-quotas-stopped-deallocated-vms-trap-td-timed-q3">[Domain 3: Compute] Regional vCPU Quotas: Stopped (Deallocated) VMs Trap (TD Timed Q3)</h3>
@@ -342,7 +342,7 @@
 <li>VM3: F2s_v2 (2 vCPUs) - Running in South Central US (different region, ignored).</li>
 </ul>
 </li>
-<li>Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) → VM5 (D2s_v3, 2 vCPUs) → VM6 (A8_v2, 8 vCPUs).</li>
+<li>Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) $\rightarrow$ VM5 (D2s_v3, 2 vCPUs) $\rightarrow$ VM6 (A8_v2, 8 vCPUs).</li>
 <li><strong>3. Flawed Mental Model:</strong></li>
 <li>Assuming <code>Stopped (Deallocated)</code> releases the VM's vCPU quota allocation.</li>
 <li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
@@ -351,8 +351,8 @@
 <li>Remaining regional quota = $15 - 12 = \mathbf{3\text{ vCPUs}}$.</li>
 <li><strong>Sequential execution:</strong><ol>
 <li>VM4 (needs 2 vCPUs): $3 \ge 2 \rightarrow$ <strong>Created (YES)</strong>. Remaining quota = $3 - 2 = \mathbf{1\text{ vCPU}}$.</li>
-<li>VM5 (needs 2 vCPUs): Only 1 vCPU available → <strong>Blocked (NO)</strong>.</li>
-<li>VM6 (needs 8 vCPUs): Only 1 vCPU available → <strong>Blocked (NO)</strong>.</li>
+<li>VM5 (needs 2 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
+<li>VM6 (needs 8 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
 </ol>
 </li>
 <li><strong>5. Exam Heuristic:</strong></li>
@@ -523,66 +523,88 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-azure-provided-dns-reverse-lookup-ptr-fqdn-ar-pt01-q23">[Domain 4: Virtual Networking] Azure-Provided DNS Reverse Lookup (PTR) FQDN (AR PT01 Q23)</h3>
+<h3 id="domain-4-virtual-networking-azure-provided-dns-reverse-lookup-ptr-domain-suffix-taxonomy-ar-pt01-q23">[Domain 4: Virtual Networking] Azure-Provided DNS Reverse Lookup (PTR) &amp; Domain Suffix Taxonomy (AR PT01 Q23)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Determine the Fully Qualified Domain Name (FQDN) returned when executing a reverse DNS lookup (PTR query) against the private IP address of an Azure VM.</li>
-<li>Constraint: Virtual Network is using default <strong>Azure-provided DNS</strong> (168.63.129.16), with no custom Azure Private DNS Zone configured.</li>
+<li>Constraint: Virtual Network is using default <strong>Azure-provided DNS</strong> (virtual IP <code>168.63.129.16</code>), with no custom Azure Private DNS Zone and no custom DNS server configured.</li>
 </ul>
 </li>
 <li><strong>3. Flawed Mental Model:</strong><ul>
-<li>Assumed the PTR lookup returns <code>&lt;vmname&gt;.cloudapp.azure.com</code>, <code>&lt;vmname&gt;.azure.com</code>, or <code>&lt;vmname&gt;.&lt;region&gt;.cloudapp.azure.com</code>.</li>
+<li>Assumed the PTR lookup returns <code>&lt;vmname&gt;.azureportal.com</code> (confusing Azure's management web portal with internal DNS) or <code>&lt;vmname&gt;.cloudapp.azure.com</code> (confusing Public IP labels with private PTR).</li>
 </ul>
 </li>
 <li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
-<li>Azure-provided DNS automatically assigns and registers the internal suffix <strong><code>internal.cloudapp.net</code></strong> for all VMs deployed within a VNet.</li>
-<li>When a reverse DNS lookup (PTR query) is performed on a private IP address within the VNet, Azure-provided DNS resolves the query to:
+<li><strong>Automatic Internal PTR Generation:</strong> Azure-provided DNS automatically manages and registers reverse DNS (PTR) records for all VMs within a VNet using the internal suffix <strong><code>internal.cloudapp.net</code></strong>.</li>
+<li>A reverse DNS query (<code>nslookup &lt;private-ip&gt;</code>) sent to Azure resolver <code>168.63.129.16</code> resolves to:
   <strong><code>&lt;vmname&gt;.internal.cloudapp.net</code></strong></li>
-<li>The <code>*.cloudapp.azure.com</code> suffix is used exclusively for Public IP DNS name labels, never for internal private IP reverse lookups.</li>
+<li><strong>Cross-VNet Limitation (High-Yield):</strong> Azure-provided name resolution is strictly scoped to the <strong>SAME Virtual Network</strong>. It CANNOT resolve hostnames across peered VNets or on-premises networks.</li>
+<li><strong>The 3 Name Resolution Methods in Azure:</strong><ol>
+<li><strong>Azure-Provided DNS:</strong> Free, zero config, suffix <code>internal.cloudapp.net</code>. Same VNet only.</li>
+<li><strong>Azure Private DNS Zones:</strong> Custom domain (e.g. <code>corp.contoso.com</code>). Resolves seamlessly across peered VNets. Supports auto-registration for up to <strong>100 VNets</strong> (a single VNet can be the registration VNet for only 1 private zone).</li>
+<li><strong>Custom DNS Server / Azure DNS Private Resolver:</strong> VM running Windows Server DNS/BIND or managed Private Resolver endpoints. Required for hybrid on-prem forwarding.</li>
+</ol>
+</li>
+<li><strong>Azure Domain Suffix Taxonomy Cheat Sheet:</strong><ul>
+<li><strong><code>&lt;vmname&gt;.internal.cloudapp.net</code>:</strong> Azure-provided default internal VM DNS (Private only, same VNet).</li>
+<li><strong><code>&lt;label&gt;.&lt;region&gt;.cloudapp.azure.com</code>:</strong> Public IP DNS Name Label (Public Internet, external resolution).</li>
+<li><strong><code>&lt;appname&gt;.azurewebsites.net</code>:</strong> Azure App Service Web Apps (Public Internet).</li>
+<li><strong><code>&lt;account&gt;.blob.core.windows.net</code>:</strong> Azure Blob Storage endpoints (Public/Private endpoint).</li>
+<li><strong><code>portal.azure.com</code>:</strong> Azure Management Web Portal UI (never a resource hostname).</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><strong>5. Distractor Killers:</strong><ul>
-<li><em><code>&lt;vmname&gt;.cloudapp.azure.com</code>:</em> Public IP DNS name label format, not private internal DNS.</li>
-<li><em><code>&lt;vmname&gt;.azure.com</code>:</em> Invalid internal domain name; not registered by Azure-provided DNS.</li>
-<li><em><code>&lt;vmname&gt;.&lt;vnetname&gt;.local</code>:</em> Not generated by Azure SDN resolver.</li>
+<li><em><code>vm-dev-web-1.azureportal.com</code>:</em> Invalid domain. <code>portal.azure.com</code> is Microsoft's web GUI console, not a DNS suffix for resources.</li>
+<li><em><code>vm-dev-web-1.cloudapp.azure.com</code>:</em> Suffix used exclusively for public IP DNS labels, never for internal private PTR queries.</li>
+<li><em><code>vm-dev-web-1.azurewebsites.net</code>:</em> Suffix reserved exclusively for Azure App Service Web Apps.</li>
 </ul>
 </li>
 <li><strong>6. Exam Heuristic:</strong><ul>
-<li><strong>"Azure-provided DNS private IP reverse lookup (PTR) = <code>&lt;vmname&gt;.internal.cloudapp.net</code>."</strong></li>
+<li><strong>"Azure-provided DNS private IP reverse lookup (PTR) = <code>&lt;vmname&gt;.internal.cloudapp.net</code>. It never resolves across peered VNets without a Private DNS Zone."</strong></li>
 </ul>
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-dual-nsg-evaluation-default-subnet-nsg-explicit-nic-nsg-ar-pt01-q24">[Domain 4: Virtual Networking] Dual NSG Evaluation: Default Subnet NSG &amp; Explicit NIC NSG (AR PT01 Q24)</h3>
+<h3 id="domain-4-virtual-networking-subnet-without-nsg-vs-nic-nsg-inbound-rdp-ar-pt01-q24">[Domain 4: Virtual Networking] Subnet Without NSG vs. NIC NSG Inbound RDP (AR PT01 Q24)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
-<li>Architecture: VM has a Subnet-level NSG (<code>app-nsg1</code>) with only default security rules, and a NIC-level NSG (<code>app-nsg2</code>) that contains an explicit inbound rule allowing TCP port 3389.</li>
-<li>Requirement: Determine whether an RDP connection succeeds when initiated from another host in the same Virtual Network (or management subnet).</li>
+<li>Architecture: <code>SubnetA</code> has <code>app-nsg1</code> attached (with only default security rules, blocking internet RDP). <code>SubnetB</code> has <strong>NO NSG attached</strong> (<code>NSG = None</code>).</li>
+<li>Deployed VMs: <code>appvm1</code> sits in <code>SubnetA</code>. <code>appvm2</code> sits in <code>SubnetB</code>.</li>
+<li>NIC NSG: <code>appvm2</code> has a dedicated NIC-level NSG (<code>app-nsg2</code>) that contains an explicit Inbound Allow rule for TCP port 3389 (RDP).</li>
+<li>OS Setting: Inbound RDP is enabled at the OS level on both virtual machines.</li>
+<li>Requirement: Determine whether an administrator can establish an RDP connection from the Internet to <strong><code>appvm2</code></strong>.</li>
 </ul>
 </li>
 <li><strong>3. Flawed Mental Model:</strong><ul>
-<li>Assumed the connection fails because <code>app-nsg1</code> lacks an explicit custom allow rule for port 3389, overlooking the default <code>AllowVNetInBound</code> rule.</li>
+<li>Assumed that an Azure subnet <em>must</em> have an NSG by default, and assumed the subnet layer would inherently block Internet RDP traffic before reaching the NIC.</li>
 </ul>
 </li>
 <li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
-<li>Every NSG includes default rules that cannot be deleted. Default inbound rule <strong><code>AllowVNetInBound</code> (Priority 65000)</strong> allows all traffic where the source and destination are within the <code>VirtualNetwork</code> service tag (which includes the entire VNet address space, peered VNets, and connected on-premises networks).</li>
-<li>Traffic evaluation sequence for inbound intra-VNet RDP:<ol>
-<li><strong>Subnet NSG (<code>app-nsg1</code>):</strong> No custom rules. Evaluates default rules → matches <code>AllowVNetInBound</code> (priority 65000) → <strong>ALLOWED</strong>.</li>
-<li><strong>NIC NSG (<code>app-nsg2</code>):</strong> Matches explicit rule allowing TCP 3389 (at higher priority, e.g. 100) → <strong>ALLOWED</strong>.</li>
+<li><strong>Subnets Have NO NSG by Default:</strong> In Azure, assigning an NSG to a subnet is completely optional (default is <code>None</code>). If a subnet has no NSG, <strong>it enforces ZERO traffic filtering</strong>—all inbound and outbound traffic passes through the subnet layer completely unimpeded.</li>
+<li><strong>Packet Flow Trace to <code>appvm2</code>:</strong><ol>
+<li><strong>Subnet Layer (<code>SubnetB</code>):</strong> No NSG attached. Packet passes through immediately without evaluation.</li>
+<li><strong>NIC Layer (<code>appvm2</code> NIC):</strong> <code>app-nsg2</code> is attached. Azure checks rules → matches explicit rule: <code>Allow Inbound TCP 3389 from Internet</code> → <strong>ALLOWED</strong>.</li>
+<li><strong>Host OS Layer:</strong> Windows OS allows RDP → <strong>Connection SUCCEEDS (YES)</strong>.</li>
 </ol>
 </li>
-<li>Since both NSGs permit the traffic, the RDP connection <strong>succeeds</strong>.</li>
+<li><strong>Contrast with <code>appvm1</code> (Question 25):</strong><ul>
+<li><code>appvm1</code> resides in <code>SubnetA</code>, which DOES have <code>app-nsg1</code> attached.</li>
+<li><code>app-nsg1</code> lacks an allow rule for 3389 → hits default rule <code>DenyAllInBound</code> (Priority 65500) → Packet dropped at Subnet level → <strong>Connection FAILS (NO)</strong>.</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><strong>5. Distractor Killers:</strong><ul>
-<li><em>Connection fails at Subnet NSG:</em> Incorrect; intra-VNet traffic is permitted by default rule <code>AllowVNetInBound</code> (65000) unless an explicit Deny rule is added.</li>
-<li><em>NIC NSG is evaluated first:</em> Inbound processing always evaluates Subnet NSG first, then NIC NSG.</li>
+<li><em>Assume SubnetB has an implicit default NSG:</em> Azure never creates invisible or mandatory subnet NSGs. Subnets without NSGs are wide open.</li>
+<li><em>Assume both Subnet NSG and NIC NSG must exist to allow traffic:</em> False; if only a NIC NSG exists, only the NIC NSG rules govern the connection.</li>
 </ul>
 </li>
 <li><strong>6. Exam Heuristic:</strong><ul>
-<li><strong>"Default NSG rules permit all intra-VNet traffic (<code>AllowVNetInBound</code>). If Subnet NSG is default and NIC NSG allows port 3389, intra-VNet RDP connects successfully."</strong></li>
+<li><strong>"Subnets have NO NSG by default. If a subnet has no NSG, traffic passes through freely, and ONLY the NIC-level NSG rules determine allow/deny."</strong></li>
 </ul>
 </li>
 </ul>
