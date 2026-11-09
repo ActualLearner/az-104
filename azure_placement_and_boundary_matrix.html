@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AZ-104: Azure Resource Placement & Boundary Matrix</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1rem 0.75rem 4rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.6rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      font-size: 0.85rem;
+      position: sticky;
+      top: 0.75rem;
+      z-index: 100;
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    @media (min-width: 768px) {
+      body { padding: 1.5rem 1rem 4rem; }
+      .content { padding: 2.5rem; }
+    }
+    h1 {
+      font-size: 1.5rem;
+      color: var(--accent-indigo);
+      margin-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      color: #1e293b;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.35rem;
+    }
+    h3 {
+      font-size: 1.05rem;
+      color: #334155;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    p { margin-bottom: 0.85rem; font-size: 0.95rem; }
+    ul, ol { margin-left: 1.25rem; margin-bottom: 1rem; font-size: 0.95rem; }
+    li { margin-bottom: 0.35rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.85rem;
+      display: block;
+      overflow-x: auto;
+      border-radius: 8px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.65rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+    }
+    tr:nth-child(even) { background: #f8fafc; }
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    code {
+      background: #f1f5f9;
+      color: #b91c1c;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85em;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+    blockquote {
+      border-left: 4px solid var(--accent-blue);
+      background: #eff6ff;
+      padding: 0.75rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body id="top">
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Master Command Hub</a>
+      <span style="color:var(--text-muted); font-size:0.8rem;">AZ-104 Placement Matrix</span>
+      <a href="#top">Top ↑</a>
+    </div>
+    <div class="content">
+<h1 id="azure-resource-placement-scope-region-boundary-matrix">Azure Resource Placement, Scope &amp; Region Boundary Matrix</h1>
+<p><strong>Target Exam:</strong> Microsoft AZ-104 (Azure Administrator)<br />
+<strong>Document Version:</strong> 2026 Definitive Edition<br />
+<strong>Companion Artifact:</strong> <a href="file:///home/actual/projects/az-104/error_journal.html">Error Journal</a> | <a href="file:///home/actual/projects/az-104/index.html">Master Command Hub</a></p>
+<hr />
+<h2 id="executive-summary-the-core-azure-placement-axioms">Executive Summary: The Core Azure Placement Axioms</h2>
+<p>On the AZ-104 exam, Microsoft frequently presents scenario tables containing Virtual Machines, Subnets, Disks, NICs, Resource Groups, and Vaults situated across multiple regions, resource groups, or virtual networks. Candidates fail these questions because they conflate <strong>administrative boundaries</strong> (Management Groups, Subscriptions, Resource Groups) with <strong>physical/routing boundaries</strong> (Regions, Availability Zones, Virtual Networks).</p>
+<h3 id="the-4-golden-axioms">The 4 Golden Axioms</h3>
+<ol>
+<li><strong>Resource Groups are purely logical metadata containers:</strong> A Resource Group's location has <strong>zero</strong> technical impact on where resources inside it can be deployed.</li>
+<li><strong>Virtual Machines are composed of regional couplings:</strong> A VM cannot span across regions or availability zones. Its NIC, Managed Disks, and Public IP must match its region.</li>
+<li><strong>Security and Routing are strictly localized:</strong> An NSG cannot protect a subnet in another region. An ASG cannot protect a NIC in another VNet.</li>
+<li><strong>Backup vs. Monitoring Divergence:</strong> Azure Backup (Recovery Services Vault) is <strong>region-locked</strong> to the VM. Azure Monitor (Log Analytics Workspace) is <strong>globally aggregatable</strong>.</li>
+</ol>
+<hr />
+<h2 id="1-master-cross-resource-placement-compatibility-matrix">1. Master Cross-Resource Placement &amp; Compatibility Matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Source Resource</th>
+<th style="text-align: left;">Target / Associated Resource</th>
+<th style="text-align: center;">Allowed Across Different Regions?</th>
+<th style="text-align: center;">Allowed Across Different VNets?</th>
+<th style="text-align: center;">Allowed Across Different Resource Groups?</th>
+<th style="text-align: center;">Allowed Across Different Subscriptions?</th>
+<th style="text-align: left;">Exam Traps &amp; Critical Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Resource Group</strong></td>
+<td style="text-align: left;">Any Child Resource</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: left;">A Resource Group in <code>East US</code> can hold VMs, Storage, and VNets located in <code>West Europe</code>. RG location only dictates where ARM deployment metadata is kept.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Virtual Machine</strong></td>
+<td style="text-align: left;">Network Interface (NIC)</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">VM and NIC <strong>must reside in the exact same region</strong>. However, they can reside in different Resource Groups within the same subscription.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Virtual Machine</strong></td>
+<td style="text-align: left;">OS &amp; Data Managed Disks</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: left;">Disks and VM must be in the <strong>same region</strong> (and same Availability Zone if zonal). Disks cannot be attached across subscriptions.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Virtual Machine</strong></td>
+<td style="text-align: left;">Availability Set</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: left;">VM must be in the <strong>same region</strong> as the Availability Set. <strong>Fatal Trap:</strong> A VM can <strong>only</strong> be placed into an Availability Set at creation time. You cannot add an existing VM to an Availability Set later without recreating the VM.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Virtual Machine</strong></td>
+<td style="text-align: left;">VMSS (Flexible Mode)</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">⚠️ Subnet shared</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: left;">To attach a standalone VM to a Flexible VMSS, the VM must be in the <strong>same Region</strong> and the <strong>same Resource Group</strong> as the VMSS.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NIC</strong></td>
+<td style="text-align: left;">Subnet / VNet</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">A NIC belongs to exactly one subnet in one VNet. Must match the VNet's region.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NIC</strong></td>
+<td style="text-align: left;">Public IP Address</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">Public IP must be in the <strong>same region</strong> as the NIC. Also, SKUs must match: Standard NIC requires Standard Public IP.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NSG</strong></td>
+<td style="text-align: left;">Subnet</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">An NSG can only be associated with a Subnet in the <strong>same region</strong>. One NSG can protect multiple subnets <em>within the same VNet or across different VNets in the same region</em>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NSG</strong></td>
+<td style="text-align: left;">NIC</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">An NSG can only be associated with a NIC in the <strong>same region</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Application Security Group (ASG)</strong></td>
+<td style="text-align: left;">NIC</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;"><strong>Fatal Trap:</strong> All NICs associated with an ASG <strong>must exist within the exact same Virtual Network</strong>. You cannot group NICs across peered VNets into one ASG.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Recovery Services Vault</strong></td>
+<td style="text-align: left;">Azure VM Backup</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: left;"><strong>High-Frequency Trap:</strong> The Recovery Services Vault <strong>must be in the same Azure region</strong> as the VMs being protected. To protect VMs in <code>West Central US</code>, you must deploy a vault in <code>West Central US</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Backup Vault</strong></td>
+<td style="text-align: left;">Azure Managed Disks</td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">❌ <strong>NO</strong></td>
+<td style="text-align: left;">Azure Disk Backup uses a Backup Vault (not Recovery Services Vault) in the same region.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Log Analytics Workspace</strong></td>
+<td style="text-align: left;">Azure Monitor Agent (AMA) / VMs</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">A single central Log Analytics workspace in <code>East US</code> can collect logs, performance counters, and IIS events from VMs globally across all regions and subscriptions.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Standard Load Balancer</strong></td>
+<td style="text-align: left;">Backend Pool VMs / NICs</td>
+<td style="text-align: center;">❌ <strong>NO</strong> (unless Cross-Region LB)</td>
+<td style="text-align: center;">✅ <strong>YES</strong> (same region)</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">Standard Load Balancer backend pool can span multiple VNets in the <strong>same region</strong>. It cannot span across regions unless deploying the specialized global Cross-Region Load Balancer SKU.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Bastion</strong></td>
+<td style="text-align: left;">Target VM (RDP/SSH)</td>
+<td style="text-align: center;">⚠️ Peered only</td>
+<td style="text-align: center;">⚠️ Standard SKU</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">Bastion Basic SKU can only connect to VMs in the <strong>same VNet</strong>. Bastion Standard SKU can connect to VMs in <strong>peered VNets</strong> (even cross-region global peering).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Storage Account</strong></td>
+<td style="text-align: left;">VNet Service Endpoint</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">Storage account firewalls can allow traffic from VNet service endpoints located in any Azure region over the Microsoft backbone.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Private Endpoint</strong></td>
+<td style="text-align: left;">Target PaaS Resource (Storage/SQL)</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: center;">✅ <strong>YES</strong></td>
+<td style="text-align: left;">The Private Endpoint (NIC) sits in your local subnet, but can connect to a Storage Account or Azure SQL Database in a <strong>different region or different tenant/subscription</strong>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-deep-dive-resource-moves-cross-rg-and-cross-subscription">2. Deep Dive: Resource Moves (Cross-RG and Cross-Subscription)</h2>
+<p>When Microsoft asks: <em>"You need to move VM1 from Subscription 1 to Subscription 2. Which resources must be moved?"</em></p>
+<h3 id="the-all-or-nothing-vm-dependency-rule">The "All-or-Nothing" VM Dependency Rule</h3>
+<p>An Azure VM cannot exist in a vacuum. If you move a VM across resource groups or subscriptions, <strong>all attached dependencies must move together</strong>:
+1. The <strong>Virtual Machine</strong> itself.
+2. The <strong>OS Disk</strong> and all attached <strong>Data Disks</strong> (Managed Disks).
+3. The <strong>Network Interface Cards (NICs)</strong> attached to the VM.
+4. Any <strong>Public IP Address</strong> resource directly associated with the VM's NIC.
+5. Any <strong>Network Security Group (NSG)</strong> directly associated with the VM's NIC.
+6. The <strong>Virtual Network</strong> containing the VM's subnet (when moving across subscriptions, because a NIC cannot reference a subnet in a different subscription).</p>
+<h3 id="resource-locks-vs-move-operations-q57-trap">Resource Locks vs. Move Operations (Q57 Trap)</h3>
+<ul>
+<li><strong>ReadOnly Lock (<code>ReadOnly</code>):</strong> Prevents modification of resource settings and prevents deletion.</li>
+<li><strong>CanNotDelete Lock (<code>CanNotDelete</code>):</strong> Prevents accidental deletion of the resource.</li>
+<li><strong>The Exam Trap:</strong> Candidates assume a <code>ReadOnly</code> lock blocks moving a resource to another Resource Group.</li>
+<li><strong>The Reality:</strong> <strong>Locks do NOT block cross-resource group move operations.</strong> You can move a resource bearing a <code>ReadOnly</code> or <code>CanNotDelete</code> lock to a new Resource Group or Subscription without removing the lock first.</li>
+</ul>
+<h3 id="does-moving-a-resource-change-its-region-q58-trap">Does Moving a Resource Change its Region? (Q58 Trap)</h3>
+<ul>
+<li><strong>NEVER.</strong> Moving a resource to a new Resource Group in another region does <strong>NOT</strong> migrate or move the underlying physical hardware.</li>
+<li>An App Service Plan in <code>Central US</code> moved to an <code>East US</code> Resource Group <strong>remains in <code>Central US</code></strong>.</li>
+</ul>
+<hr />
+<h2 id="3-deep-dive-dedicated-subnet-name-constraints">3. Deep Dive: Dedicated Subnet Name Constraints</h2>
+<p>Several Azure PaaS and networking services require strict, hardcoded subnet names. Using any alternative name causes immediate deployment failure:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Service</th>
+<th style="text-align: left;">Mandatory Subnet Name (Case-Sensitive)</th>
+<th style="text-align: center;">Minimum Subnet Prefix Size</th>
+<th style="text-align: center;">NSG Allowed?</th>
+<th style="text-align: center;">User Defined Routes (UDR) Allowed?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Azure Bastion</strong></td>
+<td style="text-align: left;"><code>AzureBastionSubnet</code></td>
+<td style="text-align: center;"><strong>/26</strong> (64 IPs)</td>
+<td style="text-align: center;">✅ Yes (strict inbound 443 &amp; outbound 3389/22 rules)</td>
+<td style="text-align: center;">❌ Restricted</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure VPN / ExpressRoute Gateway</strong></td>
+<td style="text-align: left;"><code>GatewaySubnet</code></td>
+<td style="text-align: center;"><strong>/27</strong> (recommended /27, min /29)</td>
+<td style="text-align: center;">❌ Never attach an NSG to GatewaySubnet</td>
+<td style="text-align: center;">⚠️ Specific rules only</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Firewall</strong></td>
+<td style="text-align: left;"><code>AzureFirewallSubnet</code></td>
+<td style="text-align: center;"><strong>/26</strong> (64 IPs)</td>
+<td style="text-align: center;">❌ No NSG allowed</td>
+<td style="text-align: center;">⚠️ Default route 0.0.0.0/0 to Internet</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Firewall Management</strong></td>
+<td style="text-align: left;"><code>AzureFirewallManagementSubnet</code></td>
+<td style="text-align: center;"><strong>/26</strong> (for forced tunneling)</td>
+<td style="text-align: center;">❌ No NSG allowed</td>
+<td style="text-align: center;">Must route direct to Internet</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>App Service VNet Integration</strong></td>
+<td style="text-align: left;">Any name (Delegated to <code>Microsoft.Web/serverFarms</code>)</td>
+<td style="text-align: center;"><strong>/28</strong> (min 16 IPs, /26 recommended)</td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">✅ Yes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Container Instances (ACI)</strong></td>
+<td style="text-align: left;">Any name (Delegated to <code>Microsoft.ContainerInstance/containerGroups</code>)</td>
+<td style="text-align: center;"><strong>/28</strong></td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">✅ Yes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-deep-dive-inbound-network-security-group-evaluation-order">4. Deep Dive: Inbound Network Security Group Evaluation Order</h2>
+<p>When internet traffic reaches an Azure VM, it must pass through <strong>TWO independent layers of evaluation</strong>:</p>
+<pre><code>[ Inbound Traffic from Internet ]
+               │
+               ▼
+   ┌───────────────────────┐
+   │   1. Subnet-Level NSG │ ──► Does Subnet NSG ALLOW the traffic?
+   └───────────┬───────────┘
+               │
+               ├─► [DENY] ──► PACKET DROPPED IMMEDIATELY.
+               │              (Never evaluates NIC NSG)
+               ▼
+            [ALLOW]
+               │
+               ▼
+   ┌───────────────────────┐
+   │    2. NIC-Level NSG   │ ──► Does NIC NSG ALLOW the traffic?
+   └───────────┬───────────┘
+               │
+               ├─► [DENY] ──► PACKET DROPPED.
+               ▼
+            [ALLOW]
+               │
+               ▼
+   ┌───────────────────────┐
+   │  Virtual Machine OS   │ ──► Windows Firewall / Linux iptables
+   └───────────────────────┘
+</code></pre>
+<h3 id="the-inbound-rdp-golden-rule-q21">The Inbound RDP Golden Rule (Q21)</h3>
+<p>To allow RDP (TCP port 3389) or SSH (TCP port 22) from the internet:
+- <strong>Rule 1:</strong> Subnet NSG must have an Inbound Allow rule for TCP 3389.
+- <strong>Rule 2:</strong> NIC NSG must have an Inbound Allow rule for TCP 3389.
+- If <em>either</em> level lacks an allow rule (or hits the default <code>DenyAllInBound</code> rule with priority 65500), <strong>traffic is dropped</strong>.</p>
+<hr />
+<h2 id="5-high-yield-exam-traps-heuristics-summary">5. High-Yield Exam Traps &amp; Heuristics Summary</h2>
+<ol>
+<li><strong>"Can VM1 in East US be backed up to RSV1 in West US?"</strong><br />
+   → <strong>NO.</strong> Recovery Services Vaults are region-locked. Deploy a second vault in East US.</li>
+<li><strong>"Can an NSG created in West Europe be linked to a subnet in North Europe?"</strong><br />
+   → <strong>NO.</strong> NSGs are strictly regional. Create an NSG in North Europe.</li>
+<li><strong>"Can an Application Security Group (ASG) contain VMs from two peered VNets?"</strong><br />
+   → <strong>NO.</strong> ASGs cannot cross VNet boundaries. All NICs must reside in the same VNet.</li>
+<li><strong>"Can we add an existing production VM to a newly created Availability Set?"</strong><br />
+   → <strong>NO.</strong> Availability Sets are an immutable property set only at VM creation time.</li>
+<li><strong>"Can we move a VM with a ReadOnly lock to another Resource Group?"</strong><br />
+   → <strong>YES.</strong> Management locks do not prevent cross-RG moves.</li>
+<li><strong>"If we move an App Service from a West US RG to an East US RG, does its region change?"</strong><br />
+   → <strong>NO.</strong> Resource location is permanent and independent of Resource Group location.</li>
+<li><strong>"Can VMs in 5 different regions stream syslog to 1 Log Analytics workspace?"</strong><br />
+   → <strong>YES.</strong> Azure Monitor Log Analytics workspaces support global multi-region ingestion.</li>
+</ol>
+    </div>
+  </div>
+</body>
+</html>

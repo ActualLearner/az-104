@@ -328,7 +328,7 @@
 <li><em>One plan:</em> Cannot mix Windows and Linux web apps inside the same App Service Plan.</li>
 <li><em>Five plans:</em> Redundant; apps sharing the same OS can share the same underlying plan.</li>
 <li><strong>6. Exam Heuristic:</strong></li>
-<li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux $\rightarrow$ Minimum 2 plans."</strong></li>
+<li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux → Minimum 2 plans."</strong></li>
 </ul>
 <hr />
 <h3 id="domain-3-compute-regional-vcpu-quotas-stopped-deallocated-vms-trap-td-timed-q3">[Domain 3: Compute] Regional vCPU Quotas: Stopped (Deallocated) VMs Trap (TD Timed Q3)</h3>
@@ -342,7 +342,7 @@
 <li>VM3: F2s_v2 (2 vCPUs) - Running in South Central US (different region, ignored).</li>
 </ul>
 </li>
-<li>Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) $\rightarrow$ VM5 (D2s_v3, 2 vCPUs) $\rightarrow$ VM6 (A8_v2, 8 vCPUs).</li>
+<li>Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) → VM5 (D2s_v3, 2 vCPUs) → VM6 (A8_v2, 8 vCPUs).</li>
 <li><strong>3. Flawed Mental Model:</strong></li>
 <li>Assuming <code>Stopped (Deallocated)</code> releases the VM's vCPU quota allocation.</li>
 <li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
@@ -351,8 +351,8 @@
 <li>Remaining regional quota = $15 - 12 = \mathbf{3\text{ vCPUs}}$.</li>
 <li><strong>Sequential execution:</strong><ol>
 <li>VM4 (needs 2 vCPUs): $3 \ge 2 \rightarrow$ <strong>Created (YES)</strong>. Remaining quota = $3 - 2 = \mathbf{1\text{ vCPU}}$.</li>
-<li>VM5 (needs 2 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
-<li>VM6 (needs 8 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
+<li>VM5 (needs 2 vCPUs): Only 1 vCPU available → <strong>Blocked (NO)</strong>.</li>
+<li>VM6 (needs 8 vCPUs): Only 1 vCPU available → <strong>Blocked (NO)</strong>.</li>
 </ol>
 </li>
 <li><strong>5. Exam Heuristic:</strong></li>
@@ -967,6 +967,59 @@
 </li>
 <li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"VM Guest IIS logs = Azure Monitor Agent (AMA) + Data Collection Rule (DCR) → Log Analytics → KQL Log Search Alert. VM NEVER needs VM Contributor on the workspace."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3 id="master-synthesis-all-domains-the-azure-region-resource-group-cross-resource-placement-matrix">[Master Synthesis: All Domains] The Azure Region, Resource Group &amp; Cross-Resource Placement Matrix</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ⚠️ Master Diagnostic Synthesis &amp; Universal Placement Rules</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Evaluate complex multi-tier Azure deployments across different Regions, Virtual Networks, Resource Groups, and Subscriptions.</li>
+<li>Constraint: Identify which resource associations and moves are legally supported by Azure Resource Manager, and which cause hard deployment/runtime failures.</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>Conflating <strong>administrative boundaries</strong> (Management Groups, Subscriptions, Resource Groups) with <strong>physical/routing boundaries</strong> (Regions, Availability Zones, Virtual Networks).</li>
+<li>Assuming that a Resource Group's location restricts where resources inside it can be deployed.</li>
+<li>Assuming that a ReadOnly lock prevents moving a resource to another Resource Group.</li>
+<li>Assuming that NSGs, ASGs, or Recovery Services Vaults can operate across regions or cross-VNet without restriction.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>The 4 Cardinal Placement Axioms:</strong><ol>
+<li><strong>Resource Groups are purely logical metadata containers:</strong> A Resource Group's location has <strong>zero</strong> technical impact on where resources inside it can be deployed. An RG in <code>East US</code> can hold VMs, Storage, and VNets in <code>West Europe</code>.</li>
+<li><strong>VMs are regional composite assemblies:</strong> A VM's Network Interface (NIC), OS disk, Data disks, and Public IP must all reside in the <strong>exact same Azure Region</strong> as the VM.</li>
+<li><strong>Security &amp; Routing are strictly localized:</strong><ul>
+<li><strong>NSG ↔ Subnet/NIC:</strong> Must be in the <strong>same region</strong>.</li>
+<li><strong>ASG ↔ NIC:</strong> Must be in the <strong>same region AND same Virtual Network</strong>. (Cannot span across peered VNets).</li>
+<li><strong>Azure Bastion:</strong> Sits in dedicated <code>AzureBastionSubnet</code> (/26+). To reach VMs in other VNets, requires VNet Peering AND Bastion Standard SKU.</li>
+</ul>
+</li>
+<li><strong>Backup vs. Monitoring Divergence:</strong><ul>
+<li><strong>Recovery Services Vault ↔ VM Backup:</strong> Must be in the <strong>same region</strong> (cannot back up across regions).</li>
+<li><strong>Log Analytics Workspace ↔ VMs:</strong> Supports <strong>global multi-region ingestion</strong> (one central workspace in <code>East US</code> can monitor VMs worldwide).</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><strong>Cross-Subscription / Cross-RG Move Axioms:</strong><ul>
+<li>Moving a resource to a new Resource Group <strong>NEVER</strong> changes its underlying physical Azure region.</li>
+<li>Management locks (<code>ReadOnly</code> / <code>CanNotDelete</code>) <strong>do NOT prevent moving</strong> resources between Resource Groups or Subscriptions.</li>
+<li>Moving a VM cross-subscription requires moving the VM + all attached NICs + OS disk + Data disks + attached Public IP + attached NSG as a complete batch.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>Moving an App Service to an East US RG changes its region:</em> False; region is immutable upon resource creation.</li>
+<li><em>Cannot move a resource because a ReadOnly lock is active:</em> False; locks block modifications/deletions, not ARM move operations.</li>
+<li><em>Use 1 Recovery Services Vault to back up VMs in East US and West Europe:</em> False; Recovery Services Vaults are strictly regional.</li>
+<li><em>Put NICs from two peered VNets in the same Application Security Group (ASG):</em> False; ASGs are bound to a single VNet.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"RG location never limits resource region. VM + NIC + Disks = Same Region. NSG = Same Region. ASG = Same VNet. Backup Vault = Same Region. Log Analytics = Any Region. Moving an RG never changes a resource's region."</strong></li>
 </ul>
 </li>
 </ul>
