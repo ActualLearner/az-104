@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0284c7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>AZ-104 Master Command Hub</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.55;
+      padding: 1.5rem 1rem 3rem;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    /* Sticky Top Nav */
+    .top-nav {
+      position: sticky;
+      top: 0.75rem;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 0.45rem 0.75rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .nav-link {
+      color: #334155;
+      text-decoration: none;
+      font-size: 0.775rem;
+      font-weight: 700;
+      padding: 0.35rem 0.7rem;
+      border-radius: 9999px;
+      transition: all 0.15s ease;
+    }
+    .nav-link:hover {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    .nav-link.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+    header {
+      background: var(--card-bg);
+      padding: 1.5rem 1.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #e0f2fe;
+      color: #0369a1;
+      margin-bottom: 0.4rem;
+    }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+    h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
+    h2 { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem; }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+    @media (max-width: 900px) {
+      .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .step-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .step-num {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: var(--accent-blue);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      margin-bottom: 0.5rem;
+    }
+    .step-title { font-size: 0.9rem; font-weight: 700; color: #1e293b; margin-bottom: 0.25rem; }
+    .step-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; }
+    .exec-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      background: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+    .btn:hover { background: var(--accent-blue); }
+    .btn.green { background: var(--accent-green); }
+    .btn.blue { background: var(--accent-blue); }
+    .btn.purple { background: var(--accent-indigo); }
+    .labs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.6rem;
+    }
+    .lab-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 0.65rem 0.85rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.825rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .lab-item:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .lab-num {
+      font-size: 0.7rem;
+      font-weight: 800;
+      background: #e2e8f0;
+      color: #334155;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      margin-right: 0.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.825rem; margin-top: 0.5rem; }
+    th, td { padding: 0.65rem 0.6rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: #f8fafc; font-weight: 700; color: #334155; }
+    .callout {
+      border-left: 4px solid var(--accent-green);
+      background: #f0fdf4;
+      padding: 0.85rem 1rem;
+      border-radius: 6px;
+      font-size: 0.825rem;
+      margin-top: 0.75rem;
+    }
+    .callout-amber {
+      border-left: 4px solid var(--accent-amber);
+      background: #fffbeb;
+      padding: 0.85rem 1rem;
+      border-radius: 6px;
+      font-size: 0.825rem;
+      margin-top: 0.75rem;
+    }
+    .callout-blue {
+      border-left: 4px solid var(--accent-blue);
+      background: #f0f9ff;
+      padding: 0.85rem 1rem;
+      border-radius: 6px;
+      font-size: 0.825rem;
+      margin-top: 0.75rem;
+    }
+    .scenario-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.15rem;
+      margin-top: 0.85rem;
+      border-left: 4px solid var(--accent-indigo);
+    }
+    /* Responsive Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.825rem;
+      margin-top: 0.5rem;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    th, td {
+      white-space: normal;
+      min-width: 110px;
+    }
+
+    /* Mobile First Adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.6rem 0.5rem 3.5rem;
+      }
+      .top-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0.4rem 0.5rem;
+        border-radius: 9999px;
+        top: 0.35rem;
+        margin-bottom: 0.9rem;
+      }
+      .top-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .nav-link {
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.65rem;
+      }
+      header {
+        padding: 1.15rem 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+      h1 { font-size: 1.3rem; }
+      h2 { font-size: 1.1rem; }
+      .card {
+        padding: 1.1rem 0.95rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+      .btn {
+        padding: 0.45rem 0.75rem;
+        font-size: 0.775rem;
+      }
+      .exec-bar {
+        padding: 0.6rem 0.75rem;
+        gap: 0.45rem;
+      }
+      .labs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .code-pill {
+      font-family: monospace;
+      font-size: 0.775rem;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- TOP NAVIGATION -->
+    <nav class="top-nav">
+      <a class="nav-link active" href="#workflow">⚡ Daily Flow</a>
+      <a class="nav-link" href="#roadmap">🗺️ Roadmap</a>
+      <a class="nav-link" href="#practice">🧪 Practice Exams</a>
+      <a class="nav-link" href="#labs">🔬 Official Labs</a>
+      <a class="nav-link" href="#study-stack">📚 Study Stack</a>
+      <a class="nav-link" href="#notes">📝 Notes & Guides</a>
+      <a class="nav-link" href="#error-journal">📓 Error Journal</a>
+      <a class="nav-link" href="#readiness">🎯 Readiness Gate</a>
+      <a class="nav-link" href="reddit-az104-research-2024-2025.html" target="_blank" style="background:#0f172a; color:#fff;">📊 Reddit Study (N=38)</a>
+    </nav>
+
+    <!-- HEADER / STATUS -->
+    <header>
+      <div>
+        <span class="badge badge-green">Phase 2 Active • Practice Exams & Error Journaling</span>
+        <h1>AZ-104 Master Command Hub</h1>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">
+          Empirically Proven Path to Passing Microsoft Azure Administrator on First Attempt
+        </p>
+      </div>
+      <div style="text-align:right;">
+        <span class="badge badge-purple">Exam Strategy: Closed-Book Pace</span><br>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Pass Mark: 700 / 1000 • Open-Book for Verification Only</span>
+      </div>
+    </header>
+
+    <!-- SECTION 1: DAILY WORKFLOW -->
+    <section class="card" id="workflow">
+      <h2>⚡ Sequential Daily Flow: Disciplined 6-Stage Progression</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+        Follow this strict sequential pipeline: build foundational domain theory first, consolidate hands-on muscle memory, baseline on MS Learn, cram high-altitude architecture, conquer unguided scenario challenges, and finish with Shireen Khan's practice gauntlet.
+      </p>
+
+      <div class="grid-3">
+        <div class="step-box">
+          <span class="step-num">1</span>
+          <div class="step-title">Sequential Theory (Alan Rodrigues)</div>
+          <div class="step-desc">
+            Complete the <strong>Alan Rodrigues AZ-104 Course</strong> on Udemy (1.25x–1.5x) <em>strictly in sequential order</em> (Identity → Governance → Storage → Compute → Networking → Monitoring). Never skip ahead; Azure services have strict architectural dependencies.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <span class="step-num">2</span>
+          <div class="step-title">Post-Course Guided Labs (01–11)</div>
+          <div class="step-desc">
+            Execute all official <strong>Microsoft Learning GitHub Labs (01–11)</strong> in the Azure Portal at the end of the course. Solidify tactile muscle memory, blade locations, and resource group lifecycles. <em>Golden Rule: Delete Resource Groups immediately!</em>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <span class="step-num">3</span>
+          <div class="step-title">Full Diagnostic Baseline (MS Learn)</div>
+          <div class="step-desc">
+            Take the <strong>Microsoft Learn 50-Question Assessment</strong> ONLY after finishing all 5 domains. Because questions are randomly drawn from the entire syllabus, testing early wastes questions on unstudied topics. This gives an unpolluted baseline score.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <span class="step-num">4</span>
+          <div class="step-title">Architectural Cram (John Savill)</div>
+          <div class="step-desc">
+            Watch <strong>John Savill's AZ-104 Exam Cram V2</strong> & deep-dive masterclasses on YouTube. Connects disparate topics into unified enterprise topologies (Hub-Spoke, VNet Peering, Private Endpoints, Storage Replication, and Entra ID governance).
+          </div>
+        </div>
+
+        <div class="step-box">
+          <span class="step-num">5</span>
+          <div class="step-title">Unguided Scenarios (No Guides)</div>
+          <div class="step-desc">
+            Ask your AI partner for an <strong>Enterprise Scenario Challenge</strong> with real-world constraints. Build the entire architecture in the live Azure Portal with <em>zero step-by-step guides</em>. Verify traffic/permissions, test edge failure cases, then teardown.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <span class="step-num">6</span>
+          <div class="step-title">Testing Gauntlet (Shireen Khan)</div>
+          <div class="step-desc">
+            Calibrate with Tutorials Dojo 20Q sampler, then tackle <strong>Shireen Khan's 6 Practice Exams on Udemy</strong> (Review Mode only). Paste every wrong answer & guess into chat for deep <strong>AI Error Journaling</strong> until scoring <strong>≥85%</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Action Item -->
+      <div class="callout">
+        <strong>📍 Active Phase — Phase 2: Practice Exams &amp; Diagnostic Error Journaling</strong><br>
+        1. <strong>Video Course:</strong> ✅ <strong>313 / 313 lectures COMPLETE</strong> (Alan Rodrigues AZ-104, Nov 8 2026).<br>
+        2. <strong>Current Sprint:</strong> Tutorials Dojo Sampler → Alan Rodrigues Practice Tests 1 &amp; 2 → Shireen Khan (final gate).<br>
+        3. <strong>Protocol:</strong> Every missed/guessed question gets pasted to AI for dissection → auto-logged to <a href="error_journal.html" target="_blank" style="font-weight:700; color:var(--accent-green);">Error Journal</a>.<br>
+        4. <strong>Exam Target:</strong> Dec 5–8, 2026 (ESI Voucher expires ~Dec 19, 2026).
+      </div>
+    </section>
+
+    <!-- SECTION 2: 5-PHASE MASTER ROADMAP -->
+    <section class="card" id="roadmap">
+      <h2>🗺️ The 5-Phase Master Roadmap</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Primary Focus</th>
+            <th>Core Activities</th>
+            <th>Target Platform</th>
+            <th>Exit Benchmark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Phase 1</strong><br><span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">✅ DONE</span></td>
+            <td><strong>Sequential Theory & Architectural Foundations</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Domains 1 to 5</span></td>
+            <td>Alan Rodrigues AZ-104 Course in sequential order (1.25x–1.5x)</td>
+            <td>Udemy (Personal Plan)</td>
+            <td>100% Course Completion; Core architectural models understood</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 2</strong></td>
+            <td><strong>Guided Portal Labs & Tactile Muscle Memory</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Hands-On Execution</span></td>
+            <td>Execute Official GitHub Labs 01–11 in Azure Portal; verify CLI/ARM</td>
+            <td>Azure Portal / Sandbox</td>
+            <td>Complete Labs 01–11; 100% clean resource group teardown</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 3</strong></td>
+            <td><strong>Diagnostic Baseline & Savill Architectural Cram</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Cross-Domain Synthesis</span></td>
+            <td>MS Learn 50-Q Comprehensive Assessment + John Savill Study Cram V2</td>
+            <td>MS Learn + YouTube</td>
+            <td>Baseline score recorded on MS Learn; Savill Cram fully digested</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 4</strong></td>
+            <td><strong>Unguided Scenario Challenges ("No Training Wheels")</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Active Problem Solving</span></td>
+            <td>Build AI-generated enterprise constraint scenarios in Portal with zero guides</td>
+            <td>Azure Portal + Chat Prompt</td>
+            <td>Deploy and validate 3+ complex scenarios without external instructions</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 5</strong></td>
+            <td><strong>Practice Test Gauntlet & Exam Day Sprint</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Distractor Elimination</span></td>
+            <td>Tutorials Dojo 20Q sampler → Shireen Khan 6 Full Tests (Review Mode) + Error Journaling</td>
+            <td>Udemy + Pearson VUE</td>
+            <td><strong>Score ≥85% on Shireen Khan Practice Tests → Pass AZ-104 (≥700/1000)</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 2.5: UNGUIDED SCENARIO CHALLENGES -->
+    <section class="card" id="unguided-scenarios">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
+        <div>
+          <h2>🎯 Unguided Scenario Challenges: "No Training Wheels" Protocol</h2>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+            After completing Alan's course, the guided labs, and Savill's Cram, you take real-world enterprise requirements from your AI partner and build them directly in the Azure Portal <strong>without step-by-step guides</strong>.
+          </p>
+        </div>
+        <span class="badge badge-purple">Phase 4 Execution</span>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:1rem;">
+        <div class="step-box">
+          <div style="font-weight:700; font-size:0.85rem; color:#1e293b; margin-bottom:0.25rem;">1. Request Prompt</div>
+          <div class="step-desc">Tell the AI: <em>"Give me Scenario Challenge [X]"</em>. You receive business goals, security policies, and SKU constraints.</div>
+        </div>
+        <div class="step-box">
+          <div style="font-weight:700; font-size:0.85rem; color:#1e293b; margin-bottom:0.25rem;">2. Build Solo in Portal</div>
+          <div class="step-desc">Open Azure Portal. Provision networking, compute, storage, or identity without opening any step-by-step tutorials.</div>
+        </div>
+        <div class="step-box">
+          <div style="font-weight:700; font-size:0.85rem; color:#1e293b; margin-bottom:0.25rem;">3. Verify & Teardown</div>
+          <div class="step-desc">Run DNS/connectivity checks, verify RBAC/firewall denial, and immediately delete the Resource Group.</div>
+        </div>
+      </div>
+
+      <!-- Pre-loaded Scenario Challenge 01 -->
+      <div class="scenario-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <span style="font-weight:800; font-size:0.9rem; color:var(--accent-indigo);">🔥 Ready Challenge: Scenario 01 — Zero-Trust Multi-Tier Storage & Private DNS</span>
+          <span class="badge badge-green">Ready to Deploy</span>
+        </div>
+        <p style="font-size:0.825rem; color:#334155; margin-bottom:0.6rem;">
+          <strong>Enterprise Scenario:</strong> An enterprise application tier must securely store unstructured customer files in Azure Blob Storage. For compliance, the storage account must be completely inaccessible from the public internet. Compute resources must communicate over a private RFC 1918 internal IP address.
+        </p>
+        <div style="font-size:0.8rem; line-height:1.55; color:#475569;">
+          <strong>Your Engineering Constraints:</strong>
+          <ul style="margin-left:1.25rem; margin-top:0.25rem; margin-bottom:0.5rem;">
+            <li><strong>Resource Group:</strong> <span class="code-pill">rg-scenario01-securetier</span> (in your allowed region: Spain Central, UAE North, or Central India).</li>
+            <li><strong>Virtual Network:</strong> <span class="code-pill">vnet-workload</span> (<span class="code-pill">10.10.0.0/16</span>) with two subnets: <span class="code-pill">snet-compute</span> (<span class="code-pill">10.10.1.0/24</span>) and <span class="code-pill">snet-endpoints</span> (<span class="code-pill">10.10.2.0/24</span>).</li>
+            <li><strong>Storage Security:</strong> General-purpose v2 Storage Account with public network access <strong>Disabled</strong> (<span class="code-pill">Enabled from selected virtual networks and IP addresses</span> or <span class="code-pill">Disabled</span>).</li>
+            <li><strong>Private Connectivity:</strong> Create a <strong>Private Endpoint</strong> for the <span class="code-pill">blob</span> sub-resource placed in <span class="code-pill">snet-endpoints</span>, integrated with Private DNS Zone <span class="code-pill">privatelink.blob.core.windows.net</span>.</li>
+            <li><strong>Verification:</strong> Confirm that resolving the storage FQDN from outside returns a public endpoint that rejects connections (403), while inside the VNet the FQDN resolves to the private 10.10.2.x IP.</li>
+            <li><strong>Teardown:</strong> <span class="code-pill">az group delete --name rg-scenario01-securetier --no-wait --yes</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SECTION: PRACTICE EXAMS -->
+    <section class="card" id="practice">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+        <div>
+          <h2>🧪 Practice Exam Tracker</h2>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Current Phase 2 test results — paste every missed/guessed question to AI for error journaling.</p>
+        </div>
+        <span class="badge badge-green">Phase 2 — Active</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Mode</th>
+            <th>Score</th>
+            <th>Weak Domains</th>
+            <th>Errors Logged</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>TD Sampler — Review Mode</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Tutorials Dojo Free 10Q</span></td>
+            <td>Review</td>
+            <td><span style="font-weight:700; color:var(--accent-amber);">6/10 (60%)</span></td>
+            <td>Storage 0%, Monitor 0%</td>
+            <td><a href="error_journal.html" target="_blank" style="color:var(--accent-indigo); font-weight:700;">4 entries ↗</a></td>
+          </tr>
+          <tr>
+            <td><strong>TD Sampler — Timed Mode</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Tutorials Dojo Free 10Q</span></td>
+            <td>Timed (41s)</td>
+            <td><span style="font-weight:700; color:var(--accent-amber);">8/13 (61.5%)</span></td>
+            <td>Networking 0%</td>
+            <td><a href="error_journal.html" target="_blank" style="color:var(--accent-indigo); font-weight:700;">4 entries ↗</a></td>
+          </tr>
+          <tr style="opacity:0.5;">
+            <td><strong>Alan Rodrigues — Practice Test 01</strong></td>
+            <td>Review</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr style="opacity:0.5;">
+            <td><strong>Alan Rodrigues — Practice Test 02</strong></td>
+            <td>Review</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr style="opacity:0.5;">
+            <td><strong>Shireen Khan — Full Exam 1</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">(Final Gate)</span></td>
+            <td>Review</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout-blue" style="margin-top:0.75rem;">
+        <strong>🎯 Scoring Benchmarks:</strong>
+        TD Sampler baseline of ~60% is <em>completely normal</em> for a cold start after passive video watching.
+        Target: ≥80% on TD → ≥85% on Shireen Khan before booking the real exam.
+      </div>
+    </section>
+
+    <!-- SECTION 3: OFFICIAL LABS -->
+    <section class="card" id="labs">
+      <h2>🧪 Official Microsoft Hands-On Labs (Direct Web Links)</h2>
+      
+      <!-- Launch Bar -->
+      <div class="exec-bar">
+        <span style="font-size:0.85rem; font-weight:700; color:#1e293b;">Launch Platforms:</span>
+        <a class="btn purple" href="https://mslabs.cloudguides.com/guides/AZ-104%20Exam%20Guide%20-%20Microsoft%20Azure%20Administrator" target="_blank">🎮 Free Cloudguides Lab Simulator</a>
+        <a class="btn blue" href="https://portal.azure.com" target="_blank">🚀 Open Azure Portal</a>
+        <a class="btn green" href="https://azure.microsoft.com/free/" target="_blank">🎁 Azure Free $200 Account</a>
+        <a class="btn" href="https://learn.microsoft.com/credentials/certifications/azure-administrator/" target="_blank">⚡ MS Learn Sandbox Tracks</a>
+      </div>
+
+      <div class="labs-grid">
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_01-Manage_Entra_ID_Identities.html" target="_blank" style="border-left: 3px solid #10b981;">
+          <div><span class="lab-num" style="background:#10b981; color:#fff;">✓ Lab 01</span><span>Manage Entra ID Identities</span></div>
+          <span style="color:#10b981; font-weight:700;">DONE</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_02a_Manage_Subscriptions_and_RBAC_Entra.html" target="_blank" style="border-left: 3px solid #10b981;">
+          <div><span class="lab-num" style="background:#10b981; color:#fff;">✓ Lab 02a</span><span>Manage Subscriptions & RBAC</span></div>
+          <span style="color:#10b981; font-weight:700;">DONE</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_02b-Manage_Governance_via_Azure_Policy.html" target="_blank" style="border-left: 3px solid #10b981;">
+          <div><span class="lab-num" style="background:#10b981; color:#fff;">✓ Lab 02b</span><span>Governance via Azure Policy</span></div>
+          <span style="color:#10b981; font-weight:700;">DONE</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_03b-Manage_Azure_Resources_by_Using_ARM_Templates.html" target="_blank">
+          <div><span class="lab-num">Lab 03b</span><span>Resources via ARM Templates</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_04-Implement_Virtual_Networking.html" target="_blank">
+          <div><span class="lab-num">Lab 04</span><span>Implement Virtual Networking</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_05-Implement_Intersite_Connectivity.html" target="_blank">
+          <div><span class="lab-num">Lab 05</span><span>Intersite Connectivity (Peering)</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_06-Implement_Network_Traffic_Management.html" target="_blank">
+          <div><span class="lab-num">Lab 06</span><span>Traffic Management (Routing/LB)</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_07-Manage_Azure_Storage.html" target="_blank" style="border-left: 4px solid var(--accent-green); background:#f0fdf4;">
+          <div><span class="lab-num" style="background:#22c55e; color:#fff;">Done!</span><span style="font-weight:700;">Lab 07: Manage Azure Storage</span></div>
+          <span>✓</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_08-Manage_Virtual_Machines.html" target="_blank">
+          <div><span class="lab-num">Lab 08</span><span>Manage Virtual Machines (Next!)</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_09a-Implement_Web_Apps.html" target="_blank">
+          <div><span class="lab-num">Lab 09a</span><span>Implement Web Apps</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_09b-Implement_Azure_Container_Instances.html" target="_blank">
+          <div><span class="lab-num">Lab 09b</span><span>Container Instances (ACI)</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_09c-Implement-Azure-Container-Apps.html" target="_blank">
+          <div><span class="lab-num">Lab 09c</span><span>Container Apps (ACA)</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_10-Implement_Data_Protection.html" target="_blank">
+          <div><span class="lab-num">Lab 10</span><span>Implement Data Protection (Backup)</span></div>
+          <span>↗</span>
+        </a>
+        <a class="lab-item" href="https://microsoftlearning.github.io/AZ-104-MicrosoftAzureAdministrator/Instructions/Labs/LAB_11-Implement_Monitoring.html" target="_blank">
+          <div><span class="lab-num">Lab 11</span><span>Implement Monitoring (Log Analytics)</span></div>
+          <span>↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTION 4: THE STUDY STACK & RESOURCES -->
+    <section class="card" id="study-stack">
+      <h2>📚 The Verified Study Stack & Resources</h2>
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size:0.95rem; margin-bottom:0.5rem; color:var(--accent-indigo);">🎬 Video Courses & Deep Dives</h3>
+          <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.6;">
+            <li><strong>Alan Rodrigues (Udemy Personal Plan):</strong> <a href="https://www.udemy.com/course/microsoft-certified-azure-administrator/" target="_blank">AZ-104 Certification Course</a> — <em>Primary sequential theory engine</em> (complete Domains 1–5 in order).</li>
+            <li><strong>John Savill AZ-104 Study Cram V2 (YouTube):</strong> <a href="https://www.youtube.com/watch?v=VOod_VNgdJk" target="_blank">YouTube 3.5h Study Cram</a> — <em>Architectural synthesis & cram</em> (bridges cross-domain patterns).</li>
+            <li><strong>John Savill AZ-104 Masterclass (YouTube):</strong> <a href="https://www.youtube.com/playlist?list=PLlVtbbG169nGlGPxNPWnXOmgiRf43qExz" target="_blank">Complete Masterclass Playlist</a> — Deep-dive whiteboards on VNets, Private Endpoints, and Entra ID.</li>
+          </ul>
+
+          <h3 style="font-size:0.95rem; margin-top:1rem; margin-bottom:0.5rem; color:var(--accent-indigo);">📝 Practice Exams & Mocks</h3>
+          <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.6;">
+            <li><strong>Shireen Khan AZ-104 Practice Tests (Udemy Personal Plan):</strong> <a href="https://www.udemy.com/course/70533-azure/" target="_blank">6 Full Practice Exams</a> — <em>Primary Testing Gauntlet</em> (Review Mode only; 2026 case studies & multi-selects).</li>
+            <li><strong>MS Learn Comprehensive Assessment:</strong> <a href="https://learn.microsoft.com/credentials/certifications/azure-administrator/practice/assessment?assessment-type=practice&assessmentId=21" target="_blank">Official 50-Q Practice Assessment</a> — <em>Post-theory diagnostic baseline</em> (take only after Domain 5).</li>
+            <li><strong>Tutorials Dojo (Jon Bonso):</strong> <a href="https://www.udemy.com/course/azure-administrator-associate-az-104-practice-exams-2021/" target="_blank">AZ-104 Practice Exams</a> — <em>20-question calibration sampler</em>.</li>
+            <li><strong>Microsoft Enterprise Skills Initiative (ESI):</strong> <a href="https://esi.microsoft.com" target="_blank">ESI Dashboard</a> — 100% Free Role-Based Exam Voucher.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.95rem; margin-bottom:0.5rem; color:var(--accent-indigo);">📁 Local Files & Empirical Data</h3>
+          <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.6;">
+            <li><strong>AI Error Logging SOP:</strong> <a href="error_logging_guide.html" target="_blank" style="color:var(--accent-indigo); font-weight:700;">Error Logging & Diagnostic Protocol Guide (SOP)</a></li>
+            <li><strong>Active Error Journal (Markdown):</strong> <a href="error_journal.html" target="_blank" style="color:var(--accent-green); font-weight:700;">Complete Error Journal & Distractor Dissections</a></li>
+            <li><strong>Hard-Mode Scenario 01 Deep Dive:</strong> <a href="scenario_01_deep_dive.md" target="_blank" style="color:var(--accent-red); font-weight:700;">Scenario 1 Analysis: Cross-Tenant Governance, B2B Lifecycle, Licensing & SSPR</a></li>
+            <li><strong>Entra ID Master Guide (All-in-One):</strong> <a href="entra-id-master-architecture-and-governance.md" target="_blank" style="color:var(--accent-blue); font-weight:700;">Complete Domain 1 Architecture & Governance (1,670+ lines, 2026 Standard)</a></li>
+            <li><strong>Entra ID Core Architecture (Part 1):</strong> <a href="entra-id-part1-core-architecture.md" target="_blank">Tenants, Domains, App Regs, SPs, Managed Identities</a></li>
+            <li><strong>Entra ID Advanced Architecture (Part 2):</strong> <a href="entra-id-part2-advanced-identity.md" target="_blank">Devices, PRT/TPM, Groups/Licensing, ARM vs Entra RBAC, Hybrid Provisioning (PHS/PTA/SSO)</a></li>
+            <li><strong>Reddit Research Study ($N=38$ Passers):</strong> <a href="reddit-az104-research-2024-2025.html" target="_blank">Interactive Research Report</a></li>
+            <li><strong>Reference Manual:</strong> <a href="Cheat-Sheet-MS-Azure-Administrator-Associate-AZ-104.pdf" target="_blank">166-Page Azure Cheat Sheet PDF</a></li>
+            <li><strong>Diagnostic Exam Bank:</strong> <a href="AZ-104_ITExams_397Q.pdf" target="_blank">ITExams 397-Question Bank PDF</a></li>
+          </ul>
+
+          <div class="callout-amber">
+            <strong>⚠️ The Open-Book Exam Strategy:</strong><br>
+            • Study as if the test is <strong>100% closed-book</strong>.<br>
+            • In the live exam, MS Learn has <strong>no Ctrl+F</strong> and the timer keeps ticking.<br>
+            • Budget a strict 10–15 min window at the very end to check only 2–4 specific SKU/CLI questions!
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: READINESS GATE -->
+    <section class="card" id="readiness">
+      <h2>🎯 Readiness Gate: "When Am I Ready to Pass?"</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+        Do not book your exam until you cross these statistically verified benchmarks:
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Platform / Drill</th>
+            <th>Required Readiness Score</th>
+            <th>Confidence Level</th>
+            <th>Real Exam Outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Shireen Khan Practice Tests (Udemy)</strong></td>
+            <td><strong>≥85%</strong> (Review Mode after error journaling)</td>
+            <td><span class="badge badge-green">>95% Pass Probability</span></td>
+            <td>Correlates to 780–860+ on real exam. Initial 55–65% scores are completely normal.</td>
+          </tr>
+          <tr>
+            <td><strong>Unguided Scenarios (No Guides)</strong></td>
+            <td><strong>100% Completion (3+ Scenarios)</strong></td>
+            <td><span class="badge badge-green">Tactile Mastery</span></td>
+            <td>Proves ability to configure Azure services, routing, and access control without guides.</td>
+          </tr>
+          <tr>
+            <td><strong>Tutorials Dojo (Sampler)</strong></td>
+            <td><strong>≥80% – 85%</strong></td>
+            <td><span class="badge badge-green">>90% Pass Probability</span></td>
+            <td>Solid calibration of scenario question dissection and distractor elimination.</td>
+          </tr>
+          <tr>
+            <td><strong>MS Learn Comprehensive Assessment</strong></td>
+            <td><strong>≥85% – 90%</strong> (Post-course baseline)</td>
+            <td><span class="badge badge-amber">Baseline Only</span></td>
+            <td>Valid diagnostic across all 5 domains. Avoid repeating >2 times to prevent memorization bias.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- SECTION: NOTES & GUIDES -->
+    <section class="card" id="notes">
+      <h2>📝 Notes, Guides &amp; Council Reports</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">All study reference files and AI-generated guides produced during this prep session.</p>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size:0.95rem; margin-bottom:0.5rem; color:var(--accent-indigo);">📘 Master Reference Guides</h3>
+          <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.8;">
+            <li>
+              <strong>AzCopy v10 Master Guide:</strong>
+              <a href="azcopy_master_guide.html" target="_blank" style="color:var(--accent-blue); font-weight:700;">
+                Complete 360° AzCopy Reference (HTML)
+              </a>
+            </li>
+            <li>
+              <strong>Entra ID Master Guide (All-in-One):</strong>
+              <a href="entra-id-master-architecture-and-governance.html" target="_blank" style="color:var(--accent-blue); font-weight:700;">
+                Full Domain 1 Architecture &amp; Governance (HTML)
+              </a>
+              — <a href="entra-id-master-architecture-and-governance.md" target="_blank">.md version</a>
+            </li>
+            <li>
+              <strong>Entra ID Core Architecture (Part 1):</strong>
+              <a href="entra-id-part1-core-architecture.html" target="_blank">
+                Tenants, Domains, App Registrations, SPs, Managed Identities
+              </a>
+            </li>
+            <li>
+              <strong>Entra ID Advanced Identity (Part 2):</strong>
+              <a href="entra-id-part2-advanced-identity.html" target="_blank">
+                Devices, PRT/TPM, Groups/Licensing, Hybrid Provisioning (PHS/PTA/SSO)
+              </a>
+            </li>
+            <li>
+              <strong>Hard Scenario 01 Deep Dive:</strong>
+              <a href="scenario_01_deep_dive.html" target="_blank" style="color:var(--accent-red); font-weight:700;">
+                Cross-Tenant Governance, B2B Lifecycle, Licensing &amp; SSPR
+              </a>
+            </li>
+            <li>
+              <strong>Reddit Research Study (N=38 Passers):</strong>
+              <a href="reddit-az104-research-2024-2025.html" target="_blank">
+                Interactive Research Report
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.95rem; margin-bottom:0.5rem; color:var(--accent-indigo);">🏛️ LLM Council Decision Reports</h3>
+          <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.8;">
+            <li>
+              <strong>Council: Exam Strategy (Oct 23):</strong>
+              <a href="council-report-2026-10-23.html" target="_blank">
+                Original Study Strategy Decision Report
+              </a>
+            </li>
+            <li>
+              <strong>Council: Bicep vs Portal Endpoints (Nov 7):</strong>
+              <a href="council-report-2026-11-07-bicep-endpoints.html" target="_blank">
+                Skip Section 9 Bicep Coding → Watch Portal Endpoints Only
+              </a>
+            </li>
+            <li>
+              <strong>Council: Exams vs Labs (Nov 7):</strong>
+              <a href="council-report-2026-11-07-exams-vs-labs.html" target="_blank">
+                Skip GitHub Labs → Go Directly to Practice Exams (Unanimous)
+              </a>
+            </li>
+          </ul>
+
+          <h3 style="font-size:0.95rem; margin-top:1rem; margin-bottom:0.5rem; color:var(--accent-indigo);">📋 Error Logging Protocol</h3>
+          <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.8;">
+            <li>
+              <strong>AI Error Logging SOP:</strong>
+              <a href="error_logging_guide.html" target="_blank" style="color:var(--accent-indigo); font-weight:700;">
+                Diagnostic Protocol Guide (3 Root Causes, 6-Part Format)
+              </a>
+            </li>
+            <li>
+              <strong>Active Error Journal:</strong>
+              <a href="error_journal.html" target="_blank" style="color:var(--accent-green); font-weight:700;">
+                Full Distractor Dissection Journal (12 entries so far)
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: ACTIVE ERROR JOURNAL -->
+    <section class="card" id="error-journal">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+        <div>
+          <h2>📓 Active Error Journal: 17 Key Azure Mechanics Mastered</h2>
+          <p style="font-size:0.85rem; color:var(--text-muted);">
+            Forensic error logs from practice exams & diagnostic drills (see <a href="error_logging_guide.html" target="_blank" style="font-weight:700; color:var(--accent-indigo);">SOP Protocol</a> &amp; <a href="error_journal.html" target="_blank" style="font-weight:700; color:var(--accent-green);">Full Markdown Journal</a>):
+          </p>
+        </div>
+        <a class="btn green" href="error_journal.html" target="_blank" style="font-size:0.75rem;">📄 Open Full Markdown Journal (17 Entries)</a>
+      </div>
+
+      <div class="grid-2" style="margin-top:1rem;">
+        <div>
+          <h3 style="font-size:0.95rem; color:var(--accent-indigo); margin-bottom:0.4rem;">🔐 Domain 1: Identity &amp; Governance</h3>
+          <ul style="font-size:0.825rem; margin-left:1.25rem; line-height:1.65; margin-bottom:1rem;">
+            <li><strong>Deployments vs Properties Blade (TD Sampler Q6):</strong> <code>Properties</code> shows static metadata only. Exact ARM deployment timestamps, inputs/outputs, and history live in the <strong><code>Deployments</code></strong> blade.</li>
+            <li><strong>Entra ID Custom Domain Verification (TD Timed Q5):</strong> Verification supports exactly two record types: <strong><code>TXT</code> (Primary)</strong> or <strong><code>MX</code> (Fallback)</strong>. Never A, CNAME, or SOA.</li>
+            <li><strong>Control Plane vs Data Plane RBAC:</strong> Subscription Owner/Contributor grants control plane only. Reading/writing blob data requires <strong><code>Storage Blob Data Owner / Contributor / Reader</code></strong>.</li>
+            <li><strong>Azure Policy Enforcement (<code>sys.regionrestriction</code>):</strong> Deny policies block non-compliant resources during pre-flight ARM evaluation before provisioning begins.</li>
+          </ul>
+
+          <h3 style="font-size:0.95rem; color:var(--accent-indigo); margin-bottom:0.4rem;">📦 Domain 2: Storage</h3>
+          <ul style="font-size:0.825rem; margin-left:1.25rem; line-height:1.65; margin-bottom:1rem;">
+            <li><strong>Secondary Region Read Access (Q12):</strong> Standard GRS secondary is completely unreachable without initiating customer failover. Secondary read access requires <strong>RA-GRS</strong> or <strong>RA-GZRS</strong>.</li>
+            <li><strong>AzCopy Syntax &amp; Subfolders (TD Sampler Q7):</strong> Uploading folders recursively requires <strong><code>--recursive</code></strong>. Syntax: <code>azcopy copy &lt;LocalPath&gt; &lt;BlobURL&gt; --recursive</code>.</li>
+            <li><strong>On-Prem VHD Upload (Q22):</strong> VM disks must be uploaded as <strong>Page Blobs</strong> (512-byte aligned) using <strong><code>Add-AzVhd</code></strong>, never Block Blobs.</li>
+            <li><strong>Blob Container Leases (HTTP 412):</strong> An active lease locks blob metadata/policies. Modifying leased blobs throws 412 until you <strong>Break Lease</strong>.</li>
+            <li><strong>Storage Firewalls &amp; Dynamic Client IPs:</strong> Restricting to client IP breaks when home ISP rotates dynamic IPs. Use Entra ID auth or update firewall IP rule.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.95rem; color:var(--accent-indigo); margin-bottom:0.4rem;">⚡ Domain 3: Compute</h3>
+          <ul style="font-size:0.825rem; margin-left:1.25rem; line-height:1.65; margin-bottom:1rem;">
+            <li><strong>The Stopped VM Quota Trap (TD Timed Q3):</strong> <code>Stopped (Deallocated)</code> VMs stop billing, <strong>but STILL CONSUME vCPU quota</strong>. Only deleting VMs frees quota.</li>
+            <li><strong>App Service OS Isolation (TD Timed Q2):</strong> App Service Plans support only ONE OS. Classic ASP.NET needs Windows; Python/PHP needs Linux → <strong>Minimum 2 Plans</strong>.</li>
+            <li><strong>App Service Deployment Slots (TD Sampler Q3):</strong> Staging slots require <strong>Standard (S1)</strong> tier or higher. Moving tiers = <strong>Scale Up</strong> (not Scale Out).</li>
+            <li><strong>Availability Set Resizing (Q16):</strong> If target VM size is not on the same cluster, resizing throws <code>AllocationFailed</code> until <strong>ALL VMs in the set are deallocated</strong>.</li>
+            <li><strong>VM Licensing &amp; Hybrid Benefit (AHB):</strong> Eliminates Windows Server OS fees (bills at base Linux rate). Minimum 16 cores. Toggled live via <code>licenseType</code> with <strong>zero downtime</strong>.</li>
+          </ul>
+
+          <h3 style="font-size:0.95rem; color:var(--accent-indigo); margin-bottom:0.4rem;">🌐 Domains 4 &amp; 5: Networking &amp; Monitoring</h3>
+          <ul style="font-size:0.825rem; margin-left:1.25rem; line-height:1.65;">
+            <li><strong>Load Balancer Sticky Sessions (TD Timed Q4):</strong> Route requests consistently to the same VM by setting <strong>Session persistence: <code>Client IP</code></strong> (2-tuple / 3-tuple). Default 5-tuple hash does not persist.</li>
+            <li><strong>P2S VPN Route Propagation (Q24/25):</strong> P2S clients do not learn new peered routes automatically. The <strong>VPN client package must be re-downloaded &amp; re-installed</strong>.</li>
+            <li><strong>Azure Advisor vs Azure Monitor (TD Sampler Q5):</strong> Azure Monitor collects raw metrics/logs; <strong>Azure Advisor</strong> provides proactive recommendations to identify idle/underutilized VMs to cut costs.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hard-Mode Scenario 01 Deep Dive: Cross-Tenant Identity Governance, B2B Lifecycle, Group-Based Licensing & SSPR | AZ-104 Master Architecture Notes</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-card: #182234;
+      --border: #334155;
+      --border-focus: #38bdf8;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --accent-purple: #c084fc;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-red: #f87171;
+      --code-bg: #0b1120;
+      --table-header: #1e293b;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 4.5rem;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      font-size: 15px;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Top Navigation Banner */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .nav-brand:hover {
+      color: #fff;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .nav-button:hover {
+      color: #fff;
+      background: #334155;
+      border-color: var(--accent);
+    }
+
+    .nav-button.primary {
+      background: #0284c7;
+      color: #fff;
+      border-color: #38bdf8;
+    }
+
+    .nav-button.primary:hover {
+      background: #0369a1;
+    }
+
+    /* Main Container & Layout */
+    .page-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2.5rem;
+    }
+
+    @media (max-width: 992px) {
+      .page-layout {
+        grid-template-columns: 1fr;
+        padding: 1.5rem 1rem 4rem;
+      }
+      .toc-sidebar {
+        display: none;
+      }
+    }
+
+    /* Sticky Sidebar Navigation */
+    .toc-sidebar {
+      position: sticky;
+      top: 4.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .toc-sidebar h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .toc-sidebar ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .toc-sidebar li {
+      margin-bottom: 0.45rem;
+    }
+
+    .toc-sidebar li ul {
+      padding-left: 0.9rem;
+      margin-top: 0.35rem;
+    }
+
+    .toc-sidebar a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.825rem;
+      line-height: 1.4;
+      display: block;
+      transition: color 0.15s ease;
+    }
+
+    .toc-sidebar a:hover {
+      color: var(--accent);
+    }
+
+    /* Content Area Typography */
+    .content-area {
+      min-width: 0;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .content-area {
+        padding: 1.5rem 1.25rem;
+      }
+    }
+
+    .content-area h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #f8fafc;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .content-area h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-area h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content-area h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .content-area p {
+      margin-bottom: 1.2rem;
+      color: #cbd5e1;
+    }
+
+    .content-area strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .content-area ul, .content-area ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: #cbd5e1;
+    }
+
+    .content-area li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* Code & Pre Blocks */
+    .content-area pre {
+      background-color: var(--code-bg);
+      border: 1px solid #1e293b;
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1.25rem 0 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .content-area code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: #0b1120;
+      color: #38bdf8;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .content-area pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      color: inherit;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .table-container table,
+    .content-area table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    .content-area th, .content-area td {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-area th {
+      background: var(--table-header);
+      color: #ffffff;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .content-area tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Blockquotes / Callouts */
+    .content-area blockquote {
+      border-left: 4px solid var(--accent-amber);
+      background: rgba(251, 191, 36, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0 1.5rem;
+      color: #fef3c7;
+      font-style: normal;
+    }
+
+    .content-area hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* Link styling */
+    .content-area a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .content-area a:hover {
+      color: #ffffff;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="site-nav">
+    <a href="index.html" class="nav-brand">
+      <span>🛡️ AZ-104 Command Hub</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-button">🏠 Dashboard</a>
+      <a href="index.html#notes-library" class="nav-button primary">📚 Notes Library</a>
+      <a href="scenario_01_deep_dive.html" class="nav-button">⚡ Scenario 01 Deep Dive</a>
+      <a href="entra-id-master-architecture-and-governance.html" class="nav-button">📘 Master Guide</a>
+      <a href="reddit-az104-research-2024-2025.html" class="nav-button">📊 Reddit N=38</a>
+    </div>
+  </header>
+
+  <!-- Page Layout -->
+  <div class="page-layout">
+    
+    <!-- Sidebar Table of Contents -->
+    <aside class="toc-sidebar">
+      <h3>📑 Table of Contents</h3>
+      <div class="toc">
+<ul>
+<li><a href="#hard-mode-scenario-01-deep-dive-cross-tenant-identity-governance-b2b-lifecycle-group-based-licensing-sspr">Hard-Mode Scenario 01 Deep Dive: Cross-Tenant Identity Governance, B2B Lifecycle, Group-Based Licensing &amp; SSPR</a><ul>
+<li><a href="#part-1-the-scenario-submission-and-detailed-scoring-analysis">Part 1: The Scenario, Submission, and Detailed Scoring Analysis</a><ul>
+<li><a href="#11-the-original-scenario-global-logistics-corp-lab-01">1.1 The Original Scenario: Global Logistics Corp Lab 01</a><ul>
+<li><a href="#architecture-context">Architecture Context</a></li>
+<li><a href="#configuration-baseline">Configuration Baseline</a></li>
+<li><a href="#the-three-incidents">The Three Incidents</a></li>
+</ul>
+</li>
+<li><a href="#12-user-submission">1.2 User Submission</a></li>
+<li><a href="#13-detailed-scoring-diagnostic-breakdown">1.3 Detailed Scoring &amp; Diagnostic Breakdown</a></li>
+</ul>
+</li>
+<li><a href="#part-2-microsoft-entra-b2b-graph-api-object-lifecycle-mechanics">Part 2: Microsoft Entra B2B Graph API &amp; Object Lifecycle Mechanics</a><ul>
+<li><a href="#21-the-invitation-payload-schema-attributes">2.1 The Invitation Payload &amp; Schema Attributes</a><ul>
+<li><a href="#directory-attribute-state-table">Directory Attribute State Table</a></li>
+</ul>
+</li>
+<li><a href="#22-redemption-flow-identity-mapping">2.2 Redemption Flow &amp; Identity Mapping</a></li>
+</ul>
+</li>
+<li><a href="#part-3-group-based-licensing-architecture-failure-remediation">Part 3: Group-Based Licensing Architecture &amp; Failure Remediation</a><ul>
+<li><a href="#31-license-assignment-failure-states-violation-types">3.1 License Assignment Failure States &amp; Violation Types</a></li>
+<li><a href="#32-critical-structural-constraints">3.2 Critical Structural Constraints</a></li>
+<li><a href="#33-bulk-setting-usagelocation-for-guest-accounts">3.3 Bulk Setting usageLocation for Guest Accounts</a></li>
+</ul>
+</li>
+<li><a href="#part-4-comprehensive-microsoft-entra-id-licensing-matrix-2026-standards">Part 4: Comprehensive Microsoft Entra ID Licensing Matrix (2026 Standards)</a><ul>
+<li><a href="#41-feature-breakdown-by-license-tier">4.1 Feature Breakdown by License Tier</a></li>
+<li><a href="#42-microsoft-365-license-alignment">4.2 Microsoft 365 License Alignment</a></li>
+<li><a href="#43-microsoft-entra-external-id-b2b-licensing-model">4.3 Microsoft Entra External ID (B2B) Licensing Model</a></li>
+</ul>
+</li>
+<li><a href="#part-5-self-service-password-reset-sspr-credential-authority-boundaries">Part 5: Self-Service Password Reset (SSPR) &amp; Credential Authority Boundaries</a><ul>
+<li><a href="#51-identity-authority-boundaries">5.1 Identity Authority Boundaries</a></li>
+<li><a href="#52-what-guests-can-and-cannot-do">5.2 What Guests CAN and CANNOT Do</a></li>
+<li><a href="#53-sspr-implementation-matrix-cloud-vs-hybrid">5.3 SSPR Implementation Matrix: Cloud vs Hybrid</a></li>
+</ul>
+</li>
+<li><a href="#part-6-multi-factor-authentication-mfa-architecture-enforcement">Part 6: Multi-Factor Authentication (MFA) Architecture &amp; Enforcement</a><ul>
+<li><a href="#61-authentication-methods-policy-convergence">6.1 Authentication Methods Policy Convergence</a><ul>
+<li><a href="#core-modern-authentication-methods">Core Modern Authentication Methods</a></li>
+</ul>
+</li>
+<li><a href="#62-security-defaults-vs-conditional-access">6.2 Security Defaults vs Conditional Access</a></li>
+<li><a href="#63-phishing-resistant-mfa-number-matching">6.3 Phishing-Resistant MFA &amp; Number Matching</a></li>
+</ul>
+</li>
+<li><a href="#part-7-cross-tenant-access-settings-external-identities-deep-dive">Part 7: Cross-Tenant Access Settings &amp; External Identities Deep Dive</a><ul>
+<li><a href="#71-cross-tenant-access-hierarchy">7.1 Cross-Tenant Access Hierarchy</a></li>
+<li><a href="#72-the-inbound-trust-triad">7.2 The Inbound Trust Triad</a></li>
+<li><a href="#73-b2b-collaboration-vs-b2b-direct-connect">7.3 B2B Collaboration vs B2B Direct Connect</a></li>
+<li><a href="#74-tenant-restrictions">7.4 Tenant Restrictions</a></li>
+</ul>
+</li>
+<li><a href="#part-8-step-by-step-azure-portal-click-paths-microsoft-graph-powershell-commands">Part 8: Step-by-Step Azure Portal Click-Paths &amp; Microsoft Graph PowerShell Commands</a><ul>
+<li><a href="#81-remediation-click-paths">8.1 Remediation Click-Paths</a><ul>
+<li><a href="#click-path-1-enabling-inbound-mfa-trust-for-partner-tenant">Click-Path 1: Enabling Inbound MFA Trust for Partner Tenant</a></li>
+<li><a href="#click-path-2-correcting-dynamic-group-rule">Click-Path 2: Correcting Dynamic Group Rule</a></li>
+<li><a href="#click-path-3-reprocessing-group-licenses">Click-Path 3: Reprocessing Group Licenses</a></li>
+<li><a href="#click-path-4-enabling-multi-factor-authentication-via-conditional-access-targeting-guests-partners">Click-Path 4: Enabling Multi-Factor Authentication via Conditional Access (Targeting Guests &amp; Partners)</a></li>
+<li><a href="#click-path-5-enabling-mfa-via-security-defaults-entra-id-free-tier">Click-Path 5: Enabling MFA via Security Defaults (Entra ID Free Tier)</a></li>
+<li><a href="#click-path-6-activating-modern-authentication-methods-microsoft-authenticator-fido2-tap">Click-Path 6: Activating Modern Authentication Methods (Microsoft Authenticator / FIDO2 / TAP)</a></li>
+</ul>
+</li>
+<li><a href="#82-production-powershell-microsoft-graph-automation-scripts">8.2 Production PowerShell / Microsoft Graph Automation Scripts</a></li>
+</ul>
+</li>
+<li><a href="#part-9-high-yield-az-104-exam-traps-real-world-gotchas">Part 9: High-Yield AZ-104 Exam Traps &amp; Real-World Gotchas</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </aside>
+
+    <!-- Main Content Reader -->
+    <main class="content-area">
+      <h1 id="hard-mode-scenario-01-deep-dive-cross-tenant-identity-governance-b2b-lifecycle-group-based-licensing-sspr">Hard-Mode Scenario 01 Deep Dive: Cross-Tenant Identity Governance, B2B Lifecycle, Group-Based Licensing &amp; SSPR</h1>
+<hr />
+<h2 id="part-1-the-scenario-submission-and-detailed-scoring-analysis">Part 1: The Scenario, Submission, and Detailed Scoring Analysis</h2>
+<h3 id="11-the-original-scenario-global-logistics-corp-lab-01">1.1 The Original Scenario: Global Logistics Corp Lab 01</h3>
+<h4 id="architecture-context">Architecture Context</h4>
+<p>Global Logistics Corp operates an Entra ID tenant (<code>globallogistics.com</code>) provisioned with Microsoft Entra ID P2 licenses. To facilitate customs processing and global supply chain operations, they invite external customs brokers from partner organizations and freelance field agents.</p>
+<h4 id="configuration-baseline">Configuration Baseline</h4>
+<ol>
+<li><strong>Dynamic Security Group (<code>DG-Customs-Auditors</code>)</strong>:
+   - Membership Rule:
+     <code>text
+     (user.userType -eq "Guest") and (user.accountEnabled -eq true) and (user.otherMails -contains "@partnerbroker.com")</code></li>
+<li><strong>Self-Service Password Reset (SSPR) Scope</strong>:
+   - SSPR enabled and scoped strictly to security group <code>SG-SSPR-AllClearance</code>.</li>
+<li><strong>Provisioning Workflow</strong>:
+   - 20 freelance agents with personal Microsoft accounts (<code>@outlook.com</code>) and 30 partner brokers (<code>user@partnerbroker.com</code>) are invited using Microsoft Graph B2B invitation API (<code>/invitations</code>).
+   - For the 30 partner brokers, the onboarding script sets:<ul>
+<li><code>department</code> = <code>"Customs"</code></li>
+<li><code>mail</code> = <code>"user@partnerbroker.com"</code></li>
+<li><code>otherMails</code> = <code>[]</code> (left unpopulated / empty).</li>
+<li>For the 20 freelance <code>@outlook.com</code> agents:</li>
+<li><code>usageLocation</code> = <code>"US"</code></li>
+<li>Added as direct assigned members to <code>SG-SSPR-AllClearance</code>.</li>
+</ul>
+</li>
+<li><strong>Conditional Access &amp; Cross-Tenant Access Settings</strong>:
+   - Conditional Access Policy <code>CAP-Enforce-MFA</code>:<ul>
+<li>Target: All cloud applications.</li>
+<li>Users/Groups: <code>DG-Customs-Auditors</code>.</li>
+<li>Grant Control: Require multi-factor authentication (MFA).</li>
+<li>Entra External ID -&gt; Cross-Tenant Access Settings:</li>
+<li>Partner Tenant: <code>partnerbroker.com</code>.</li>
+<li>Inbound Trust Settings: <strong>Trust multi-factor authentication from Microsoft Entra tenants</strong> is <strong>Disabled</strong>.</li>
+</ul>
+</li>
+</ol>
+<h4 id="the-three-incidents">The Three Incidents</h4>
+<ul>
+<li><strong>Incident A (Dynamic Group &amp; Group-Based Licensing Failure)</strong>:
+  None of the 30 partner brokers appear in <code>DG-Customs-Auditors</code> after invitation redemption, despite their corporate email address ending in <code>@partnerbroker.com</code>. When the tenant administrator modifies the dynamic membership rule to <code>(user.mail -contains "@partnerbroker.com")</code>, the 30 users populate into the group. However, when an Entra ID P2 license is assigned to <code>DG-Customs-Auditors</code> via group-based licensing, the assignment triggers a failure state: <code>LicenseAssignmentFailed</code> with status <code>MutuallyExclusiveViolations</code> or <code>MissingPrerequisite</code> / <code>DependencyViolation</code>.</li>
+<li><strong>Incident B (SSPR Portal Rejection on Guest Accounts)</strong>:
+  A freelance agent (<code>agent1@outlook.com</code>) forgets their password and attempts to initiate a password reset at the tenant-specific reset URL:
+  <code>https://passwordreset.microsoftonline.com/?tenantid=&lt;global-logistics-tenant-id&gt;</code>.
+  The SSPR portal immediately halts the workflow with an error stating the account cannot be reset. The administrator insists this is a platform defect because SSPR is enabled, the user is an active direct member of <code>SG-SSPR-AllClearance</code>, and an Entra ID P2 license is assigned.</li>
+<li><strong>Incident C (Redundant Multi-Factor Authentication Escalation)</strong>:
+  Partner brokers from <code>partnerbroker.com</code> successfully complete strong MFA when logging into their home corporate Entra tenant. However, upon accessing Global Logistics Corp&rsquo;s cloud resources, <code>CAP-Enforce-MFA</code> forces them to register and perform a second MFA inside Global Logistics Corp&rsquo;s tenant, prompting widespread helpdesk escalations.</li>
+</ul>
+<hr />
+<h3 id="12-user-submission">1.2 User Submission</h3>
+<blockquote>
+<p><em>&ldquo;1. The invited b2b users &ldquo;mail&rdquo; property is filled with the mail they use to log in, which is the partners mail. Using othermails wouldn&rsquo;t work since that&rsquo;s not where their @partnerbroker.com is. The licensing assignment failed because I think it&rsquo;s the inbound MFA being disabled though I don&rsquo;t know why.</em></p>
+<p><em>2. Since they are guest users, their accounts are not actually stored with us in our tenant, we&rsquo;re simply trusting their Identity provider for authenticating them, so we can&rsquo;t really change their passwords or give them SSPR feature. I&rsquo;m guessing the tenant can&rsquo;t perform any self-service account operations in our tenant since their idenitty is not with us.</em></p>
+<p><em>3. Your question told me the answer to no.1, duplicate MFA is what caused the license assignment to fail(don&rsquo;t give me the answer again like this, i doubt shireens and other practice exams are like this). I&rsquo;m guessing the answer is the inbound MFA being disabled, we should trust it, thus allowing the accounts to pass mfa from their IDP and accepting that mFA passing as mfa passed.&rdquo;</em></p>
+</blockquote>
+<hr />
+<h3 id="13-detailed-scoring-diagnostic-breakdown">1.3 Detailed Scoring &amp; Diagnostic Breakdown</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Incident</th>
+<th style="text-align: left;">Candidate Assessment</th>
+<th style="text-align: center;">Score</th>
+<th style="text-align: left;">Architectural Truth &amp; Root Cause Breakdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Incident A</strong><br><em>(Dynamic Rule &amp; Licensing)</em></td>
+<td style="text-align: left;"><strong>Partially Correct</strong><br>(Identified <code>mail</code> attribute correctly; missed licensing root cause)</td>
+<td style="text-align: center;"><strong>1.5 / 3.0</strong></td>
+<td style="text-align: left;"><strong>Attribute Discovery</strong>: 100% correct. B2B invitations write the invited address into <code>mail</code> and construct the User Principal Name (<code>user_partnerbroker.com#EXT#@globallogistics.onmicrosoft.com</code>). The <code>otherMails</code> collection remained empty (<code>[]</code>), so the initial filter returned zero users.<br><br><strong>Licensing Failure Root Cause</strong>: Incorrect. MFA settings have zero interaction with the Entra ID licensing evaluation engine. The assignment failed because:<br>1. <strong>Missing <code>usageLocation</code></strong>: Guest user objects provisioned via Graph without explicit <code>usageLocation</code> default to <code>null</code>. Azure licensing requires ISO-3166-1 alpha-2 country codes.<br>2. <strong>Service Plan Dependency / Mutually Exclusive SKUs</strong>: Group-based licensing assigns all service plans by default unless specific plans are toggled off. Assigning a standalone add-on (e.g., PIM or Identity Governance) without its prerequisite base plan, or assigning overlapping plans that conflict (e.g., conflicting Exchange Online or Defender service plans), triggers <code>MutuallyExclusiveViolations</code> or <code>MissingPrerequisite</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Incident B</strong><br><em>(SSPR &amp; Guest Boundary)</em></td>
+<td style="text-align: left;"><strong>Strongly Correct</strong><br>(Identified authentication authority boundary; clarified self-service boundary)</td>
+<td style="text-align: center;"><strong>2.5 / 3.0</strong></td>
+<td style="text-align: left;"><strong>Authentication Authority</strong>: 100% accurate. SSPR requires write authority over the user&rsquo;s credential store. For external B2B guests (MSA <code>@outlook.com</code> or external Entra ID), password authority resides strictly in their Home IdP (MSA accounts at <code>account.live.com</code>). Global Logistics Corp issues SAML/WS-Fed/OIDC federated security tokens; it holds no password hashes for external identities and cannot execute password writebacks or resets.<br><br><strong>Nuance / Self-Service Boundary</strong>: While guests <em>cannot</em> reset their passwords in the resource tenant, guests <em>can</em> and <em>must</em> perform self-service operations for resource-scoped authentication methods (e.g., registering Microsoft Authenticator, FIDO2 keys, phone) via the resource tenant&rsquo;s Combined Registration portal: <code>https://mysignins.microsoftonline.com?tenantid=&lt;tenant-id&gt;</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Incident C</strong><br><em>(Cross-Tenant Inbound MFA)</em></td>
+<td style="text-align: left;"><strong>Accurate</strong><br>(Identified Inbound Trust disabled; correct fix)</td>
+<td style="text-align: center;"><strong>3.0 / 3.0</strong></td>
+<td style="text-align: left;"><strong>Cross-Tenant Trust Triad</strong>: Correct. By default, Inbound Access for external organizations requires guests to satisfy MFA within the resource tenant. When <code>CAP-Enforce-MFA</code> evaluates the token, if Inbound Trust for MFA is unchecked, the token lacks an accepted MFA claim. To honor the partner&rsquo;s MFA token, the resource administrator must navigate to <strong>External Identities -&gt; Cross-tenant access settings -&gt; Organizational settings -&gt; Add partnerbroker.com -&gt; Inbound access -&gt; Trust settings</strong> and check <strong>Trust multi-factor authentication from Microsoft Entra tenants</strong>.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Overall Score</strong>: <strong>7.0 / 9.0 (77.8% - PASS on Hard Mode)</strong></p>
+<hr />
+<h2 id="part-2-microsoft-entra-b2b-graph-api-object-lifecycle-mechanics">Part 2: Microsoft Entra B2B Graph API &amp; Object Lifecycle Mechanics</h2>
+<pre><code>                  +----------------------------------------------+
+                  | Admin / Automation calls POST /invitations    |
+                  +----------------------+-----------------------+
+                                         |
+                                         v
+                  +----------------------------------------------+
+                  |  Pre-Redemption Guest Object Created         |
+                  |  - userType: &quot;Guest&quot;                         |
+                  |  - mail: &quot;user@partnerbroker.com&quot;            |
+                  |  - otherMails: [] (unless explicitly passed) |
+                  |  - UPN: user_partnerbroker.com#EXT#@domain   |
+                  |  - externalUserState: &quot;PendingAcceptance&quot;    |
+                  |  - usageLocation: null (unless specified!)   |
+                  +----------------------+-----------------------+
+                                         |
+                       Invitation Link Delivered to User
+                                         |
+                                         v
+                  +----------------------------------------------+
+                  | User Clicks Link &amp; Authenticates at Home IdP |
+                  +----------------------+-----------------------+
+                                         |
+                                         v
+                  +----------------------------------------------+
+                  |  Post-Redemption State Transition             |
+                  |  - externalUserState: &quot;Accepted&quot;             |
+                  |  - externalUserStateChangeDateTime: &lt;UTC&gt;    |
+                  |  - Object immutable ID linked to Home IdP    |
+                  |  - mail &amp; UPN remain intact                  |
+                  +----------------------------------------------+
+</code></pre>
+<h3 id="21-the-invitation-payload-schema-attributes">2.1 The Invitation Payload &amp; Schema Attributes</h3>
+<p>When inviting external users via Microsoft Graph API (<code>POST https://graph.microsoft.com/v1.0/invitations</code>), the directory engine provisions a shadow user object in the resource tenant. Understanding how identity attributes map across the API payload is essential for AZ-104 dynamic groups.</p>
+<pre><code class="language-json">{
+  &quot;invitedUserEmailAddress&quot;: &quot;broker101@partnerbroker.com&quot;,
+  &quot;invitedUserDisplayName&quot;: &quot;Customs Broker 101&quot;,
+  &quot;inviteRedirectUrl&quot;: &quot;https://logistics.globallogistics.com/customs&quot;,
+  &quot;sendInvitationMessage&quot;: true,
+  &quot;invitedUserType&quot;: &quot;Guest&quot;,
+  &quot;invitedUserMessageInfo&quot;: {
+    &quot;customizedMessageBody&quot;: &quot;Welcome to Global Logistics Customs Portal.&quot;
+  }
+}
+</code></pre>
+<h4 id="directory-attribute-state-table">Directory Attribute State Table</h4>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Attribute</th>
+<th style="text-align: left;">State Prior to Redemption</th>
+<th style="text-align: left;">State Post-Redemption</th>
+<th style="text-align: left;">Dynamic Rule Caveat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>userPrincipalName</code></td>
+<td style="text-align: left;"><code>broker101_partnerbroker.com#EXT#@globallogistics.onmicrosoft.com</code></td>
+<td style="text-align: left;">Remains unchanged unless manually modified by tenant admin.</td>
+<td style="text-align: left;">Contains <code>#EXT#</code> and the resource tenant default domain. Never use <code>-match "@partnerbroker.com"</code> on UPN.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>mail</code></td>
+<td style="text-align: left;">Populated with <code>invitedUserEmailAddress</code> (<code>broker101@partnerbroker.com</code>).</td>
+<td style="text-align: left;">Persists as <code>broker101@partnerbroker.com</code>.</td>
+<td style="text-align: left;"><strong>Primary filter target</strong> for dynamic membership rules targeting external corporate domains.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>otherMails</code></td>
+<td style="text-align: left;">Empty collection <code>[]</code> by default unless explicitly supplied during provisioning via Graph <code>/users/{id}</code> PATCH.</td>
+<td style="text-align: left;">Remains unchanged. Graph invitation does <strong>not</strong> populate <code>otherMails</code>.</td>
+<td style="text-align: left;">Filtering <code>(user.otherMails -contains "@partnerbroker.com")</code> will evaluate to <code>false</code> for all standard invitations.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>userType</code></td>
+<td style="text-align: left;"><code>"Guest"</code> (or <code>"Member"</code> if requested in API payload).</td>
+<td style="text-align: left;">Remains <code>"Guest"</code>.</td>
+<td style="text-align: left;">Can be toggled between <code>Guest</code> and <code>Member</code> without altering authentication authority.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>externalUserState</code></td>
+<td style="text-align: left;"><code>"PendingAcceptance"</code></td>
+<td style="text-align: left;"><code>"Accepted"</code></td>
+<td style="text-align: left;">Useful for targeting onboarding campaigns (e.g., users who have not yet redeemed).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>usageLocation</code></td>
+<td style="text-align: left;"><code>null</code> (unless explicitly provided).</td>
+<td style="text-align: left;"><code>null</code></td>
+<td style="text-align: left;"><strong>Critical blocker</strong>: Prevents group-based licensing assignment.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-redemption-flow-identity-mapping">2.2 Redemption Flow &amp; Identity Mapping</h3>
+<ol>
+<li><strong>Target Identification</strong>: When the external user navigates to the invitation URL, Entra ID inspects the tenant context and redirects the user to their authoritative identity provider (IdP).</li>
+<li><strong>Authority Resolution</strong>:
+   - If the domain matches a managed or federated Entra ID tenant (e.g., <code>partnerbroker.com</code>), authentication occurs against that tenant.
+   - If the user uses a consumer Microsoft Account (<code>@outlook.com</code>, <code>@live.com</code>), authentication occurs against the consumer MSA identity platform.
+   - If Google Federation or Email One-Time Passcode (OTP) is configured, the respective provider issues the identity assertion.</li>
+<li><strong>Claim Anchoring</strong>: Entra ID maps the external subject identifier (<code>sub</code> or <code>oid</code> from the home tenant) to the shadow user object&rsquo;s alternative security identities. The object is now linked; subsequent sign-ins evaluate credentials strictly at the home IdP.</li>
+</ol>
+<hr />
+<h2 id="part-3-group-based-licensing-architecture-failure-remediation">Part 3: Group-Based Licensing Architecture &amp; Failure Remediation</h2>
+<p>Group-based licensing automates license assignment and removal based on group membership. While simple in concept, its internal dependency engine enforces strict validation rules that frequently cause failures in heterogeneous environments.</p>
+<pre><code>+---------------------------------------------------------------------------------+
+|                         Group-Based Licensing Engine                            |
++---------------------------------------------------------------------------------+
+                                         |
+                                         v
+   +---------------------------+---------------------------+---------------------------+
+   |   1. Usage Location       |   2. License Quantity     |   3. Service Dependency   |
+   +---------------------------+---------------------------+---------------------------+
+   | Checks if `usageLocation` | Checks if tenant has      | Validates base SKU is     |
+   | is set (ISO-3166-1).      | available unassigned seats| assigned for any add-on   |
+   | FAIL: ProhibitedInUsage-  | FAIL: CountViolation      | plans.                    |
+   | LocationViolation         |                           | FAIL: DependencyViolation |
+   +---------------------------+---------------------------+---------------------------+
+                                         |
+                                         v
+   +---------------------------+---------------------------+---------------------------+
+   |   4. Mutual Exclusivity   |   5. Inheritance Bounds   |   6. Resolution Engine    |
+   +---------------------------+---------------------------+---------------------------+
+   | Checks for duplicate or   | Evaluates DIRECT members  | Error recorded on user.   |
+   | conflicting plans.        | only. Nested groups are   | Admin fixes issue, then   |
+   | FAIL: MutuallyExclusive-  | IGNORED by licensing engine| triggers &quot;Reprocess&quot;.     |
+   | Violation                 |                           |                           |
+   +---------------------------+---------------------------+---------------------------+
+</code></pre>
+<h3 id="31-license-assignment-failure-states-violation-types">3.1 License Assignment Failure States &amp; Violation Types</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Violation Type</th>
+<th style="text-align: left;">Technical Trigger</th>
+<th style="text-align: left;">Real-World Scenario</th>
+<th style="text-align: left;">Remediation Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>MutuallyExclusiveViolation</code></strong></td>
+<td style="text-align: left;">Two conflicting service plans that cannot coexist are assigned to the same user simultaneously.</td>
+<td style="text-align: left;">A group assigns a license containing <em>Exchange Online (Plan 2)</em> while the user already has <em>Exchange Online (Plan 1)</em> or a conflicting security plan assigned directly or via another group.</td>
+<td style="text-align: left;">Open group license configuration -&gt; toggle OFF conflicting service plan components within the assignment blade.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>DependencyViolation</code> / <code>MissingPrerequisite</code></strong></td>
+<td style="text-align: left;">An assigned service plan requires another service plan to be enabled, but that prerequisite plan is disabled or absent.</td>
+<td style="text-align: left;">Assigning <em>Microsoft Entra ID Governance Step-Up</em> or <em>PIM for Groups</em> when the base <em>Microsoft Entra ID P1/P2</em> license plan is toggled off or unassigned.</td>
+<td style="text-align: left;">Enable the parent service plan in the same group assignment, or assign the prerequisite base license to the user.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>ProhibitedInUsageLocationViolation</code></strong></td>
+<td style="text-align: left;">The user object lacks a <code>usageLocation</code>, or the service is legally restricted in the specified country.</td>
+<td style="text-align: left;">B2B Guest users invited via script where <code>usageLocation</code> was left <code>null</code>. Azure cannot calculate tax or compliance.</td>
+<td style="text-align: left;">Execute PowerShell / Graph call to populate <code>usageLocation</code> with a 2-letter ISO country code (e.g., <code>"US"</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>CountViolation</code></strong></td>
+<td style="text-align: left;">All purchased seats for the specified SKU are exhausted.</td>
+<td style="text-align: left;">Group has 500 members; only 450 Entra ID P2 seats remain available in tenant.</td>
+<td style="text-align: left;">Purchase additional licenses, unassign unused direct licenses, or downsize group membership.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="32-critical-structural-constraints">3.2 Critical Structural Constraints</h3>
+<ol>
+<li><strong>Strict Non-Inheritance of Nested Groups</strong>:
+   - If Group A is assigned a license, and Group B is added as a member of Group A (Group B nested inside Group A), <strong>members of Group B DO NOT receive the license</strong>.
+   - Group-based licensing <em>only</em> evaluates direct first-degree members (<code>transitiveMemberOf</code> is not used by the licensing processor).</li>
+<li><strong>License Assignment State Transition</strong>:
+   - When a user enters a group: Entra ID transitions user license state to <code>Active</code> (or <code>Error</code> if a violation occurs).
+   - If in <code>Error</code> state, the user <strong>does not receive the license</strong>, but remains a member of the security group.</li>
+<li><strong>Reprocessing Licenses</strong>:
+   - After resolving root causes (e.g., updating <code>usageLocation</code> on all guest objects), licensing is not always re-evaluated immediately.
+   - The administrator must force re-evaluation via the Azure Portal: <strong>Microsoft Entra ID -&gt; Licenses -&gt; All products -&gt; [Select License] -&gt; Licensed groups -&gt; [Select Group] -&gt; Reprocess</strong>.
+   - Via Microsoft Graph PowerShell:
+     <code>powershell
+     # Force group license reprocessing
+     Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/v1.0/groups/&lt;group-id&gt;/reprocessLicense"</code></li>
+</ol>
+<h3 id="33-bulk-setting-usagelocation-for-guest-accounts">3.3 Bulk Setting <code>usageLocation</code> for Guest Accounts</h3>
+<pre><code class="language-powershell"># Connect to Microsoft Graph
+Connect-MgGraph -Scopes &quot;User.ReadWrite.All&quot;
+
+# Query all Guest users lacking a usageLocation and set to 'US'
+$guestsWithoutLocation = Get-MgUser -Filter &quot;userType eq 'Guest' and usageLocation eq null&quot; -All
+
+foreach ($guest in $guestsWithoutLocation) {
+    Update-MgUser -UserId $guest.Id -UsageLocation &quot;US&quot;
+    Write-Host &quot;Updated usageLocation for: $($guest.UserPrincipalName)&quot; -ForegroundColor Green
+}
+</code></pre>
+<hr />
+<h2 id="part-4-comprehensive-microsoft-entra-id-licensing-matrix-2026-standards">Part 4: Comprehensive Microsoft Entra ID Licensing Matrix (2026 Standards)</h2>
+<p>Azure and Microsoft Entra licensing spans multiple tiers. For AZ-104, administrators must distinguish between what is free, what requires P1, what requires P2, and how External ID (B2B) billing functions.</p>
+<h3 id="41-feature-breakdown-by-license-tier">4.1 Feature Breakdown by License Tier</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature Capability</th>
+<th style="text-align: center;">Entra ID Free</th>
+<th style="text-align: center;">Entra ID P1</th>
+<th style="text-align: center;">Entra ID P2</th>
+<th style="text-align: center;">Entra ID Governance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Directory Object Limit</strong></td>
+<td style="text-align: center;">500,000 objects</td>
+<td style="text-align: center;">Unlimited</td>
+<td style="text-align: center;">Unlimited</td>
+<td style="text-align: center;">Unlimited</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>User &amp; Group Management</strong></td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Self-Service Password Reset (SSPR)</strong></td>
+<td style="text-align: center;">Cloud users only (No password writeback)</td>
+<td style="text-align: center;">Cloud + Hybrid Password Writeback to AD DS</td>
+<td style="text-align: center;">Cloud + Hybrid Password Writeback to AD DS</td>
+<td style="text-align: center;">Cloud + Hybrid Password Writeback to AD DS</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Conditional Access Policies (CAP)</strong></td>
+<td style="text-align: center;">No (Security Defaults only)</td>
+<td style="text-align: center;"><strong>Full Support</strong></td>
+<td style="text-align: center;"><strong>Full Support</strong></td>
+<td style="text-align: center;"><strong>Full Support</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Group-Based Licensing</strong></td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Dynamic Security &amp; M365 Groups</strong></td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hybrid Identity (Password Hash Sync)</strong></td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hybrid Identity (Pass-Through Auth)</strong></td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Identity Protection (Risk Policies)</strong></td>
+<td style="text-align: center;">No (Can view basic flags)</td>
+<td style="text-align: center;">No (Can view basic flags)</td>
+<td style="text-align: center;"><strong>Yes</strong> (Risk-based Conditional Access)</td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Privileged Identity Management (PIM)</strong></td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;"><strong>Yes</strong> (Roles + Groups)</td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Access Reviews &amp; Lifecycle Workflows</strong></td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">Basic Reviews</td>
+<td style="text-align: center;"><strong>Yes</strong> (Complete Governance Suite)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Entitlement Management (Access Packages)</strong></td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;"><strong>Yes</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="42-microsoft-365-license-alignment">4.2 Microsoft 365 License Alignment</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Microsoft 365 SKU</th>
+<th style="text-align: left;">Included Entra ID License</th>
+<th style="text-align: left;">Notable Identity Features Included</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Microsoft 365 Business Basic / Standard</strong></td>
+<td style="text-align: left;">Entra ID Free</td>
+<td style="text-align: left;">Security Defaults, basic cloud SSPR, standard directory.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Microsoft 365 Business Premium</strong></td>
+<td style="text-align: left;"><strong>Entra ID P1</strong></td>
+<td style="text-align: left;">Conditional Access, Dynamic Groups, Group Licensing, Cloud SSPR + Password Writeback.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Microsoft 365 E3 / Office 365 E3</strong></td>
+<td style="text-align: left;"><strong>Entra ID P1</strong></td>
+<td style="text-align: left;">Enterprise Conditional Access, hybrid writeback, dynamic groups.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Microsoft 365 E5 / Office 365 E5 Security</strong></td>
+<td style="text-align: left;"><strong>Entra ID P2</strong></td>
+<td style="text-align: left;">Full Identity Protection (User/Sign-in Risk), PIM for Azure resources &amp; Entra roles, Access Reviews.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="43-microsoft-entra-external-id-b2b-licensing-model">4.3 Microsoft Entra External ID (B2B) Licensing Model</h3>
+<ul>
+<li><strong>Historical Model (Deprecated)</strong>: 1:5 ratio (1 P1/P2 license covered 5 guest users).</li>
+<li><strong>Current Official Model (Monthly Active Users - MAU)</strong>:</li>
+<li>B2B Collaboration is billed under <strong>Microsoft Entra External ID</strong>.</li>
+<li><strong>First 50,000 MAUs per month are 100% FREE</strong> across both P1 and P2 feature sets.</li>
+<li>An MAU is defined as a unique guest user who performs an authentication event (interactive or non-interactive) within the calendar month.</li>
+<li>If guest usage exceeds 50,000 MAU within a single month:<ul>
+<li>B2B with P1 features: Flat per-MAU charge (~$0.00325 per active user).</li>
+<li>B2B with P2 features (e.g., Risk-based Conditional Access evaluating guest sign-ins): Premium per-MAU charge (~$0.01625 per active user).</li>
+</ul>
+</li>
+<li><strong>Linking Requirement</strong>: To enable P1/P2 features for guest users beyond free defaults, the Entra ID tenant must be linked to an active Azure Subscription via a Resource Group.</li>
+</ul>
+<hr />
+<h2 id="part-5-self-service-password-reset-sspr-credential-authority-boundaries">Part 5: Self-Service Password Reset (SSPR) &amp; Credential Authority Boundaries</h2>
+<pre><code>+---------------------------------------------------------------------------------+
+|                       SSPR Reset Request Architecture                           |
++---------------------------------------------------------------------------------+
+                                         |
+                                         v
+   +-------------------------------------+-------------------------------------+
+   |           Native Cloud Member       |           External B2B Guest        |
+   |      (alice@globallogistics.com)    |         (agent1@outlook.com)        |
+   +-------------------------------------+-------------------------------------+
+   | - Password Authority:               | - Password Authority:               |
+   |   Resource Tenant (globallogistics) |   Home IdP (account.live.com)       |
+   | - Hash Stored Locally: YES          | - Hash Stored Locally: NO           |
+   | - SSPR Capability: ALLOWED          | - SSPR Capability: BLOCKED          |
+   |   (Can reset password in portal)    |   (Cannot reset password in tenant) |
+   +-------------------------------------+-------------------------------------+
+                                         |
+                                         v
+   +-------------------------------------+-------------------------------------+
+   | SSPR Outcome:                       | SSPR Outcome:                       |
+   | Success -&gt; Updates Cloud Hash       | Halt -&gt; Error displayed:            |
+   | (and writes back to AD DS if P1)    | &quot;You cannot reset your own password |
+   |                                     | because password reset is not       |
+   |                                     | properly set up for your organization&quot;|
+   +-------------------------------------+-------------------------------------+
+</code></pre>
+<h3 id="51-identity-authority-boundaries">5.1 Identity Authority Boundaries</h3>
+<p>The fundamental principle of federated identity and B2B collaboration is <strong>Authority Boundary</strong>:
+1. <strong>Credential Authority</strong>: The tenant or provider that issues, verifies, and stores the cryptographic credential (password, private key, biometric).
+2. <strong>Resource Authority</strong>: The tenant granting access to cloud applications, subscriptions, and workloads.</p>
+<p>For B2B Guest users:
+- The resource tenant possesses <strong>zero write authority</strong> over the guest&rsquo;s home credential database.
+- An <code>@outlook.com</code> user authenticates against Microsoft Consumer Identity (<code>login.live.com</code>).
+- A <code>user@partnerbroker.com</code> user authenticates against <code>login.microsoftonline.com/partnerbroker.com</code>.
+- When an external user visits <code>passwordreset.microsoftonline.com/?tenantid=&lt;resource-tenant-id&gt;</code>, the resource tenant inspects the user object. Because <code>CreationType</code> is <code>Invitation</code> or <code>userType</code> is <code>Guest</code> backed by an external IdP, the portal aborts.</p>
+<h3 id="52-what-guests-can-and-cannot-do">5.2 What Guests CAN and CANNOT Do</h3>
+<ul>
+<li><strong>Guests CANNOT</strong>:</li>
+<li>Reset their password in the inviting resource tenant.</li>
+<li>Unlock their account via the resource tenant&rsquo;s SSPR portal.</li>
+<li>Register security questions for password reset in the resource tenant.</li>
+<li><strong>Guests CAN</strong>:</li>
+<li>Register authentication methods specifically for the resource tenant (e.g., Microsoft Authenticator app push notifications, SMS verification, FIDO2 security keys).</li>
+<li>Manage their resource tenant security methods by visiting:
+    <code>https://mysignins.microsoftonline.com?tenantid=&lt;resource-tenant-id&gt;</code> -&gt; <strong>Security info</strong>.</li>
+<li>Leave the resource tenant self-service via <code>https://myaccount.microsoftonline.com</code> -&gt; <strong>Organizations</strong> -&gt; <strong>Leave organization</strong>.</li>
+</ul>
+<h3 id="53-sspr-implementation-matrix-cloud-vs-hybrid">5.3 SSPR Implementation Matrix: Cloud vs Hybrid</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Configuration Component</th>
+<th style="text-align: center;">Cloud-Only User</th>
+<th style="text-align: center;">Hybrid User (Without Writeback)</th>
+<th style="text-align: center;">Hybrid User (With Writeback Enabled)</th>
+<th style="text-align: center;">External Guest User</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Minimum License</strong></td>
+<td style="text-align: center;">Entra ID Free</td>
+<td style="text-align: center;">Entra ID Free / P1</td>
+<td style="text-align: center;"><strong>Entra ID P1 or P2</strong></td>
+<td style="text-align: center;">N/A (Unsupported)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Password Change Location</strong></td>
+<td style="text-align: center;">Entra ID Portal</td>
+<td style="text-align: center;">On-premises Windows / Ctrl+Alt+Del</td>
+<td style="text-align: center;">Entra ID Portal / MySignIns</td>
+<td style="text-align: center;">Home IdP Only</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Writeback Agent</strong></td>
+<td style="text-align: center;">Not required</td>
+<td style="text-align: center;">Not required</td>
+<td style="text-align: center;"><strong>Microsoft Entra Connect Sync</strong> / Cloud Sync</td>
+<td style="text-align: center;">Not applicable</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Account Unlock Sync</strong></td>
+<td style="text-align: center;">Immediate in Cloud</td>
+<td style="text-align: center;">Local AD only</td>
+<td style="text-align: center;">Synchronizes unlock to on-premises AD DS</td>
+<td style="text-align: center;">Not applicable</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="part-6-multi-factor-authentication-mfa-architecture-enforcement">Part 6: Multi-Factor Authentication (MFA) Architecture &amp; Enforcement</h2>
+<p>Modern Microsoft Entra MFA has completely transitioned away from legacy per-user enforcement to unified policies and Conditional Access.</p>
+<pre><code>+---------------------------------------------------------------------------------+
+|                       Modern Authentication Policy Engine                       |
++---------------------------------------------------------------------------------+
+                                         |
+                                         v
+   +-------------------------------------+-------------------------------------+
+   |           Legacy Per-User MFA       |        Conditional Access MFA       |
+   |          (DEPRECATED / RETIRED)     |         (MODERN STANDARD 2026)      |
+   +-------------------------------------+-------------------------------------+
+   | - Static: Disabled / Enabled /      | - Dynamic: Context-aware evaluation |
+   |   Enforced                          |   (Device, Location, Risk, App)     |
+   | - Disrupts modern auth workflows    | - Enforced per-session or per-token |
+   | - Lacks granular scoping            | - Granular grant controls           |
+   +-------------------------------------+-------------------------------------+
+                                         |
+                                         v
+   +---------------------------------------------------------------------------+
+   |                Authentication Methods Convergence Policy                  |
+   |      (Microsoft Entra ID -&gt; Protection -&gt; Authentication methods)         |
+   |                                                                           |
+   | - FIDO2 / Passkeys (Phishing-resistant)                                   |
+   | - Microsoft Authenticator (Number Matching &amp; Geo-Context MANDATORY)       |
+   | - Certificate-Based Authentication (CBA)                                  |
+   | - Temporary Access Pass (TAP) for onboarding &amp; bootstrapping              |
+   +---------------------------------------------------------------------------+
+</code></pre>
+<h3 id="61-authentication-methods-policy-convergence">6.1 Authentication Methods Policy Convergence</h3>
+<p>Microsoft has unified all legacy MFA and SSPR method toggles into the centralized <strong>Authentication Methods Policy</strong>:
+- <strong>Location</strong>: <strong>Microsoft Entra ID -&gt; Protection -&gt; Authentication methods -&gt; Policies</strong>.
+- Legacy portals (<strong>MFA Service Settings</strong> at <code>account.activedirectory.windowsazure.com</code> and <strong>Password Reset -&gt; Authentication methods</strong>) are superseded.</p>
+<h4 id="core-modern-authentication-methods">Core Modern Authentication Methods</h4>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Authentication Method</th>
+<th style="text-align: left;">Security Classification</th>
+<th style="text-align: center;">Phishing Resistant?</th>
+<th style="text-align: left;">AZ-104 Key Architectural Property</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>FIDO2 / WebAuthn / Passkeys</strong></td>
+<td style="text-align: left;">High</td>
+<td style="text-align: center;"><strong>YES</strong></td>
+<td style="text-align: left;">Hardware token or device passkey; bound to domain origin; immune to AiTM proxy attacks.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Windows Hello for Business</strong></td>
+<td style="text-align: left;">High</td>
+<td style="text-align: center;"><strong>YES</strong></td>
+<td style="text-align: left;">Cryptographic key pair tied to physical TPM 2.0 chip on registered device.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Certificate-Based Auth (CBA)</strong></td>
+<td style="text-align: left;">High</td>
+<td style="text-align: center;"><strong>YES</strong></td>
+<td style="text-align: left;">X.509 client certificates validated against trusted tenant CA hierarchy.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Microsoft Authenticator (Push)</strong></td>
+<td style="text-align: left;">Medium-High</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: left;">App notification with <strong>Number Matching</strong> and <strong>Application Context</strong> enforced tenant-wide.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OATH TOTP (Hardware/Software)</strong></td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: left;">6-digit rolling code; vulnerable to real-time prompt replay / AiTM phishing.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>SMS / Voice Call</strong></td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: left;">Legacy telephony; vulnerable to SIM swap and SS7 interception. Weakest method.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Temporary Access Pass (TAP)</strong></td>
+<td style="text-align: left;">Administrative</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: left;">Time-limited passcode (1 hr to 8 hrs) used to bootstrap passwordless / FIDO2 onboarding without passwords.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="62-security-defaults-vs-conditional-access">6.2 Security Defaults vs Conditional Access</h3>
+<ul>
+<li><strong>Security Defaults</strong>:</li>
+<li>Included with Entra ID Free.</li>
+<li>Binary switch: All users must register for Microsoft Authenticator within 14 days.</li>
+<li>Blocks legacy authentication protocols (POP3, IMAP, SMTP).</li>
+<li>Forces MFA for privileged administrator roles on every sign-in.</li>
+<li><strong>Incompatibility</strong>: Cannot be enabled if any Conditional Access policy is active in the tenant.</li>
+<li><strong>Conditional Access Policies (CAP)</strong>:</li>
+<li>Requires <strong>Entra ID P1</strong> or <strong>P2</strong>.</li>
+<li>Provides granular signal-based evaluation:<ul>
+<li><em>Signals</em>: User/Group, Cloud App, Device Platform, Named Network Location, Device State (Compliant/Hybrid Joined), Sign-in Risk (P2), User Risk (P2).</li>
+<li><em>Decisions</em>: Block Access, Grant Access with Controls (Require MFA, Require Compliant Device, Require Password Change).</li>
+<li><em>Session Controls</em>: Sign-in frequency, Persistent browser session.</li>
+</ul>
+</li>
+</ul>
+<h3 id="63-phishing-resistant-mfa-number-matching">6.3 Phishing-Resistant MFA &amp; Number Matching</h3>
+<p>As of 2023–2026, <strong>Number Matching</strong> is permanently enforced globally for all Microsoft Authenticator push notifications.
+- When a user signs in, the browser displays a two-digit number.
+- The user must enter that exact two-digit number into the Microsoft Authenticator prompt on their mobile device.
+- Eliminates <strong>MFA Fatigue / MFA Bombing</strong> attacks where attackers spam approval prompts until the victim taps &ldquo;Approve&rdquo;.
+- <strong>Application Context &amp; Geographic Location</strong>: Admins can configure the prompt to display the calling application name and approximate GPS-derived map location.</p>
+<hr />
+<h2 id="part-7-cross-tenant-access-settings-external-identities-deep-dive">Part 7: Cross-Tenant Access Settings &amp; External Identities Deep Dive</h2>
+<p>Cross-tenant access settings govern how external users collaborate with your tenant (Inbound) and how your internal users interact with external tenants (Outbound).</p>
+<pre><code>                      INBOUND ACCESS                             OUTBOUND ACCESS
+             (External Users -&gt; Our Tenant)              (Our Users -&gt; External Tenants)
+             +----------------------------+              +----------------------------+
+             | Default Settings           |              | Default Settings           |
+             | (Applies to all external)  |              | (Applies to all external)  |
+             +--------------+-------------+              +--------------+-------------+
+                            |                                           |
+                            v                                           v
+             +----------------------------+              +----------------------------+
+             | Organizational Settings    |              | Organizational Settings    |
+             | (Overrides Default for     |              | (Overrides Default for     |
+             | partnerbroker.com)         |              | partnerbroker.com)         |
+             +--------------+-------------+              +--------------+-------------+
+                            |
+                            v
+             +----------------------------------------------------------+
+             |                 Inbound Trust Triad                      |
+             |  [x] Trust MFA from Entra tenants                        |
+             |  [ ] Trust compliant devices                             |
+             |  [ ] Trust Microsoft Entra hybrid joined devices         |
+             +----------------------------------------------------------+
+</code></pre>
+<h3 id="71-cross-tenant-access-hierarchy">7.1 Cross-Tenant Access Hierarchy</h3>
+<ol>
+<li><strong>Default Settings</strong>: Baseline inbound and outbound rules applied to every external Entra ID organization not explicitly defined.</li>
+<li><strong>Organizational Settings</strong>: Specific per-domain configurations that override default settings for designated partner tenants (e.g., adding <code>partnerbroker.com</code>).</li>
+</ol>
+<h3 id="72-the-inbound-trust-triad">7.2 The Inbound Trust Triad</h3>
+<p>When an external partner user accesses your tenant, your Conditional Access policies evaluate their session. Without Inbound Trust enabled, your tenant ignores any claims issued by their home tenant.</p>
+<p>The Trust Triad consists of three independent checkboxes under <strong>Inbound access -&gt; Trust settings</strong>:
+1. <strong>Trust multi-factor authentication from Microsoft Entra tenants</strong>:
+   - When checked: If the partner completes MFA in their home tenant, their issued authentication token contains an MFA claim (<code>authmethodsreferences</code> containing <code>mfa</code>). Your tenant&rsquo;s Conditional Access policy satisfies <code>Require MFA</code> immediately without re-prompting.
+   - When unchecked: Global Logistics Corp treats the incoming token as single-factor. The user is redirected to Global Logistics&rsquo; MFA registration flow.
+2. <strong>Trust compliant devices</strong>:
+   - Honors the MDM compliance claim (Intune) issued by the partner tenant.
+   - Allows partner devices managed by their own MDM to satisfy your Conditional Access policies requiring <code>Require device to be marked as compliant</code>.
+3. <strong>Trust Microsoft Entra hybrid joined devices</strong>:
+   - Honors the on-premises domain-join claim issued by the partner tenant.</p>
+<h3 id="73-b2b-collaboration-vs-b2b-direct-connect">7.3 B2B Collaboration vs B2B Direct Connect</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Capability Dimension</th>
+<th style="text-align: left;">B2B Collaboration (Standard)</th>
+<th style="text-align: left;">B2B Direct Connect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>User Object in Resource Tenant</strong></td>
+<td style="text-align: left;"><strong>Shadow Guest User created</strong> (<code>userType: Guest</code>).</td>
+<td style="text-align: left;"><strong>No shadow user object created</strong>. Mutual token trust only.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Invitation &amp; Redemption</strong></td>
+<td style="text-align: left;">Required (Email invitation or direct link redemption).</td>
+<td style="text-align: left;">No invitation or redemption required. Seamless SSO.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Workloads</strong></td>
+<td style="text-align: left;">All Azure Portal, Azure resources, SharePoint, Teams, SaaS apps.</td>
+<td style="text-align: left;">Exclusively <strong>Microsoft Teams Shared Channels</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Administration</strong></td>
+<td style="text-align: left;">Managed via Users blade, Dynamic Groups, App assignments.</td>
+<td style="text-align: left;">Managed via Cross-Tenant Access Settings -&gt; B2B Direct Connect.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Cross-Tenant Trust Requirements</strong></td>
+<td style="text-align: left;">Optional (MFA trust recommended to avoid double MFA).</td>
+<td style="text-align: left;"><strong>Mandatory</strong>: Mutual cross-tenant inbound and outbound trust must be enabled.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="74-tenant-restrictions">7.4 Tenant Restrictions</h3>
+<ul>
+<li><strong>Purpose</strong>: Prevents internal corporate users on managed devices/networks from accessing external unauthorized Entra tenants (data exfiltration mitigation).</li>
+<li><strong>Mechanism</strong>: Injects HTTP request headers via corporate proxy / firewall:</li>
+<li><code>Restrict-Access-To-Tenants: &lt;allowed-tenant-list&gt;</code></li>
+<li><code>Restrict-Access-Context: &lt;directory-ID&gt;</code></li>
+</ul>
+<hr />
+<h2 id="part-8-step-by-step-azure-portal-click-paths-microsoft-graph-powershell-commands">Part 8: Step-by-Step Azure Portal Click-Paths &amp; Microsoft Graph PowerShell Commands</h2>
+<h3 id="81-remediation-click-paths">8.1 Remediation Click-Paths</h3>
+<h4 id="click-path-1-enabling-inbound-mfa-trust-for-partner-tenant">Click-Path 1: Enabling Inbound MFA Trust for Partner Tenant</h4>
+<ol>
+<li>Sign in to the <strong>Microsoft Entra admin center</strong> (<code>https://entra.microsoft.com</code>) as a <strong>Security Administrator</strong> or <strong>Global Administrator</strong>.</li>
+<li>In the left navigation pane, expand <strong>Identity</strong> -&gt; expand <strong>External Identities</strong> -&gt; select <strong>Cross-tenant access settings</strong>.</li>
+<li>Select the <strong>Organizational settings</strong> tab.</li>
+<li>Click <strong>+ Add organization</strong>.</li>
+<li>In the search box, type <code>partnerbroker.com</code> (or enter the partner&rsquo;s Tenant ID) -&gt; select the partner -&gt; click <strong>Add</strong>.</li>
+<li>In the list, locate <code>partnerbroker.com</code> and select the hyperlink under the <strong>Inbound access</strong> column (initially states <em>Inherited from default</em>).</li>
+<li>Select the <strong>Trust settings</strong> tab.</li>
+<li>Check the box: <strong>Trust multi-factor authentication from Microsoft Entra tenants</strong>.</li>
+<li><em>(Optional)</em> Check <strong>Trust compliant devices</strong> if partner Intune compliance should be honored.</li>
+<li>Click <strong>Save</strong> at the bottom of the blade.</li>
+</ol>
+<h4 id="click-path-2-correcting-dynamic-group-rule">Click-Path 2: Correcting Dynamic Group Rule</h4>
+<ol>
+<li>Navigate to <strong>Identity</strong> -&gt; <strong>Groups</strong> -&gt; <strong>All groups</strong>.</li>
+<li>Locate and select <strong><code>DG-Customs-Auditors</code></strong>.</li>
+<li>Under the <strong>Manage</strong> section, select <strong>Dynamic membership rules</strong>.</li>
+<li>In the rule builder, update the syntax:
+   <code>text
+   (user.userType -eq "Guest") and (user.accountEnabled -eq true) and (user.mail -contains "@partnerbroker.com")</code></li>
+<li>Click <strong>Save</strong>.</li>
+<li>Select <strong>Validate Rules (Preview)</strong> -&gt; Add test partner broker accounts to verify evaluation returns <code>true</code>.</li>
+</ol>
+<h4 id="click-path-3-reprocessing-group-licenses">Click-Path 3: Reprocessing Group Licenses</h4>
+<ol>
+<li>In the Entra admin center, navigate to <strong>Identity</strong> -&gt; <strong>Billing</strong> -&gt; <strong>Licenses</strong>.</li>
+<li>Select <strong>All products</strong> -&gt; click your <strong>Microsoft Entra ID P2</strong> license.</li>
+<li>In the left menu, select <strong>Licensed groups</strong>.</li>
+<li>Locate and check the box next to <strong><code>DG-Customs-Auditors</code></strong>.</li>
+<li>In the top action toolbar, click <strong>Reprocess</strong>.</li>
+</ol>
+<h4 id="click-path-4-enabling-multi-factor-authentication-via-conditional-access-targeting-guests-partners">Click-Path 4: Enabling Multi-Factor Authentication via Conditional Access (Targeting Guests &amp; Partners)</h4>
+<ol>
+<li>Sign in to the <strong>Microsoft Entra admin center</strong> (<code>https://entra.microsoft.com</code>) as a <strong>Conditional Access Administrator</strong> or <strong>Security Administrator</strong>.</li>
+<li>Expand <strong>Protection</strong> -&gt; select <strong>Conditional Access</strong> -&gt; <strong>Policies</strong>.</li>
+<li>Click <strong>+ New policy</strong>.</li>
+<li>Name the policy: e.g., <code>CAP-Enforce-MFA-CustomsAuditors</code>.</li>
+<li>Under <strong>Users</strong>:
+   - Select <strong>Include</strong> -&gt; Choose <strong>Select users and groups</strong> -&gt; Check <strong>Users and groups</strong> -&gt; Select <code>DG-Customs-Auditors</code> (or select <strong>Guest or external users</strong> -&gt; check <em>B2B collaboration guest users</em> and <em>B2B collaboration member users</em>).
+   - Under <strong>Exclude</strong> -&gt; Always exclude at least one Break-Glass / Emergency Access Account.</li>
+<li>Under <strong>Target resources</strong> (Cloud apps):
+   - Select <strong>All cloud apps</strong> (or select specific apps like <em>Office 365</em> or <em>Azure Remote Management</em>).</li>
+<li>Under <strong>Access controls</strong> -&gt; <strong>Grant</strong>:
+   - Select <strong>Grant access</strong>.
+   - Check <strong>Require multifactor authentication</strong> (or <strong>Require authentication strength</strong> -&gt; <em>Phishing-resistant MFA</em>).
+   - Operator: <em>Require all the selected controls</em>.</li>
+<li>Under <strong>Enable policy</strong>:
+   - Toggle to <strong>Report-only</strong> (for initial baseline testing) or <strong>On</strong>.</li>
+<li>Click <strong>Create</strong>.</li>
+</ol>
+<h4 id="click-path-5-enabling-mfa-via-security-defaults-entra-id-free-tier">Click-Path 5: Enabling MFA via Security Defaults (Entra ID Free Tier)</h4>
+<ol>
+<li>Sign in to <strong>Microsoft Entra admin center</strong> (<code>https://entra.microsoft.com</code>) as a <strong>Global Administrator</strong>.</li>
+<li>Expand <strong>Identity</strong> -&gt; select <strong>Overview</strong> -&gt; <strong>Properties</strong>.</li>
+<li>Scroll to the bottom of the Properties blade and click <strong>Manage security defaults</strong>.</li>
+<li>In the side flyout panel, change <strong>Security defaults</strong> from <em>Disabled</em> to <strong>Enabled</strong>.</li>
+<li>Click <strong>Save</strong>.
+   <em>(Note: This enforces registration for all users within 14 days and requires MFA for admins on sign-in. Cannot be enabled if Conditional Access policies exist.)</em></li>
+</ol>
+<h4 id="click-path-6-activating-modern-authentication-methods-microsoft-authenticator-fido2-tap">Click-Path 6: Activating Modern Authentication Methods (Microsoft Authenticator / FIDO2 / TAP)</h4>
+<ol>
+<li>Sign in to <strong>Microsoft Entra admin center</strong> (<code>https://entra.microsoft.com</code>) as an <strong>Authentication Policy Administrator</strong>.</li>
+<li>Expand <strong>Protection</strong> -&gt; select <strong>Authentication methods</strong> -&gt; <strong>Policies</strong>.</li>
+<li>To configure <strong>Microsoft Authenticator</strong>:
+   - Click <strong>Microsoft Authenticator</strong>.
+   - Set <strong>Enable</strong> to <strong>On</strong> and Target to <strong>All users</strong> (or selected pilot groups).
+   - Click the <strong>Configure</strong> tab:<ul>
+<li>Set <em>Show application name in push notifications</em> to <strong>Enabled</strong>.</li>
+<li>Set <em>Show geographic location in push notifications</em> to <strong>Enabled</strong>.</li>
+<li>Verify <em>Require number matching for push notifications</em> is set to <strong>Enabled</strong> (enforced by default).</li>
+</ul>
+</li>
+<li>To configure <strong>Temporary Access Pass (TAP)</strong>:
+   - Click <strong>Temporary Access Pass</strong> -&gt; toggle <strong>Enable</strong> to <strong>On</strong> -&gt; Target the required onboarding group.
+   - Under <strong>Configure</strong>, set <em>Minimum lifetime</em> (e.g. 1 hour), <em>Maximum lifetime</em> (e.g. 8 hours), and <em>One-time use</em> preference.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<hr />
+<h3 id="82-production-powershell-microsoft-graph-automation-scripts">8.2 Production PowerShell / Microsoft Graph Automation Scripts</h3>
+<pre><code class="language-powershell">&lt;#
+=================================================================================
+AZ-104 PRODUCTION SCRIPT: Cross-Tenant Onboarding, Fixing Guest usageLocation,
+Configuring Dynamic Membership, and Updating Cross-Tenant Trust Settings
+=================================================================================
+#&gt;
+
+# 1. Install and Connect to Microsoft Graph
+Install-Module Microsoft.Graph.Authentication -Scope CurrentUser -Repository PSGallery -Force
+Install-Module Microsoft.Graph.Identity.SignIns -Scope CurrentUser -Repository PSGallery -Force
+Install-Module Microsoft.Graph.Users -Scope CurrentUser -Repository PSGallery -Force
+Install-Module Microsoft.Graph.Groups -Scope CurrentUser -Repository PSGallery -Force
+
+Connect-MgGraph -Scopes @(
+    &quot;Policy.ReadWrite.CrossTenantAccess&quot;,
+    &quot;User.ReadWrite.All&quot;,
+    &quot;Group.ReadWrite.All&quot;,
+    &quot;Directory.ReadWrite.All&quot;
+)
+
+# 2. Bulk Invite Guest Brokers with explicit usageLocation to prevent Licensing Errors
+$brokers = @(
+    @{ Name = &quot;Customs Broker 1&quot;; Email = &quot;broker1@partnerbroker.com&quot; },
+    @{ Name = &quot;Customs Broker 2&quot;; Email = &quot;broker2@partnerbroker.com&quot; }
+)
+
+foreach ($broker in $brokers) {
+    $invitationParams = @{
+        InvitedUserEmailAddress = $broker.Email
+        InvitedUserDisplayName = $broker.Name
+        InviteRedirectUrl = &quot;https://myapps.microsoft.com&quot;
+        SendInvitationMessage = $true
+        InvitedUserType = &quot;Guest&quot;
+    }
+
+    $invitation = New-MgInvitation -BodyParameter $invitationParams
+    Write-Host &quot;Invited: $($broker.Email) [User ID: $($invitation.InvitedUser.Id)]&quot; -ForegroundColor Cyan
+
+    # CRITICAL: Explicitly set usageLocation immediately to prevent ProhibitedInUsageLocationViolation
+    Update-MgUser -UserId $invitation.InvitedUser.Id -UsageLocation &quot;US&quot; -Department &quot;Customs&quot;
+}
+
+# 3. Configure Inbound Cross-Tenant Access Policy for partnerbroker.com
+# NOTE: PartnerId strictly requires the partner's Entra Tenant GUID (not domain name).
+# In production, query the partner tenant ID via: (Invoke-RestMethod &quot;https://login.microsoftonline.com/partnerbroker.com/v2.0/.well-known/openid-configuration&quot;).token_endpoint.Split('/')[3]
+$partnerTenantId = &quot;72f988bf-86f1-41af-91ab-2d7cd011db47&quot; # Partner Tenant GUID
+$partnerDomain = &quot;partnerbroker.com&quot;
+
+# Prepare Inbound Partner Policy with Inbound MFA Trust enabled
+$partnerConfig = @{
+    PartnerId = $partnerTenantId
+    InboundTrust = @{
+        IsMfaAccepted = $true
+        IsCompliantDeviceAccepted = $false
+        IsHybridAzureADJoinedDeviceAccepted = $false
+    }
+    B2bCollaborationInbound = @{
+        UsersAndGroups = @{
+            AccessType = &quot;allowed&quot;
+            Targets = @(
+                @{
+                    Target = &quot;AllUsers&quot;
+                    TargetType = &quot;user&quot;
+                }
+            )
+        }
+        Applications = @{
+            AccessType = &quot;allowed&quot;
+            Targets = @(
+                @{
+                    Target = &quot;AllApplications&quot;
+                    TargetType = &quot;application&quot;
+                }
+            )
+        }
+    }
+}
+
+# Apply Organizational Setting in Cross-Tenant Access Policy
+New-MgPolicyCrossTenantAccessPolicyPartner -BodyParameter $partnerConfig
+Write-Host &quot;Inbound MFA Trust successfully established for $partnerDomain ($partnerTenantId)&quot; -ForegroundColor Green
+
+# 4. Update Dynamic Group Rule to use 'mail' with exact match or -endsWith
+# In Entra ID dynamic rules, -match or -endsWith is best practice for single-value strings like 'mail'
+$targetGroup = Get-MgGroup -Filter &quot;DisplayName eq 'DG-Customs-Auditors'&quot;
+if ($targetGroup) {
+    $updatedRule = '(user.userType -eq &quot;Guest&quot;) and (user.accountEnabled -eq true) and (user.mail -endsWith &quot;@partnerbroker.com&quot;)'
+    Update-MgGroup -GroupId $targetGroup.Id -MembershipRule $updatedRule -MembershipRuleProcessingState &quot;On&quot;
+    Write-Host &quot;Updated dynamic rule on DG-Customs-Auditors using -endsWith&quot; -ForegroundColor Green
+}
+
+# 5. Trigger License Reprocessing on the Group
+Invoke-MgGraphRequest -Method POST -Uri &quot;https://graph.microsoft.com/v1.0/groups/$($targetGroup.Id)/reprocessLicense&quot;
+Write-Host &quot;Triggered license reprocessing on DG-Customs-Auditors&quot; -ForegroundColor Yellow
+</code></pre>
+<hr />
+<h2 id="part-9-high-yield-az-104-exam-traps-real-world-gotchas">Part 9: High-Yield AZ-104 Exam Traps &amp; Real-World Gotchas</h2>
+<ol>
+<li><strong>Dynamic Group <code>match</code> vs <code>-contains</code></strong>:
+   - <code>-contains</code> is a prefix/substring operator for string fields and array inclusion operator for multi-value collections.
+   - For string properties like <code>mail</code>, <code>(user.mail -contains "@partnerbroker.com")</code> evaluates true for <code>alice@partnerbroker.com</code>.
+   - On the exam, Microsoft often tricks candidates by setting the rule to <code>(user.userPrincipalName -contains "@partnerbroker.com")</code>. This <strong>FAILS</strong> for redeemed B2B guests because their UPN is altered to <code>user_partnerbroker.com#EXT#@resourcetenant.onmicrosoft.com</code>!</li>
+<li><strong>SSPR Scoping Pitfall</strong>:
+   - In Microsoft Entra ID SSPR configuration, the options are: <strong>None</strong>, <strong>Selected</strong>, or <strong>All</strong>.
+   - If <strong>Selected</strong> is chosen, you can select <strong>only ONE group</strong>.
+   - If multiple departments need SSPR, you cannot select five separate security groups. You must create an umbrella group (or nested members, though SSPR does not evaluate nested groups reliably—a flat security group populated dynamically is required).</li>
+<li><strong>Security Defaults vs Conditional Access</strong>:
+   - You cannot use both simultaneously. Enabling Conditional Access policies requires turning off Security Defaults.
+   - If a scenario asks to enforce MFA for specific users on Entra ID Free, the answer is <strong>Security Defaults</strong> (which enforces it for everyone/admins), not Conditional Access (which requires P1).</li>
+<li><strong>Group Licensing Nested Group Trap</strong>:
+   - If an exam question depicts Group Sales-US nested inside Group Sales-Global, and Group Sales-Global has an Entra ID P2 license assigned:
+   - Question: <em>&ldquo;Are users in Sales-US licensed?&rdquo;</em>
+   - Answer: <strong>NO</strong>. Direct membership is strictly required.</li>
+<li><strong>UsageLocation Inheritance</strong>:
+   - Users created manually in the Azure Portal inherit the Tenant&rsquo;s country location if not specified.
+   - Users created via PowerShell or Graph API <strong>DO NOT</strong> inherit tenant location; <code>usageLocation</code> remains <code>null</code>.
+   - Any group licensing assignment targeting API-created users will throw <code>ProhibitedInUsageLocationViolation</code> until updated.</li>
+</ol>
+
+      <div class="page-footer">
+        <div>AZ-104 Exam Hard-Mode Gauntlet & Architecture Series • 2026 Standards</div>
+        <div><a href="index.html" style="color:var(--accent);">← Return to Master Command Hub</a></div>
+      </div>
+    </main>
+
+  </div>
+
+</body>
+</html>

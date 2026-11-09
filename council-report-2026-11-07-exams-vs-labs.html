@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Council Briefing: AZ-104 Post-Video Strategy & Practice Exam Sequencing</title>
+<style>
+  :root {
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+    --success: #16a34a;
+    --success-light: #f0fdf4;
+    --warning: #d97706;
+    --warning-light: #fffbeb;
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 920px; margin: 0 auto; }
+  header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 9999px;
+    background-color: var(--accent-light);
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
+  .meta { font-size: 0.875rem; color: var(--text-secondary); }
+  
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card-verdict {
+    border-left: 5px solid var(--success);
+    background: #ffffff;
+  }
+  .card-alert {
+    background-color: var(--warning-light);
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+  h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 0.75rem; color: var(--text-secondary); font-size: 0.95rem; }
+  p strong { color: var(--text-primary); }
+  ul, ol { margin-left: 1.25rem; margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.95rem; }
+  li { margin-bottom: 0.35rem; }
+
+  /* Grid visual */
+  .grid-council {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+  }
+  .advisor-box {
+    padding: 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: #fafafa;
+    text-align: center;
+  }
+  .advisor-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.25rem; }
+  .advisor-vote { font-size: 0.8rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block; }
+  .vote-exams { background: var(--success-light); color: var(--success); }
+  .advisor-sub { font-size: 0.75rem; color: #64748b; margin-top: 0.35rem; }
+
+  /* Callout action */
+  .action-box {
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .action-box h3 { color: #38bdf8; margin-top: 0; }
+  .action-box p { color: #cbd5e1; margin-bottom: 0.5rem; }
+  .action-step {
+    background: rgba(255,255,255,0.08);
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  /* Schedule Table */
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .schedule-table th, .schedule-table td {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  .schedule-table th { background: #f1f5f9; font-weight: 700; color: #0f172a; }
+
+  /* Collapsibles */
+  details {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+  }
+  summary {
+    padding: 0.85rem 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #fdfdfd;
+    user-select: none;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  summary:hover { background: #f1f5f9; }
+  .details-content {
+    padding: 1.25rem;
+    border-top: 1px solid var(--border);
+    background: #ffffff;
+    font-size: 0.92rem;
+  }
+  .details-content p { color: var(--text-secondary); margin-bottom: 0.75rem; }
+
+  footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <span class="badge">LLM Council Consensus Verdict</span>
+    <h1>AZ-104 Strategy: Practice Exams vs. Labs & Gating Architecture</h1>
+    <div class="meta">Session Date: 2026-11-07 | Target Exam: ~Dec 5–8, 2026 | ESI Voucher Deadline: 4 Weeks</div>
+  </header>
+
+  <!-- Council Alignment Visual -->
+  <div class="card">
+    <h2>Council Verdict on Hands-on Labs vs. Diagnostic Exams</h2>
+    <div class="grid-council">
+      <div class="advisor-box">
+        <div class="advisor-name">The Outsider</div>
+        <span class="advisor-vote vote-exams">EXAMS (Rated #1)</span>
+        <div class="advisor-sub">Pulls Shireen to W2/3</div>
+      </div>
+      <div class="advisor-box">
+        <div class="advisor-name">First Principles</div>
+        <span class="advisor-vote vote-exams">EXAMS DIRECTLY</span>
+        <div class="advisor-sub">Portal as dictionary</div>
+      </div>
+      <div class="advisor-box">
+        <div class="advisor-name">The Executor</div>
+        <span class="advisor-vote vote-exams">EXAMS DIRECTLY</span>
+        <div class="advisor-sub">Day A/B testing cycle</div>
+      </div>
+      <div class="advisor-box">
+        <div class="advisor-name">The Contrarian</div>
+        <span class="advisor-vote vote-exams">EXAMS DIRECTLY</span>
+        <div class="advisor-sub">Warns: No late Shireen</div>
+      </div>
+      <div class="advisor-box">
+        <div class="advisor-name">The Expansionist</div>
+        <span class="advisor-vote vote-exams">EXAMS DIRECTLY</span>
+        <div class="advisor-sub">Forensic diagnostics</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chairman Verdict -->
+  <div class="card card-verdict">
+    <h2>Chairman's Official Verdict & Blueprint</h2>
+    
+    <p><strong>1. Skip the 14 GitHub Labs Entirely:</strong> All 5 advisors and all 5 reviewers unanimously agree: do <em>not</em> spend 30–40 hours following generic lab manuals. You have 4 weeks. Doing labs blindly without knowing your weak spots is low-yield click-ops. Move straight to practice exams.</p>
+
+    <p><strong>2. How to Bridge the "Zero Hands-On" Gap (The Interactive Dictionary Rule):</strong><br>
+    Whenever a question exposes a gap (e.g., Private DNS Zone links, lifecycle management rules, Conditional Access policies), open a free Azure Portal tab for <strong>exactly 2 to 3 minutes</strong>. Navigate to that blade, inspect the toggles, see what greys out when an option is selected, and visually register the hierarchy. <strong>Do not build infrastructure—simply inspect the terrain where you got tricked.</strong></p>
+
+    <p><strong>3. THE MAJOR CORRECTION: Do NOT Save Shireen Khan for the Final Week!</strong><br>
+    Saving Shireen Khan for Week 4 is <em>strategic suicide</em>. Shireen Khan is famous for brutal word traps and edge cases; scoring 65% a few days before an unextendable deadline shatters confidence with zero runway to remediate. <strong>Introduce Shireen Khan in Weeks 2 and 3</strong> so her trick questions inoculate you against traps while you still have time to fix gaps.</p>
+
+    <p><strong>4. Stop Test-Shopping on Udemy:</strong><br>
+    Shopping for random extra Udemy practice tests is productive procrastination. You already have the gold standard: <strong>Tutorials Dojo (architecture & diagrams)</strong>, <strong>Shireen Khan (brutal trap resilience)</strong>, and <strong>MS Learn (official question format)</strong>. Adding unvetted banks dilutes your focus.</p>
+
+    <p><strong>5. THE SECRET WEAPON: In-Exam MS Learn Open-Book Access:</strong><br>
+    Microsoft exams now include <strong>live split-screen access to MS Learn</strong>! During your practice exam runs, practice searching `learn.microsoft.com` under 60 seconds to look up obscure PowerShell flags, SKU limits, and template syntax.</p>
+
+    <table class="schedule-table">
+      <thead>
+        <tr>
+          <th>Phase</th>
+          <th>Timeframe</th>
+          <th>Primary Assessment</th>
+          <th>Operational Focus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Phase 1: Foundation</strong></td>
+          <td>Week 1 (Nov 8–15)</td>
+          <td><strong>Tutorials Dojo (Review Mode)</strong></td>
+          <td>Take 60-question sets. Dissect every explanation and diagram. Use Portal as a 2-min dictionary for misses.</td>
+        </tr>
+        <tr>
+          <td><strong>Phase 2: Stress Inoculation</strong></td>
+          <td>Weeks 2–3 (Nov 16–29)</td>
+          <td><strong>Shireen Khan (Udemy)</strong> + Tutorials Dojo Retakes</td>
+          <td>Expose brutal word traps. Expect scores in the 65–75% range (normal!). Train rapid MS Learn doc search.</td>
+        </tr>
+        <tr>
+          <td><strong>Phase 3: Final Calibration</strong></td>
+          <td>Week 4 (Nov 30–Dec 5)</td>
+          <td><strong>MS Learn Practice Assessment</strong> + Error Log Review</td>
+          <td>Calibrate against official Microsoft phrasing. Review your error journal. Zero panic. Take exam ~Dec 5–8.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="action-box">
+      <h3>The One Thing to Do First</h3>
+      <p>Finish your 3-hour video run today to permanently close out video lectures.</p>
+      <div class="action-step">
+        Tomorrow morning at 8:00 AM: Open <strong>Tutorials Dojo AZ-104 Practice Exam 1 in Review Mode</strong> and take your first diagnostic baseline test.
+      </div>
+    </div>
+  </div>
+
+  <!-- Collapsible Section for Details -->
+  <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Full Advisor Arguments & Peer Reviews (Click to Expand)</h2>
+
+  <details open>
+    <summary><span>Advisor 4: The Outsider (Council Champion)</span> <span style="font-size:0.8rem; color:#16a34a; font-weight:700;">★ 4/5 Peer Review Winner</span></summary>
+    <div class="details-content">
+      <p>Looking at this from the outside, you have 28 days, a hard deadline, and an illusion of competence from playing videos at double speed. You cannot afford a sprawling lab curriculum now.</p>
+      <p>You aren't preparing to be an enterprise administrator tomorrow; you are preparing to pass a specific exam. Take practice tests immediately. Doing open-ended GitHub labs without knowing your weak spots is like reading an entire dictionary to prepare for a crossword puzzle.</p>
+      <p><strong>Your biggest tactical mistake is saving the hardest test for last.</strong> Why wait until days before an unextendable deadline to discover you fall for word traps? If Shireen Khan exposes how the exam tricks candidates, you need that humiliation in Week 2, not Week 4. Saving it for the end turns it into an autopsy with no runway to fix your weaknesses.</p>
+      <p>To handle zero manual labbing: surgical inspection. Whenever you miss an exam question, open the free Azure portal and spend exactly two minutes navigating to that blade. Look at the real drop-downs, visually anchor where toggles live, and close the tab. Do not build infrastructure.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><span>Advisor 1: The Contrarian</span> <span style="font-size:0.8rem; color:#64748b;">(Why test-shopping fails)</span></summary>
+    <div class="details-content">
+      <p>Passive-watching videos at 2x with zero hands-on experience has given you an illusion of competence, not operational knowledge. The fatal flaw in your plan isn't skipping 40 hours of open-ended GitHub labs—a massive time sink four weeks out—it's assuming you can pass AZ-104 by brute-forcing practice test answer keys.</p>
+      <p>1. <strong>Saving Shireen Khan for the end is strategic suicide.</strong> If Shireen’s brutal traps shatter your confidence one week before your voucher expires, you have zero runway to remediate.<br>
+      2. <strong>Shopping for more Udemy tests is productive procrastination.</strong> You already own Tutorials Dojo, the gold standard. Adding random question banks dilutes quality.<br>
+      3. <strong>"No manual labbing" cannot mean "never opening the Portal."</strong> Treat the Portal as your dictionary. When you miss a question, verify the UI layout with your own eyes.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><span>Advisor 2: The First Principles Thinker</span> <span style="font-size:0.8rem; color:#64748b;">(Constraint satisfaction model)</span></summary>
+    <div class="details-content">
+      <p>AZ-104 does not test operational muscle memory; it tests constraint satisfaction and state navigation under Microsoft's rules. Following step-by-step GitHub labs provides abysmal cognitive yield per hour—you mindlessly copy-paste parameters into the Portal.</p>
+      <p>Under a 4-week hard deadline, the Azure Portal should not be treated as a construction site. Treat it as an <strong>interactive dictionary</strong>. When an exam question discusses conditional access, storage lifecycle tiers, or network security rules, open the free Portal and physically navigate to that blade. Inspect the toggles, examine which fields grey out, and verify the constraint logic.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><span>Advisor 5: The Executor</span> <span style="font-size:0.8rem; color:#64748b;">(Operational testing cadence)</span></summary>
+    <div class="details-content">
+      <p>Monday morning at 8 AM, do not touch a lab manual. With 28 days and a hard voucher cutoff, setting up official GitHub labs is a massive time sink. Move directly to practice exams.</p>
+      <p><strong>Cycle one full 60-question block every two days:</strong> Day A: Complete 60 questions under realistic timing. Day B: Dissect every missed question and lucky guess. Log the core concept gap into a spreadsheet.</p>
+      <p><strong>Micro-click verification:</strong> Three minutes per gap, zero infrastructure overhead.</p>
+    </div>
+  </details>
+
+  <footer>
+    Generated by Antigravity Autonomous LLM Council System | Full markdown transcript saved to <code>council-transcript-2026-11-07-exams-vs-labs.md</code>
+  </footer>
+
+</div>
+</body>
+</html>

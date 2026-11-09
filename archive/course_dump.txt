@@ -1,0 +1,1629 @@
+<USER_REQUEST>
+161 of 321 complete.
+Udemy
+AZ-104 Microsoft Azure Administrator Certification
+Lecture thumbnail
+0:00 / 0:00
+Microsoft Certified: Azure Administrator Associate
+5 weeks till due date
+Microsoft Certified: Azure Administrator Associate
+Completed
+Start
+1. PDF and Diagrams download
+1min
+Completed
+Play
+2. How the course has been structured
+5min
+Completed
+Play
+3. Introduction to Azure
+2min
+Completed
+Play
+4. The Azure Free Account
+4min
+Completed
+Play
+5. Creating an Azure Free Account
+5min
+Completed
+Play
+6. Tour of the Azure Portal
+3min
+Completed
+Start
+7. Code resources for this section
+1min
+Completed
+Play
+8. We are going to start with the Azure virtual machine service
+1min
+Completed
+Play
+9. The anatomy behind building an Azure virtual machine
+8min
+Completed
+Play
+10. Lab - Building a Windows virtual machine
+17min
+Completed
+Play
+11. Lab - Connecting to the Virtual Machine
+10min
+Completed
+Play
+12. Lab - Resizing the Virtual Machine
+6min
+Completed
+Play
+13. Connecting to the machine from macOS
+2min
+Completed
+Play
+14. Troubleshooting connectivity
+4min
+Completed
+Play
+15. Lab - Setting up a Web server on the virtual machine
+6min
+Completed
+Play
+16. Understanding Azure regions
+6min
+Completed
+Play
+17. Costing for Azure resources
+7min
+Completed
+Play
+18. Virtual Machine sizes
+3min
+Completed
+Play
+19. Lab - Building a Linux Virtual Machine
+5min
+Completed
+Play
+20. Lab - Connecting to the Linux machine
+6min
+Completed
+Play
+21. Connecting to Linux from macOS
+1min
+Completed
+Play
+22. Lab - Deploying a web server on the Linux virtual machine
+3min
+Completed
+Play
+23. Lab - Deploying a Linux machine - SSH keys
+4min
+Completed
+Play
+24. Azure Virtual Machine - Disks
+7min
+Completed
+Play
+25. Lab - Adding data disks
+5min
+Completed
+Play
+26. What happens when we stop the machine
+7min
+Completed
+Play
+27. Lab - Data Disks Snapshot
+12min
+Completed
+Play
+28. Azure Disks - Server Side Encryption
+3min
+Completed
+Play
+29. Lab - Azure Key Vault Service
+9min
+Completed
+Play
+30. Lab - Disk Encrytion Sets
+6min
+Completed
+Play
+31. Lab - Azure Disk Encryption
+6min
+Completed
+Play
+32. Custom Script Extensions
+4min
+Completed
+Play
+33. Lab - Custom Script Extensions for Windows Virtual Machines
+11min
+Completed
+Play
+34. Lab - Custom Script Extensions for Linux Virtual Machines
+5min
+Completed
+Play
+35. Linux Virtual Machines - Cloud init
+3min
+Completed
+Play
+36. Virtual Machine - Boot Diagnostics
+2min
+Completed
+Play
+37. Availability Sets
+9min
+Completed
+Start
+38. Availability Sets - Review
+1min
+Completed
+Play
+39. Lab - Availability Sets
+7min
+Completed
+Play
+40. Availability Zones
+3min
+Completed
+Play
+41. Lab - Availability Zones
+5min
+Completed
+Start
+42. Availability Zones Review
+1min
+Completed
+Play
+43. Azure virtual machine scale sets
+7min
+Completed
+Play
+44. Lab - Azure Virtual Machine Scale Sets
+7min
+Completed
+Play
+45. Lab - Azure Virtual Machine Scale Set - Scale out
+8min
+Completed
+Play
+46. Azure Virtual Machine Scale Set - Understanding the scaling process
+9min
+Completed
+Play
+47. Lab - Azure Virtual Machine Scale Set - Scale in
+3min
+Completed
+Play
+48. Lab - Azure Virtual Machine Scale Sets - Flexible Orchestration Mode
+9min
+Completed
+Start
+Quiz 1: Section Quiz - Compute - Virtual Machines
+Completed
+Play
+49. Introduction onto Azure Web Apps
+4min
+Completed
+Play
+50. Lab - Azure Web Apps
+9min
+Completed
+Play
+51. Lab - Making simple changes to the Web App
+2min
+Completed
+Play
+52. Lab - Azure Web Apps - Adding a simple web application
+6min
+Completed
+Play
+53. Azure Web Apps - Deployment Slots
+5min
+Completed
+Play
+54. Lab - Azure Web Apps - Deployment Slots
+10min
+Completed
+Play
+55. Autoscaling for Web Apps
+6min
+Completed
+Play
+56. Container-based applications
+4min
+Completed
+Play
+57. Lab - Setting up Docker on an Azure virtual machine
+6min
+Completed
+Play
+58. Lab - Containerize an application
+8min
+Completed
+Play
+59. Lab - Azure Container Registry Service
+4min
+Completed
+Play
+60. Lab - Publishing to Azure Container Registry
+4min
+Completed
+Play
+61. Lab - Azure Container Instances
+6min
+Completed
+Play
+62. Building a multi-container application
+6min
+Completed
+Play
+63. Lab - Building and testing a custom MySQL image
+10min
+Completed
+Play
+64. Lab - Rebuild our PHP Application and push to Azure Container Registry
+6min
+Completed
+Play
+65. Lab - Azure Container Group
+10min
+Completed
+Play
+66. Azure Container Apps
+4min
+Completed
+Play
+67. Lab - Azure Container Apps
+5min
+Completed
+Play
+68. Lab - Azure Web Apps - Container deployment
+5min
+Completed
+Play
+69. Section Summary
+16min
+Completed
+Start
+Quiz 2: Section Quiz - Compute - Azure Web Apps and Container-based services
+Completed
+Start
+70. Code resources for this section
+1min
+Completed
+Play
+71. Networking 101 - Networks, devices and IP addresses - Basics
+3min
+Completed
+Play
+72. Networking 101 - IP addresses
+5min
+Completed
+Play
+73. Networking 101 - Subnet Mask and CIDR blocks
+4min
+Completed
+Play
+74. Introduction to Virtual Networks in Azure
+2min
+Completed
+Play
+75. Lab - Building an Azure virtual network
+6min
+Completed
+Play
+76. Understanding subnets
+6min
+Completed
+Play
+77. Lab - Deploying an Azure virtual machine to the network
+7min
+Completed
+Play
+78. Lab - Let’s deploy another machine to another subnet
+6min
+Completed
+Play
+79. Understanding IP addresses
+1min
+Completed
+Play
+80. Lab - Adding a secondary network interface
+7min
+Completed
+Play
+81. About Network Security Groups
+4min
+Completed
+Play
+82. Lab - Network Security Groups - Getting started
+10min
+Completed
+Play
+83. Lab - Network Security Groups - Understanding priorities
+6min
+Completed
+Play
+84. Lab - Network Security Groups - Inter VM communication
+7min
+Completed
+Play
+85. Lab - Network Security Groups - Outbound rules
+6min
+Completed
+Play
+86. Lab - Network Security Groups - ICMP Protocol
+4min
+Completed
+Play
+87. Lab - Network Security Groups - Two-tier architecture - Setup
+4min
+Completed
+Play
+88. Lab - Network Security Groups - Two-tier architecture - Implementation
+15min
+Completed
+Play
+89. Lab - Network Security Groups - Subnets
+11min
+Completed
+Play
+90. Lab - Network Security Group - Subnet and Network Interface
+4min
+Completed
+Play
+91. Application Security Groups
+3min
+Completed
+Play
+92. Lab - Applying Application Security Groups to our setup
+5min
+Completed
+Play
+93. Lab - Virtual Network Peering - Setup
+4min
+Completed
+Play
+94. Lab - Virtual Network Peering - Implementation
+6min
+Completed
+Play
+95. Azure Bastion
+4min
+Completed
+Play
+96. Lab - Azure Bastion
+7min
+Completed
+Play
+97. Network Watcher
+2min
+Completed
+Play
+98. Lab - Network Watcher - Connection Troubleshoot
+3min
+Completed
+Play
+99. Lab - Network Watcher - Connection Monitor
+5min
+Completed
+Play
+100. Lab - Network Watcher - IP Flow Verify
+2min
+Completed
+Play
+101. Lab - Network Watcher - Next hop
+1min
+Completed
+Play
+102. Lab - Network Watcher - NSG Diagnostic
+2min
+Completed
+Play
+103. Lab - Network Watcher - NSG Flow logs
+6min
+Completed
+Play
+104. User Defined Routes
+4min
+Completed
+Play
+105. Lab - User Defined Routes
+9min
+Completed
+Play
+106. The Azure Load Balancer Service
+2min
+Completed
+Play
+107. Lab - Azure Load Balancer - Standard SKU - Setup
+3min
+Completed
+Play
+108. Lab - Azure Load Balancer - Standard SKU - Implementation
+11min
+Completed
+Play
+109. Lab - Azure Load Balancer - Standard SKU - Inbound NAT Rules
+7min
+Completed
+Play
+110. Lab - Standard Load Balancer - Outbound Connectivity
+2min
+Completed
+Play
+111. Lab - Standard Load Balancer - VM Scale Set - Setup
+4min
+Completed
+Play
+112. Lab - Standard Load Balancer - VM Scale Set - Implementation
+6min
+Completed
+Play
+113. DNS Fundamentals for Azure Administrators
+5min
+Completed
+Play
+114. An example of setting the DNS name for an Azure virtual machine
+7min
+Completed
+Play
+115. Azure Public DNS
+8min
+Completed
+Play
+116. Designing a Private DNS Foundation in Azure VNets
+6min
+Completed
+Play
+117. Lab - Building the Domain Installing AD DS & DNS on Windows Server 2025
+6min
+Completed
+Play
+118. Lab - Using Your Local DNS Name Resolution Inside the VNet
+8min
+Completed
+Play
+119. Azure Private DNS
+4min
+Completed
+Play
+120. Lab - Azure Private DNS
+4min
+Completed
+Play
+121. Azure Web App - Virtual Network Integration
+3min
+Completed
+Play
+122. Lab - Azure Web App - Azure Virtual Network Integration - Database server
+4min
+Completed
+Play
+123. Lab - Azure Web App - Azure Virtual Network Integration - Application setup
+4min
+Completed
+Play
+124. Lab - Azure Web App - Azure Virtual Network Integration - Implementation
+3min
+Completed
+Play
+125. Azure Web Apps - Custom domain names
+4min
+Completed
+Play
+126. Section Summary
+12min
+Completed
+Start
+Quiz 3: Section Quiz - Networking
+Completed
+Play
+127. Introduction to Azure Storage Accounts
+4min
+Completed
+Play
+128. Different types of storage accounts
+2min
+Completed
+Play
+129. Lab - Creating an Azure storage account
+4min
+Completed
+Play
+130. Azure Blob service
+2min
+Completed
+Play
+131. Lab - Blob service - Uploading objects
+7min
+Completed
+Play
+132. Lab - Blob service - Accessing objects
+5min
+Completed
+Play
+133. Azure Storage - Blob service - Different authorization techniques
+3min
+Completed
+Play
+134. Lab - Installing the Azure Storage Explorer
+2min
+Completed
+Play
+135. Lab - Blob service authorization - Using Storage access keys
+4min
+Completed
+Play
+136. Using the Azure storage explorer from a macOS system
+2min
+Completed
+Play
+137. Lab - Blob service authorization - Shared Access Signatures - Blob level
+5min
+Completed
+Play
+138. Lab - Blob service authorization - Shared Access Signatures - Container level
+4min
+Completed
+Play
+139. Lab - Blob service authorization -Shared Access Signatures-Storage Account level
+4min
+Completed
+Play
+140. Lab - Blob service authorization - Stored Access Policy
+5min
+Completed
+Play
+141. Azure Storage Accounts - Immutable Blob Storage
+2min
+Completed
+Play
+142. Azure Storage Accounts - Data Redundancy
+7min
+Completed
+Play
+143. Storage Accounts - Introduction to Access Tiers
+8min
+Completed
+Play
+144. Lab - Storage Accounts - Configuring access tiers
+6min
+Completed
+Play
+145. Azure Blob Storage lifecycle management
+5min
+Completed
+Play
+146. Azure Blob Storage lifecycle management - Further Information
+8min
+Completed
+Play
+147. Azure Storage Accounts - Blob Snapshots
+3min
+Completed
+Play
+148. Azure Storage Accounts - Blob Versioning
+3min
+Completed
+Play
+149. Lab - Azure Storage Accounts - Object Replication
+6min
+Completed
+Play
+150. Lab - Working with File shares
+6min
+Completed
+Play
+151. Connecting onto a file share from macOS
+1min
+Completed
+Play
+152. Azure File share snapshots
+2min
+Completed
+Play
+153. Azure File - Soft delete
+1min
+Completed
+Play
+154. Azure Storage Accounts - AzCopy Tool
+8min
+Completed
+Play
+155. Premium Storage Accounts
+4min
+Completed
+Play
+156. Section Summary
+12min
+Completed
+Start
+Quiz 4: Section Quiz -Storage
+Completed
+Start
+157. Code resources for this section
+1min
+Not completed
+Play
+158. Installing the latest version of PowerShell
+4min
+Not completed
+Play
+159. Installing Azure modules for PowerShell
+2min
+Not completed
+Play
+160. Lab - Creating a resource group
+9min
+Not completed
+Play
+161. Lab - Creating a virtual network
+4min
+Not completed
+Play
+162. Using Azure Cloud Shell
+3min
+Not completed
+Play
+163. Lab - Adding a subnet
+6min
+Not completed
+Play
+164. Lab - Creating a network interface
+4min
+Not completed
+Play
+165. Lab - Public IP Address
+7min
+Not completed
+Play
+166. Lab - Creating a Network Security Group
+8min
+Not completed
+Play
+167. Lab - Creating the Azure Virtual Machine
+5min
+Not completed
+Play
+168. Lab - Adding a data disk
+3min
+Not completed
+Play
+169. Lab - Creating a storage account
+3min
+Not completed
+Play
+170. Lab - Azure Web App
+4min
+Not completed
+Play
+171. Azure CLI
+1min
+Not completed
+Play
+172. Lab - Azure CLI - Creating a resource group
+5min
+Not completed
+Play
+173. Lab - Azure CLI - Creating a virtual network
+3min
+Not completed
+Play
+174. Lab - Azure CLI - Creating a Public IP address
+2min
+Not completed
+Play
+175. Lab - Azure CLI - Creating a network interface
+2min
+Not completed
+Play
+176. Lab - Azure CLI - Creating a network security group
+4min
+Not completed
+Play
+177. Lab - Azure CLI - Creating the storage account
+2min
+Not completed
+Play
+178. Lab - Azure CLI - Creating the Azure Virtual Machine
+6min
+Not completed
+Play
+179. Lab - Azure CLI - Azure Web App
+2min
+Not completed
+Start
+180. Code resources for this section
+1min
+Not completed
+Play
+181. What are Azure Resource Manager templates
+3min
+Not completed
+Play
+182. ARM Template structure
+2min
+Not completed
+Play
+183. Setting up Visual Studio Code
+2min
+Not completed
+Play
+184. Lab - Deploying a resource group - Building the template
+6min
+Not completed
+Play
+185. Lab - Deploying a resource group - Deployment via PowerShell
+3min
+Not completed
+Play
+186. Lab - Azure Storage Account - Building the template
+5min
+Not completed
+Play
+187. Lab - Multiple copies of a resource
+9min
+Not completed
+Play
+188. Lab - Azure Virtual network
+9min
+Not completed
+Play
+189. Lab - Public IP address
+3min
+Not completed
+Play
+190. Lab - Network Interface
+7min
+Not completed
+Play
+191. Lab - Creating a Network Security Group
+8min
+Not completed
+Play
+192. Lab - Attaching NSG’s to the subnets
+4min
+Not completed
+Play
+193. Lab - Creating an Azure virtual machine
+12min
+Not completed
+Play
+194. Lab - Using parameters in an ARM template
+9min
+Not completed
+Play
+195. Lab - Parameters - Secure String
+5min
+Not completed
+Play
+196. Lab - Using a parameters file
+5min
+Not completed
+Play
+197. Dependency across resources
+10min
+Not completed
+Play
+198. Lab - Azure Availability Set and VM
+4min
+Not completed
+Play
+199. Lab - Creating a data disk
+3min
+Not completed
+Play
+200. Lab - Custom Script Extensions
+7min
+Not completed
+Play
+201. Lab - Azure Web App
+7min
+Not completed
+Start
+202. Code resources for this section
+1min
+Not completed
+Play
+203. Introduction to Bicep
+3min
+Not completed
+Play
+204. Lab - Deploying a resource group
+5min
+Not completed
+Play
+205. Lab - Azure Storage Account
+6min
+Not completed
+Play
+206. Lab - Multiple copies of a resource
+5min
+Not completed
+Play
+207. Lab - Azure Virtual network
+3min
+Not completed
+Play
+208. Lab - Public IP address
+2min
+Not completed
+Play
+209. Lab - Network Interface
+7min
+Not completed
+Play
+210. Lab - Network Security Groups
+3min
+Not completed
+Play
+211. Lab - Associate NSG with subnet
+6min
+Not completed
+Play
+212. Lab - Creating an Azure virtual machine
+7min
+Not completed
+Play
+213. Lab - Using parameters
+3min
+Not completed
+Play
+214. Lab - Availability Sets
+3min
+Not completed
+Play
+215. Lab - Adding data disks
+5min
+Not completed
+Play
+216. Lab - Custom Script Extensions
+3min
+Not completed
+Play
+217. Lab - Azure Web App
+5min
+Not completed
+Start
+218. Code resources for this section
+1min
+Not completed
+Play
+219. Project Overview
+5min
+Not completed
+Play
+220. Project Infrastructure Overview
+3min
+Not completed
+Play
+221. Bicep Modules - Building the virtual network module
+9min
+Not completed
+Play
+222. Lab - Bicep Modules - Building the parameters file
+7min
+Not completed
+Play
+223. Lab - Bicep Modules - Defining the main bicep file
+5min
+Not completed
+Play
+224. Lab - Bicep - Deploying the virtual network
+11min
+Not completed
+Play
+225. Lab - Bicep Modules - Building the storage account
+7min
+Not completed
+Play
+226. Lab - Bicep Modules - The Network Security Group
+8min
+Not completed
+Play
+227. Lab - Bicep Modules - Attaching the Network Security Group
+10min
+Not completed
+Play
+228. Lab - Bicep modules - Building the Windows VM bicep file
+7min
+Not completed
+Play
+229. Lab - Bicep Modules - Adding code for multiple resource copies
+14min
+Not completed
+Play
+230. Lab - Bicep modules - Defining outputs
+12min
+Not completed
+Play
+231. Lab - Bicep - Final deployment of the virtual machines
+11min
+Not completed
+Play
+232. Lab - Bicep Modules - Azure Bastion - Public IP address
+7min
+Not completed
+Play
+233. Lab - Bicep Modules - Deploying Azure Bastion
+10min
+Not completed
+Play
+234. Lab - Azure Bastion - Native client support
+5min
+Not completed
+Play
+235. Lab - Bicep Modules - Custom Script Extensions
+4min
+Not completed
+Play
+236. Lab - Bicep modules - Deploying an Internal Load Balancer
+11min
+Not completed
+Play
+237. Lab - Bicep Modules - Building the test network
+8min
+Not completed
+Play
+238. Lab - Bicep Modules - Establishing Virtual Network Peering
+9min
+Not completed
+Play
+239. Lab - Azure Private DNS Zone
+8min
+Not completed
+Play
+240. Lab - Azure Storage Service Endpoints - Preparation
+11min
+Not completed
+Play
+241. Lab - Azure Storage Service Endpoints - Implementation
+3min
+Not completed
+Play
+242. Lab - Using Network Security Groups - Outbound access to storage account
+4min
+Not completed
+Play
+243. Lab - Azure Storage Service endpoint policies
+5min
+Not completed
+Play
+244. Lab - Azure Storage Private Endpoints
+5min
+Not completed
+Play
+245. Azure Storage Service Encryption
+8min
+Not completed
+Play
+246. What is Microsoft Entra ID
+4min
+Not completed
+Play
+247. Lab - Creating a user in Microsoft Entra ID
+8min
+Not completed
+Play
+248. Lab - Logging in as the new user
+6min
+Not completed
+Play
+249. Lab - Let's deploy some resources
+6min
+Not completed
+Play
+250. Introduction to Role Based Access Control
+3min
+Not completed
+Play
+251. Lab - Role-based assignments - Resource level
+8min
+Not completed
+Play
+252. Lab - Role-based assignments - Resource group level
+2min
+Not completed
+Play
+253. Lab - Role-based assignments - Contributor Role
+5min
+Not completed
+Play
+254. Lab - Role-based assignments - User Access Administrator Role
+6min
+Not completed
+Play
+255. Lab - Role assignments for Azure Storage Accounts
+8min
+Not completed
+Play
+256. Lab - Role Assignment conditions
+5min
+Not completed
+Play
+257. Lab - Role assignments for Azure virtual machines - Preparation
+5min
+Not completed
+Play
+258. Lab - Role assignments for Azure virtual machines - Implementation
+12min
+Not completed
+Play
+259. Lab - Custom Roles
+8min
+Not completed
+Play
+260. Microsoft Entra ID Roles
+2min
+Not completed
+Play
+261. Lab -Microsoft Entra ID Roles
+3min
+Not completed
+Play
+262. Note - Microsoft Entra ID Custom Roles
+1min
+Not completed
+Play
+263. Microsoft Entra ID - Inviting external identities
+4min
+Not completed
+Play
+264. Microsoft Entra ID Licenses
+7min
+Not completed
+Play
+265. Assigning licenses to users
+3min
+Not completed
+Play
+266. Assigning licenses to groups
+6min
+Not completed
+Play
+267. Further points on group-based licensing
+6min
+Not completed
+Play
+268. What is self-service password reset
+1min
+Not completed
+Play
+269. Enabling self-service password reset
+5min
+Not completed
+Play
+270. Performing a self-service password reset
+5min
+Not completed
+Play
+271. Resource tags
+3min
+Not completed
+Play
+272. Lab - Moving resources across resource groups
+5min
+Not completed
+Play
+273. Moving resources across subscriptions
+3min
+Not completed
+Play
+274. Lab - Locking Resources
+4min
+Not completed
+Play
+275. Management Groups
+3min
+Not completed
+Play
+276. Just a quick look into Management Groups
+3min
+Not completed
+Play
+277. Lab - Using the Azure Policy Service
+8min
+Not completed
+Play
+278. Lab - Azure Policy - Not Allowed Resource types
+4min
+Not completed
+Play
+279. Section Summary
+7min
+Not completed
+Start
+Quiz 5: Section Quiz
+Not completed
+Play
+280. Preparing our infrastructure
+2min
+Not completed
+Play
+281. What is the Azure Monitor Service
+2min
+Not completed
+Play
+282. Quick look at Azure Monitor
+3min
+Not completed
+Play
+283. Lab - Azure Monitor - Alerts
+9min
+Not completed
+Play
+284. Lab - Alert - Activity Log
+4min
+Not completed
+Play
+285. Suppressing alerts
+5min
+Not completed
+Play
+286. What is a Log Analytics Workspace
+2min
+Not completed
+Play
+287. Lab - Creating a Log Analytics workspace
+2min
+Not completed
+Play
+288. Lab - Connecting virtual machine to the workspace
+7min
+Not completed
+Play
+289. Lab - Log Analytics Queries
+6min
+Not completed
+Start
+290. Log Analytics Queries
+1min
+Not completed
+Play
+291. Log Analytics - Alerts
+2min
+Not completed
+Play
+292. Lab - Collecting IIS logs from a Windows machine
+4min
+Not completed
+Play
+293. Azure VM Insights
+5min
+Not completed
+Play
+294. Azure Monitor cleanup
+4min
+Not completed
+Play
+295. What is the Azure Backup feature
+3min
+Not completed
+Play
+296. Lab - Azure Virtual Machine - Backup - Recovery Services Vault
+5min
+Not completed
+Play
+297. Lab - Azure Virtual Machine - Backup - Enable Backup
+4min
+Not completed
+Play
+298. Lab - Azure Virtual Machine - Backup - Perform initial backup
+3min
+Not completed
+Play
+299. Lab - Azure Backup - File Restore
+5min
+Not completed
+Play
+300. Lab - Azure Backup - VM Restore
+7min
+Not completed
+Play
+301. Azure Recovery Services Agent
+2min
+Not completed
+Play
+302. Lab - Azure Backup - MARS agent - Taking the Backup
+8min
+Not completed
+Play
+303. Lab - Azure Backup - MARS agent - Recovery
+6min
+Not completed
+Start
+304. Azure Backup Reports
+2min
+Not completed
+Play
+305. Azure file share backup
+6min
+Not completed
+Play
+306. Azure Web App backup
+1min
+Not completed
+Play
+307. Azure Site Recovery
+6min
+Not completed
+Play
+308. Lab - Azure Site Recovery - Azure VM - Enabling replication
+4min
+Not completed
+Play
+309. Lab - Azure Site Recovery - Azure VM - Performing the failover
+5min
+Not completed
+Play
+310. Azure Backup Vault - Azure VM
+7min
+Not completed
+Play
+311. Azure Backup Vault - Blobs
+5min
+Not completed
+Play
+312. Section Summary
+7min
+Not completed
+Start
+Quiz 6: Section Quiz
+Not completed
+Start
+Practice Test 1: NEW - Practice Test 01
+Not completed
+Start
+Practice Test 2: NEW - Practice Test 02
+Not completed
+Start
+313. Bonus Lecture
+1min
+
+Voucher Logo
+Get your ticket to certification
+Don't just prep for your Microsoft exam — save on your exam voucher too. 
+
+Current price$72.62
+Original Price$83.00
+information alert
+Schedule learning time
+Learning a little each day adds up. Research shows that students who make learning a habit are more likely to reach their goals. Set time aside to learn and get reminders using your learning scheduler.
+Preparation for Microsoft Azure Administrator Certification AZ-104 exam.
+Rating: 4.6 out of 5
+4.6
+27,770 ratings
+144,895
+Students
+27 hours
+Total
+Last updated April 2026
+English
+English [Auto], Arabic [Auto]
+, 
+What you'll learn
+Students will familiarize themself with various Cloud Administration skills.
+Students will become proficient with various Azure setups including managing networks , compute and storage.
+Students will prepare themselves for the AZ-104 Azure administrator exam
+Students will get a better understanding in deploying and managing infrastructure on Azure
+Description
+Release v10.0 - October 2025
+
+An entire course refresh for the AZ-104 course. This is being done to align the course with what are the most recent exam objectives.
+
+All of the videos will be up-to date with the latest User Interface and feature changes to the Azure services. This will provide a more seamless experience for the student and make it easier to follow along to practice on the Azure platform.
+
+An entire refresh also carried out for the Practice Tests - All Practice Test questions updated.
+
+Quizzes also added and updated for each section
+
+Videos added at the end of each section to summarize all important aspects discussed during the section.
+
+An entire project - What you’ll build in the Project
+
+Networking: Two VNets (dev & test), subnets for web/app/DB, VNet peering
+
+Security: NSGs/ASGs, Key Vault for admin secrets
+
+Access: Azure Bastion for RDP/SSH—no public IPs on VMs
+
+Traffic: Internal Load Balancer (backend pools, health probes, persistence)
+
+Storage Connectivity: Service Endpoints vs Private Endpoints, plus Private DNS
+
+Automation: Bicep modules for VNets, NSGs, VMs, ILB—deploy with param files
+
+Release v9.0 - September 2024
+
+An entire course refresh for the AZ-104 course. This is being done to align the course with what are the most recent exam objectives.
+
+All of the videos will be up-to date with the latest User Interface and feature changes to the Azure services. This will provide a more seamless experience for the student and make it easier to follow along to practice on the Azure platform.
+
+Azure services go through several updates and we need to ensure we align our learning with the most recent updates.
+
+Release v8.1 - July 2023
+
+To keep in line with the exam objective changes on 28th July , the following topics have been added to the course
+
+Azure file shares - Snapshots , soft-delete, identity-based authentication
+
+Azure Container Apps
+
+An entire section on how to use Bicep to deploy Azure resources
+
+Release v8.0 - April 2023
+
+Carried out a complete revision of the Azure Administrator course. Refreshed all videos and ensured course is aligned with the most recent course objectives.
+
+Release v7.0 - January 2022
+
+Created new sections with revised videos on
+
+Monitor and back up Azure resources
+
+Azure PowerShell and Azure CLI
+
+Azure Resource Manager Templates
+
+Have introduced a lot of chapters on how you can create ARM templates.
+
+Created around 180 new practice test questions
+
+
+
+Release v6.0 - March 2021
+
+Refreshed videos on various chapters which includes the following
+
+Point-to-Site VPN connections
+
+Site-to-Site VPN connections
+
+Network Security Groups
+
+Azure Standard Load Balancer
+
+Azure Backup and Restore for Azure Virtual Machines
+
+Azure Firewall
+
+Azure Storage Accounts
+
+Added new videos which includes the following
+
+Azure Kubernetes - Adding disks and file shares
+
+Azure Web Apps - Backup, Custom domains, SSL
+
+Azure Application Gateway - Working with multiple sites
+
+Azure Storage Accounts - Object replication, Private Endpoints
+
+
+
+Release v5.0 - December 2020
+
+Added new contents including the following
+
+Creating VM's with Premium Disks
+
+Lab on using an Azure Load Balancer with Virtual Machine Scale sets
+
+Deployment slots for Azure Web Apps
+
+Integration of Azure Web Apps with Azure Virtual Network
+
+Usage of various tools available with Network Watcher
+
+Refreshed chapters to reflect changes in Azure services
+
+
+
+Release v4.0 - April
+
+Added contents based on AZ-104 skills outline
+
+Students can use this course to pass either the AZ-103 or the AZ-104 exam
+
+
+
+Release v3.0 - February
+
+Released newer version of section "Deploy and manage virtual machines (VMs)"
+
+Released newer version of section "Configure and manage virtual networks"
+
+Released newer version of section "Implement and manage storage"
+
+Updated section "Manage Azure subscriptions and resources"
+
+Updated section "Manage identities"
+
+Release - v2.0 - July 2019
+
+Fresh new look to chapters that explain key concepts on the Azure platform
+
+Added more chapters on concepts - Resource tagging , storage accounts , Virtual Machine SLA
+
+Mention on new az PowerShell
+
+Added chapter on Availability Zones
+
+Added chapter on implementation of the Azure Standard Load Balancer
+
+Release - v1.1 - June 2019
+
+Added optional chapters for students who are new to the Azure platform
+
+Added chapter on Azure subscriptions based on students request
+
+Release - v1.0 - May 2019
+
+Course contents updated to align with AZ-103 objectives
+
+This course is designed for students who would like to attain the Microsoft Azure Administration Certification
+
+This course has contents for the Exam AZ-104
+
+The objectives covered in this course are
+
+Manage Azure identities and governance
+
+Implement and manage storage
+
+Deploy and manage Azure compute resources
+
+Configure and manage virtual networking
+
+Monitor and back up Azure resources
+
+Who this course is for:
+This course helps learners to not only navigate the complexities of the cloud environment but also enhance your organization's efficiency.
+This course is for students who want to excel when they take their AZ-104 certification exam.
+Instructor
+Alan Rodrigues
+Software Engineering Evangelist
+
+4.5 Instructor Rating
+203,992 Reviews
+900,794 Students
+31 Courses
+AI & Cloud Technology Evangelist | Course Creator | Certification Specialist
+
+With over 25+ years of experience in the Software & Technology industry, I am a passionate Tech evangelist dedicated to demystifying complex cloud and AI technologies for learners across the globe.
+
+
+
+My career is driven by one mission: to make cutting-edge tech accessible, understandable, and practical for everyone.
+
+
+
+A lifelong learner with a deep commitment to industry certifications, I hold numerous credentials across Microsoft Azure, AWS, AI and DevOps domains. My focus is on creating practical, certification-focused courses that bridge the gap between exam success and real-world expertise.
+
+
+
+Featured Courses:
+
+                          AI & CoPoilot Courses:
+
+AI-900: Microsoft Azure AI Fundamentals Certification [AI-900]
+
+AI-102: Microsoft Certified Azure AI Engineer Associate [AI-102]
+
+AWS Certified AI Practitioner – AIF-C01
+
+AB-730: Microsoft AI Business Professional [AB-730]
+
+AB-731: Microsoft AI Transformation Leader [AB-731]
+
+
+
+                      Azure Cloud & Architecure Courses:
+
+AZ-900: Microsoft Azure Fundamentals [AZ-900]
+
+AZ-104: Microsoft Azure Administrator Certification [AZ-104]
+
+AZ-305: Designing Azure Infrastructure Solutions [AZ-305]
+
+Azure Architect Technologies
+
+
+
+                   Data, Analytics & Microsoft Fabric Courses:
+
+DP-900: Microsoft Azure Data Fundamentals Certification [DP-900]
+
+DP-203: Data Engineering on Microsoft Azure  [DP-203]
+
+DP-700: Fabric Data Engineer Associate  [DP-700]
+
+DP-600: Fabric Analytics Engineer Associate [DP-600]
+
+       
+
+              Security, Identity & Compliance Courses :
+
+AZ-500: Microsoft Azure Security Exam Certification [AZ-500]
+
+SC-100: Microsoft Cybersecurity Architect [SC-100]
+
+SC-300: Microsoft Identity and Access Administrator [SC-300]
+
+SC-900: Microsoft Security, Compliance, Identity Fundamentals  [SC-900]
+
+     
+
+        Developer, DevOps, Networking & AWS Courses:
+
+AZ-204: Developing Solutions for Microsoft Azure [AZ-204]
+
+AZ-400: Designing and Implementing DevOps Certification [AZ-400]
+
+AZ-700: Designing and Implementing Azure Networking Solutions
+
+Programming with C#
+
+Docker and Kubernetes – Your Complete Guide
+
+Terraform on Azure
+
+Mastering Azure PowerShell
+
+AWS Certified Cloud Practitioner
+
+AWS Certified Solutions Architect – Associate (SAA-C03)
+
+
+
+Beyond public course creation, I’ve also ghostwritten exam question banks and developed custom learning content for high-profile enterprise clients. Whether it’s empowering an individual learner or scaling up a corporate team, building impactful training experiences is what I do best.
+
+
+
+"Every expert was once a beginner — stay hungry, stay consistent, and keep going."
+
+Requirements
+Students are required to have sound knowledge on Azure fundamentals
+Students are required to have basic IT background, Knowledge on Virtual Machines , Networks and other IT infrastructure aspects
+Students are required to create or have an Azure Account to practice along
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Teach the world online
+Create an online video course, reach students across the globe, and earn money
+Top companies choose Udemy Business to build in-demand career skills.
+NasdaqVolkswagenNetAppEventbrite
+Udemy Business
+Teach on Udemy
+Get the app
+About us
+Contact us
+Careers
+Blog
+Help and Support
+Affiliate
+Investors
+Terms
+Privacy policy
+Sitemap
+Accessibility statement
+© 2026 Udemy, Inc.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-03T16:48:20+03:00.
+</ADDITIONAL_METADATA>

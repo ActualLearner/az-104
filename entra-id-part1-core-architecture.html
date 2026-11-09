@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft Entra ID - Part 1: Core Identity Architecture & Foundations | AZ-104 Master Architecture Notes</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-card: #182234;
+      --border: #334155;
+      --border-focus: #38bdf8;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --accent-purple: #c084fc;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-red: #f87171;
+      --code-bg: #0b1120;
+      --table-header: #1e293b;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 4.5rem;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      font-size: 15px;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Top Navigation Banner */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .nav-brand:hover {
+      color: #fff;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .nav-button:hover {
+      color: #fff;
+      background: #334155;
+      border-color: var(--accent);
+    }
+
+    .nav-button.primary {
+      background: #0284c7;
+      color: #fff;
+      border-color: #38bdf8;
+    }
+
+    .nav-button.primary:hover {
+      background: #0369a1;
+    }
+
+    /* Main Container & Layout */
+    .page-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2.5rem;
+    }
+
+    @media (max-width: 992px) {
+      .page-layout {
+        grid-template-columns: 1fr;
+        padding: 1.5rem 1rem 4rem;
+      }
+      .toc-sidebar {
+        display: none;
+      }
+    }
+
+    /* Sticky Sidebar Navigation */
+    .toc-sidebar {
+      position: sticky;
+      top: 4.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .toc-sidebar h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .toc-sidebar ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .toc-sidebar li {
+      margin-bottom: 0.45rem;
+    }
+
+    .toc-sidebar li ul {
+      padding-left: 0.9rem;
+      margin-top: 0.35rem;
+    }
+
+    .toc-sidebar a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.825rem;
+      line-height: 1.4;
+      display: block;
+      transition: color 0.15s ease;
+    }
+
+    .toc-sidebar a:hover {
+      color: var(--accent);
+    }
+
+    /* Content Area Typography */
+    .content-area {
+      min-width: 0;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .content-area {
+        padding: 1.5rem 1.25rem;
+      }
+    }
+
+    .content-area h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #f8fafc;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .content-area h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-area h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content-area h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .content-area p {
+      margin-bottom: 1.2rem;
+      color: #cbd5e1;
+    }
+
+    .content-area strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .content-area ul, .content-area ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: #cbd5e1;
+    }
+
+    .content-area li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* Code & Pre Blocks */
+    .content-area pre {
+      background-color: var(--code-bg);
+      border: 1px solid #1e293b;
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1.25rem 0 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .content-area code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: #0b1120;
+      color: #38bdf8;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .content-area pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      color: inherit;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .table-container table,
+    .content-area table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    .content-area th, .content-area td {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-area th {
+      background: var(--table-header);
+      color: #ffffff;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .content-area tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Blockquotes / Callouts */
+    .content-area blockquote {
+      border-left: 4px solid var(--accent-amber);
+      background: rgba(251, 191, 36, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0 1.5rem;
+      color: #fef3c7;
+      font-style: normal;
+    }
+
+    .content-area hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* Link styling */
+    .content-area a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .content-area a:hover {
+      color: #ffffff;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="site-nav">
+    <a href="index.html" class="nav-brand">
+      <span>🛡️ AZ-104 Command Hub</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-button">🏠 Dashboard</a>
+      <a href="index.html#notes-library" class="nav-button primary">📚 Notes Library</a>
+      <a href="scenario_01_deep_dive.html" class="nav-button">⚡ Scenario 01 Deep Dive</a>
+      <a href="entra-id-master-architecture-and-governance.html" class="nav-button">📘 Master Guide</a>
+      <a href="reddit-az104-research-2024-2025.html" class="nav-button">📊 Reddit N=38</a>
+    </div>
+  </header>
+
+  <!-- Page Layout -->
+  <div class="page-layout">
+    
+    <!-- Sidebar Table of Contents -->
+    <aside class="toc-sidebar">
+      <h3>📑 Table of Contents</h3>
+      <div class="toc">
+<ul>
+<li><a href="#microsoft-entra-id-part-1-core-identity-architecture-foundations">Microsoft Entra ID - Part 1: Core Identity Architecture &amp; Foundations</a><ul>
+<li><a href="#1-the-two-universes-of-microsoft-cloud">1. The Two Universes of Microsoft Cloud</a></li>
+<li><a href="#2-tenants-directories-and-domains">2. Tenants, Directories, and Domains</a><ul>
+<li><a href="#what-is-a-directory">What is a "Directory"?</a></li>
+<li><a href="#what-is-a-tenant">What is a "Tenant"?</a></li>
+<li><a href="#why-does-an-azure-subscription-trust-a-directory">Why Does an Azure Subscription "Trust" a Directory?</a></li>
+<li><a href="#why-would-a-company-have-multiple-tenants">Why Would a Company Have Multiple Tenants?</a></li>
+</ul>
+</li>
+<li><a href="#3-the-identity-objects-users-members-and-guests">3. The Identity Objects: Users, Members, and Guests</a><ul>
+<li><a href="#1-member-users">1. Member Users</a></li>
+<li><a href="#2-guest-users-b2b-collaboration">2. Guest Users (B2B Collaboration)</a></li>
+</ul>
+</li>
+<li><a href="#4-external-identities-b2b-vs-b2c">4. External Identities: B2B vs. B2C</a><ul>
+<li><a href="#how-social-logins-work-google-facebook">How Social Logins Work (Google / Facebook)</a></li>
+</ul>
+</li>
+<li><a href="#5-applications-app-registration-vs-service-principal">5. Applications: App Registration vs. Service Principal</a></li>
+<li><a href="#6-single-tenant-vs-multi-tenant-applications">6. Single-Tenant vs. Multi-Tenant Applications</a></li>
+<li><a href="#7-permissions-delegated-vs-application-oauth-20">7. Permissions: Delegated vs. Application (OAuth 2.0)</a></li>
+<li><a href="#8-machine-credentials-how-service-principals-authenticate">8. Machine Credentials: How Service Principals Authenticate</a></li>
+<li><a href="#9-managed-identities-for-azure-resources">9. Managed Identities for Azure Resources</a><ul>
+<li><a href="#system-assigned-vs-user-assigned-managed-identities">System-Assigned vs. User-Assigned Managed Identities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </aside>
+
+    <!-- Main Content Reader -->
+    <main class="content-area">
+      <h1 id="microsoft-entra-id-part-1-core-identity-architecture-foundations">Microsoft Entra ID - Part 1: Core Identity Architecture &amp; Foundations</h1>
+<hr />
+<h2 id="1-the-two-universes-of-microsoft-cloud">1. The Two Universes of Microsoft Cloud</h2>
+<p>Microsoft Cloud is fundamentally divided into two isolated, independent planes:</p>
+<pre><code>┌────────────────────────────────────────────────────────────────────────┐
+│                   THE IDENTITY PLANE (Microsoft Entra ID)              │
+│   • Admin Center: entra.microsoft.com                                  │
+│   • Governs: WHO you are (Authentication, Passwords, MFA, Tokens)      │
+│   • Objects: Users, Groups, App Registrations, Service Principals      │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    │ 1-Way Trust Relationship
+                                    │ (&quot;Who is allowed to manage resources?&quot;)
+                                    │
+┌───────────────────────────────────▼────────────────────────────────────┐
+│              THE RESOURCE &amp; BILLING PLANE (Azure Resource Manager)     │
+│   • Portal: portal.azure.com                                           │
+│   • Governs: WHAT exists (VMs, Storage, Networks, Databases, Billing)  │
+│   • Hierarchy: Management Groups ──► Subscriptions ──► Resource Groups │
+└────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<ol>
+<li><strong>The Identity Plane (Microsoft Entra ID):</strong> Knows <em>who</em> an entity is. It manages users, checks passwords, validates MFA, evaluates Conditional Access policies, and issues signed JSON Web Tokens (JWT). It has no concept of virtual machines, storage disks, or credit card invoices.</li>
+<li><strong>The Resource Plane (Azure Resource Manager / ARM):</strong> Manages cloud hardware, deployments, and billing. It has no concept of passwords or user databases. When you deploy a VM, ARM delegates authentication to Entra ID: <em>&ldquo;Did this user pass MFA, and what role does Entra say they have?&rdquo;</em></li>
+</ol>
+<hr />
+<h2 id="2-tenants-directories-and-domains">2. Tenants, Directories, and Domains</h2>
+<h3 id="what-is-a-directory">What is a &ldquo;Directory&rdquo;?</h3>
+<p>In computer networking, a &ldquo;Directory&rdquo; is an identity database heavily optimized for lightning-fast reading, searching, and attribute lookup (originating from physical phone directories). Microsoft Entra ID is a multi-tenant cloud directory database.</p>
+<h3 id="what-is-a-tenant">What is a &ldquo;Tenant&rdquo;?</h3>
+<p>A <strong>Tenant</strong> is a dedicated, completely isolated instance of Microsoft Entra ID provisioned for an organization when it signs up for Microsoft 365, Azure, or Dynamics.
+* <strong>Hard Isolation Boundary:</strong> Tenant A cannot read, query, or modify Tenant B. Each tenant has a unique, permanent 36-character GUID called the <strong>Tenant ID</strong> (e.g. <code>0ed1ea11-a7a4-4961-bd7a-22ede3e8aaad</code>).
+* <strong>The Domain Requirement:</strong> Because every human identity requires a standard RFC-compliant login namespace (<code>username@domain.com</code>), every Entra tenant must be bound to at least one DNS domain name.
+  * <strong>Initial Default Domain:</strong> Microsoft automatically generates a free domain ending in <strong><code>.onmicrosoft.com</code></strong> (e.g., <code>contosocorp.onmicrosoft.com</code>).
+  * <strong>Custom Verified Domains:</strong> Organizations add their public domain (e.g., <code>contoso.com</code>) by adding a DNS TXT verification record at their domain registrar (GoDaddy, Cloudflare, etc.). Once verified, users log in as <code>sarah@contoso.com</code>.</p>
+<h3 id="why-does-an-azure-subscription-trust-a-directory">Why Does an Azure Subscription &ldquo;Trust&rdquo; a Directory?</h3>
+<ul>
+<li>A <strong>Subscription</strong> is a billing container. It defines who gets billed for cloud compute and enforces spending limits.</li>
+<li>A subscription <strong>cannot maintain its own users</strong>. It must trust <strong>exactly ONE Entra ID tenant</strong>.</li>
+<li><strong>The Rule of Trust:</strong></li>
+<li><strong>1 Subscription $\rightarrow$ Trusts exactly 1 Tenant.</strong></li>
+<li><strong>1 Tenant $\rightarrow$ Can be trusted by Many Subscriptions</strong> (e.g., <em>Dev-Sub</em>, <em>Test-Sub</em>, <em>Prod-Sub</em>, <em>Billing-Sub</em> all trust the same corporate tenant).</li>
+<li>If an administrator transfers a subscription to a different Entra ID tenant, <strong>all Role-Based Access Control (RBAC) role assignments are immediately wiped clean</strong>, because the security principals (users and groups) from the old directory do not exist in the new directory.</li>
+</ul>
+<h3 id="why-would-a-company-have-multiple-tenants">Why Would a Company Have Multiple Tenants?</h3>
+<p>95% of organizations only ever need one tenant. However, enterprise architects deploy multiple distinct tenants in three specific scenarios:
+1. <strong>Mergers, Acquisitions, and Divestitures:</strong> Company A acquires Company B. Both keep their legacy tenants until identity consolidation takes place months or years later.
+2. <strong>Sovereignty &amp; Regulatory Compliance:</strong> Separate legal jurisdictions (e.g., US Department of Defense, Azure China operated by 21Vianet, or strict healthcare/financial data isolation requirements) mandate zero shared directory infrastructure.
+3. <strong>Tenant-Wide Isolation Sandboxing:</strong> Certain configurations are <strong>global to the entire tenant</strong> (e.g., root Cross-Tenant Access Settings, B2B collaboration restrictions, Tenant-wide Conditional Access baseline policies). You cannot test changes to these settings inside a subscription—you need a separate, isolated tenant to test them safely.</p>
+<hr />
+<h2 id="3-the-identity-objects-users-members-and-guests">3. The Identity Objects: Users, Members, and Guests</h2>
+<p>Inside the Entra ID directory, every entity is an object with an <strong>Object ID</strong> (GUID).</p>
+<pre><code>                            [ Entra ID Users ]
+                                     │
+           ┌─────────────────────────┴─────────────────────────┐
+           ▼                                                   ▼
+     MEMBER USER                                          GUEST USER
+• Native internal employee                           • External partner / vendor
+• UPN: sarah@contoso.com                             • UPN: bob_partner.com#EXT#@contoso.com
+• Full directory read rights                         • Highly restricted directory rights
+• Home tenant: Contoso                               • Home tenant: Partner company (B2B)
+</code></pre>
+<h3 id="1-member-users">1. Member Users</h3>
+<ul>
+<li><strong>Who they are:</strong> Permanent employees of the organization.</li>
+<li><strong>User Principal Name (UPN):</strong> Matches the company domain (<code>user@contoso.com</code>).</li>
+<li><strong>Permissions:</strong> By default, Members have broad directory read permissions: they can search the Global Address List, view other employees, see group memberships, and view registered applications.</li>
+</ul>
+<h3 id="2-guest-users-b2b-collaboration">2. Guest Users (B2B Collaboration)</h3>
+<ul>
+<li><strong>Who they are:</strong> External contractors, auditors, suppliers, or partners (e.g., <code>auditor@deloitte.com</code>).</li>
+<li><strong>How B2B Works:</strong>
+  1. An admin invites <code>auditor@deloitte.com</code> to the Contoso tenant.
+  2. Entra ID creates a user object with <code>UserType: Guest</code>.
+  3. Notice the UPN format: <code>auditor_deloitte.com#EXT#@contoso.onmicrosoft.com</code>.
+  4. <strong>Authentication:</strong> The auditor logs in using <strong>their own Deloitte password and Deloitte MFA</strong>. Deloitte’s identity provider signs a token, and Contoso’s tenant cryptographically trusts it. Contoso never knows or stores the auditor’s password!</li>
+<li><strong>Permissions:</strong> By default, Guests have <strong>restricted permissions</strong>. They cannot browse the full list of company users or groups; they can only access the specific apps, files, or Azure resources explicitly shared with them.</li>
+</ul>
+<hr />
+<h2 id="4-external-identities-b2b-vs-b2c">4. External Identities: B2B vs. B2C</h2>
+<p>All external collaboration is unified under the <strong>Microsoft Entra External ID</strong> portfolio, but serves two radically different audiences:</p>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">🏢 B2B Collaboration</th>
+<th style="text-align: left;">🛒 B2C / Customer External ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Target Audience</strong></td>
+<td style="text-align: left;">Business partners, vendors, contractors</td>
+<td style="text-align: left;">Millions of retail consumers / mobile app shoppers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Where Users Live</strong></td>
+<td style="text-align: left;">Directly inside your <strong>Corporate Tenant</strong> as <code>Guest</code></td>
+<td style="text-align: left;">Inside a <strong>Separate, Isolated Customer Directory</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Identity Providers</strong></td>
+<td style="text-align: left;">Other Entra ID tenants, Google Workspace, SAML</td>
+<td style="text-align: left;">Google, Facebook, Apple, local email/password</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Access Scope</strong></td>
+<td style="text-align: left;">Corporate apps (Teams, SharePoint, Azure Portal)</td>
+<td style="text-align: left;">Only your specific consumer-facing website/app</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Why Separated?</strong></td>
+<td style="text-align: left;">Partners collaborate with internal staff</td>
+<td style="text-align: left;"><strong>Never mix 5 million shoppers with corporate payroll!</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="how-social-logins-work-google-facebook">How Social Logins Work (Google / Facebook)</h3>
+<p>Google and Facebook <strong>do not receive Service Principals</strong> in your tenant. They are registered under <strong>External Identity Providers</strong>:
+1. You register an OAuth app in Google Cloud Console or Meta for Developers to obtain a <code>Client ID</code> and <code>Client Secret</code>.
+2. You save those credentials in Entra External ID under <em>Identity Providers</em>.
+3. When a user clicks <em>&ldquo;Sign in with Google&rdquo;</em>, Entra redirects their browser to Google’s OAuth endpoints. Google authenticates the user and returns an OpenID Connect (OIDC) token. Entra verifies Google&rsquo;s cryptographic signature and issues an internal session token.</p>
+<hr />
+<h2 id="5-applications-app-registration-vs-service-principal">5. Applications: App Registration vs. Service Principal</h2>
+<p>This maps directly to classical Object-Oriented Programming:</p>
+<p>$$\mathbf{App\ Registration} = \mathbf{The\ Class\ (Global\ Blueprint)}$$
+$$\mathbf{Service\ Principal} = \mathbf{The\ Object\ Instance\ (Local\ Tenant\ Identity)}$$</p>
+<pre><code>                   [ App Registration ]
+                   &quot;InventoryApp v1&quot;
+                   (Created in Dev Tenant)
+                             │
+            ┌────────────────┴────────────────┐
+            ▼                                 ▼
+   [ Service Principal ]             [ Service Principal ]
+    in Contoso Tenant                 in Fabrikam Tenant
+   (Local Object ID: a1b2...)        (Local Object ID: c3d4...)
+   (Has Contoso Storage RBAC)        (Has Fabrikam SQL RBAC)
+</code></pre>
+<ol>
+<li><strong>App Registration (The Blueprint):</strong> The master definition of the application (Client ID, Redirect URIs, permissions requested).</li>
+<li><strong>Service Principal (The Local Enterprise Account):</strong> An application cannot type passwords or answer phone MFA. Entra ID instantiates a <strong>Service Principal</strong> in each tenant where the app runs. It has an <strong>Object ID</strong>, its own audit logs, and is the actual entity that receives Azure RBAC roles in <em>Access Control (IAM)</em>.</li>
+<li><strong>Security Principal (Umbrella Term):</strong> Any entity that can be assigned an Azure role:
+   $$\mathbf{Security\ Principal} \in {\text{User},\ \text{Group},\ \text{Service Principal},\ \text{Managed Identity}}$$</li>
+</ol>
+<hr />
+<h2 id="6-single-tenant-vs-multi-tenant-applications">6. Single-Tenant vs. Multi-Tenant Applications</h2>
+<pre><code>                         [ App Registration ]
+                                  │
+         ┌────────────────────────┴────────────────────────┐
+         ▼                                                 ▼
+   SINGLE-TENANT                                     MULTI-TENANT
+&quot;Accounts in this directory only&quot;             &quot;Accounts in ANY Entra ID directory&quot;
+• Used for internal corporate apps            • Used when building commercial SaaS
+• Microsoft blocks external users             • Users from Nike, Amazon, or Contoso
+  at the login screen                         • 1 App Registration ──► Many Service Principals
+</code></pre>
+<ul>
+<li><strong>Single-Tenant (Default):</strong> Only users inside the registering directory can authenticate. If <code>bob@external.com</code> tries to sign in, Microsoft blocks them at the door. (Best for internal company portals like <code>payroll.mycompany.com</code>).</li>
+<li><strong>Multi-Tenant:</strong> Users from <strong>ANY</strong> Microsoft Entra ID tenant in the world can authenticate against their home tenant and access the app. (Best for commercial SaaS software like Zoom, Slack, Snowflake).</li>
+</ul>
+<hr />
+<h2 id="7-permissions-delegated-vs-application-oauth-20">7. Permissions: Delegated vs. Application (OAuth 2.0)</h2>
+<pre><code>                            [ API Request to Azure ]
+                                       │
+           ┌───────────────────────────┴───────────────────────────┐
+           ▼                                                       ▼
+   DELEGATED PERMISSIONS                               APPLICATION PERMISSIONS
+  (&quot;On Behalf Of a User&quot;)                                (&quot;Direct App Identity&quot;)
+• Human user is actively signed in.                   • No human user present.
+• User proves identity with MFA.                      • Background daemons, nightly crons.
+• Token contains: appid + user oid.                   • Token contains: appid only.
+• Effective Rights = Intersection                     • Effective Rights = Full assigned
+  (App Rights ∩ User Rights).                           application role permissions.
+• App can NEVER exceed the user's rights!             • Requires Tenant Admin Consent!
+</code></pre>
+<ul>
+<li><strong>Delegated Permissions:</strong> Used when a human is present. The token carries both the Application ID and the User ID. The app’s effective permissions are strictly the <strong>intersection</strong> of what the app is granted AND what the signed-in user is permitted to do.</li>
+<li><strong>Application Permissions:</strong> Used for headless background services, daemons, and sync scripts running without a user. The app operates with full assigned authority and strictly mandates <strong>Admin Consent</strong> from a Global Administrator.</li>
+</ul>
+<hr />
+<h2 id="8-machine-credentials-how-service-principals-authenticate">8. Machine Credentials: How Service Principals Authenticate</h2>
+<ol>
+<li><strong>Client Secret (Symmetric Key):</strong> A randomized alphanumeric password generated in the portal. High security risk if committed to code repositories.</li>
+<li><strong>Certificate (Asymmetric Cryptography):</strong> An X.509 public/private key pair. Public key uploaded to Entra ID; private key held securely on the server.</li>
+<li><strong>Federated Credentials (Workload Identity Federation - 2026 Gold Standard):</strong> <strong>Zero stored secrets!</strong> Direct OpenID Connect (OIDC) trust established with <strong>GitHub Actions</strong>, <strong>GitLab</strong>, or <strong>Kubernetes</strong>. GitHub sends a signed token to Entra ID; Entra ID exchanges it for a 1-hour Azure access token. No passwords ever exist to be stolen!</li>
+</ol>
+<hr />
+<h2 id="9-managed-identities-for-azure-resources">9. Managed Identities for Azure Resources</h2>
+<p>A <strong>Managed Identity IS a Service Principal</strong> whose credential lifecycle is 100% managed by Azure behind the scenes. Zero secrets stored in configuration files!</p>
+<pre><code>       [ Azure Virtual Machine ]
+                  │
+                  │ 1. Asks local metadata endpoint for a token:
+                  │    http://169.254.169.254/metadata/identity/oauth2/token
+                  ▼
+       [ Azure Internal IMDS ]
+                  │
+                  │ 2. Communicates over private fabric to Entra ID
+                  ▼
+       [ Microsoft Entra ID ]
+                  │
+                  │ 3. Issues short-lived Access Token back to VM
+                  ▼
+       [ Azure Virtual Machine ]
+                  │
+                  │ 4. Uses token to call Azure Key Vault or Storage!
+                  ▼
+       [ Azure Storage Account ]
+</code></pre>
+<h3 id="system-assigned-vs-user-assigned-managed-identities">System-Assigned vs. User-Assigned Managed Identities</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">⚙️ System-Assigned</th>
+<th style="text-align: left;">👤 User-Assigned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Creation</strong></td>
+<td style="text-align: left;">Enabled directly via a toggle on the Azure resource</td>
+<td style="text-align: left;">Created as an independent, standalone Azure resource</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Relationship</strong></td>
+<td style="text-align: left;"><strong>1-to-1</strong> (Tied strictly to that single resource)</td>
+<td style="text-align: left;"><strong>1-to-Many</strong> (Can be attached to multiple resources)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Lifecycle</strong></td>
+<td style="text-align: left;"><strong>Tied:</strong> If you delete the VM, Azure deletes the identity!</td>
+<td style="text-align: left;"><strong>Independent:</strong> Deleting the VM leaves the identity intact.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Best Used For</strong></td>
+<td style="text-align: left;">Single workloads with unique permissions</td>
+<td style="text-align: left;">Fleets of identical VMs (e.g. a 20-node web scale set)</td>
+</tr>
+</tbody>
+</table></div>
+
+      <div class="page-footer">
+        <div>AZ-104 Exam Hard-Mode Gauntlet & Architecture Series • 2026 Standards</div>
+        <div><a href="index.html" style="color:var(--accent);">← Return to Master Command Hub</a></div>
+      </div>
+    </main>
+
+  </div>
+
+</body>
+</html>

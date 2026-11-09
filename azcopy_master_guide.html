@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0284c7">
+  <title>AZ-104 AzCopy v10 Master Guide</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1.5rem 1rem 4rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin-top: 2rem; margin-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; color: var(--accent-indigo); margin-top: 1.4rem; margin-bottom: 0.5rem; }
+    h4 { font-size: 0.95rem; font-weight: 700; color: #334155; margin-top: 1rem; margin-bottom: 0.4rem; }
+    p { margin-bottom: 1rem; font-size: 0.925rem; color: #334155; }
+    ul, ol { margin-left: 1.5rem; margin-bottom: 1.2rem; font-size: 0.925rem; color: #334155; }
+    li { margin-bottom: 0.35rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1.2rem 0; overflow-x: auto; display: block; }
+    th, td { padding: 0.65rem 0.85rem; text-align: left; border: 1px solid var(--border); }
+    th { background: #f8fafc; font-weight: 700; color: #1e293b; }
+    tr:nth-child(even) { background: #fbfcfe; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; color: #0f172a; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85rem; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 1.15rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1.2rem; }
+    pre code { background: transparent; color: inherit; padding: 0; font-size: 0.85rem; }
+    blockquote { border-left: 4px solid var(--accent-amber); background: #fffbeb; padding: 0.85rem 1.15rem; border-radius: 6px; margin: 1.2rem 0; font-size: 0.875rem; color: #92400e; }
+    hr { border: 0; height: 1px; background: var(--border); margin: 2rem 0; }
+
+    @media (max-width: 768px) {
+      body { padding: 0.75rem 0.5rem 3.5rem; }
+      .content { padding: 1.25rem 1rem; border-radius: 10px; }
+      h1 { font-size: 1.4rem; }
+      h2 { font-size: 1.15rem; margin-top: 1.5rem; }
+      h3 { font-size: 1rem; }
+      p, ul, ol { font-size: 0.875rem; }
+      pre { padding: 0.85rem; font-size: 0.8rem; }
+      table { font-size: 0.775rem; }
+      th, td { padding: 0.5rem 0.6rem; }
+      .nav-bar { padding: 0.5rem 0.85rem; font-size: 0.8rem; border-radius: 9999px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Back to Master Command Hub</a>
+      <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">AZ-104 Study Engine</span>
+      <a href="error_journal.md" target="_blank">Open Error Journal ↗</a>
+    </div>
+    <div class="content">
+      <h1 id="az-104-definitive-master-guide-azcopy-v10">AZ-104 Definitive Master Guide: AzCopy v10</h1>
+<p><strong>Authoritative, 360-Degree Reference for Microsoft Certified Azure Administrator Associate (AZ-104)</strong><br />
+<em>Based strictly on official Microsoft Learn technical documentation and audited against current AZ-104 exam blueprints.</em></p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-core-fundamentals--architecture">Core Fundamentals &amp; Architecture</a></li>
+<li><a href="#2-installation-distribution--azure-cloud-shell">Installation, Distribution &amp; Azure Cloud Shell</a></li>
+<li><a href="#3-authentication--authorization-deep-dive">Authentication &amp; Authorization Deep Dive</a></li>
+<li><a href="#4-sas-token-parameter-anatomy-the-exam-anatomy">SAS Token Parameter Anatomy (The Exam Anatomy)</a></li>
+<li><a href="#5-command-verbs--core-syntax">Command Verbs &amp; Core Syntax</a></li>
+<li><a href="#6-the-source-to-destination-matrix">The Source-to-Destination Matrix</a></li>
+<li><a href="#7-trailing-slash--url-wildcard-rules">Trailing Slash &amp; URL Wildcard Rules</a></li>
+<li><a href="#8-comprehensive-flag-reference-for-az-104">Comprehensive Flag Reference for AZ-104</a></li>
+<li><a href="#9-azcopy-copy-vs-azcopy-sync-the-deep-dive"><code>azcopy copy</code> vs <code>azcopy sync</code> (The Deep Dive)</a></li>
+<li><a href="#10-job-engine-resume-mechanics--logging">Job Engine, Resume Mechanics &amp; Logging</a></li>
+<li><a href="#11-performance-tuning--environment-variables">Performance Tuning &amp; Environment Variables</a></li>
+<li><a href="#12-network-routing-tcp-445-smb-vs-tcp-443-https-rest">Network Routing: TCP 445 (SMB) vs TCP 443 (HTTPS REST)</a></li>
+<li><a href="#13-data-migration-decision-matrix-azcopy-vs-all-alternatives">Data Migration Decision Matrix: AzCopy vs All Alternatives</a></li>
+<li><a href="#14-the-9-classic-az-104-exam-scenarios--traps">The 9 Classic AZ-104 Exam Scenarios &amp; Traps</a></li>
+<li><a href="#15-the-top-10-fatal-traps-quick-reference-card">The Top 10 "Fatal Traps" Quick-Reference Card</a></li>
+</ol>
+<hr />
+<h2 id="1-core-fundamentals-architecture">1. Core Fundamentals &amp; Architecture</h2>
+<h3 id="what-is-azcopy">What is AzCopy?</h3>
+<p>AzCopy (specifically <strong>AzCopy v10</strong>, the current active major version) is Microsoft's official, high-performance command-line utility written in <strong>Go</strong>. It is designed specifically for high-throughput, parallelized data transfer to, from, and between Microsoft Azure Storage services.</p>
+<h3 id="key-architectural-characteristics">Key Architectural Characteristics</h3>
+<ul>
+<li><strong>Stateless &amp; Self-Contained:</strong> Distributed as a single compiled binary with zero external runtime dependencies (.NET Framework or runtime libraries are <strong>not</strong> required).</li>
+<li><strong>Multi-Platform:</strong> Native support on Windows (x64/x86/ARM64), Linux (x64/ARM64), and macOS.</li>
+<li><strong>Asynchronous Multi-Threaded Engine:</strong> Built-in auto-scaling concurrency that saturates available network pipes by opening simultaneous HTTP/HTTPS connections.</li>
+<li><strong>Server-to-Server (S2S) Direct Transfer:</strong> When transferring data between two cloud storage accounts (or from Amazon S3 / Google Cloud Storage to Azure Blob), AzCopy instructs Azure Storage to execute a direct <strong>Put Block From URL</strong> / <strong>Put Page From URL</strong> copy via Microsoft's cloud backbone. Data is <strong>never</strong> downloaded to the local client machine executing the AzCopy command.</li>
+<li><strong>Storage Services Supported:</strong></li>
+<li><strong>Azure Blob Storage:</strong> Block Blobs, Page Blobs (VM VHDs), Append Blobs.</li>
+<li><strong>Azure Data Lake Storage (ADLS) Gen2:</strong> Full hierarchical namespace (HNS) support with POSIX ACLs.</li>
+<li><strong>Azure Files:</strong> Full SMB/NFS share migration with NTFS metadata preservation.</li>
+<li><strong>External Object Stores (Source Only):</strong> Amazon Web Services (AWS) S3 buckets and Google Cloud Storage (GCS) buckets (can only transfer into Azure Blob Storage).</li>
+<li><strong>Services NOT Supported:</strong></li>
+<li><strong>Azure Table Storage</strong> and <strong>Azure Queue Storage</strong> are <strong>NOT</strong> supported in AzCopy v10 (support was retired after legacy v8).</li>
+</ul>
+<hr />
+<h2 id="2-installation-distribution-azure-cloud-shell">2. Installation, Distribution &amp; Azure Cloud Shell</h2>
+<h3 id="distribution-installation">Distribution &amp; Installation</h3>
+<ul>
+<li>AzCopy does <strong>not</strong> use an <code>.msi</code>, <code>.deb</code>, or package-manager installer.</li>
+<li>It is distributed as a compressed <code>.zip</code> (Windows) or <code>.tar.gz</code> (Linux/macOS) archive containing a single executable (<code>azcopy.exe</code> or <code>azcopy</code>).</li>
+<li>System-wide configuration is achieved simply by placing the executable into any directory listed in the system's <code>PATH</code> environment variable.</li>
+</ul>
+<h3 id="azure-cloud-shell-pre-installation-high-yield-exam-fact">Azure Cloud Shell Pre-Installation (High-Yield Exam Fact)</h3>
+<ul>
+<li><strong>AzCopy v10 is pre-installed and automatically updated in Azure Cloud Shell</strong> (both Bash and PowerShell environments).</li>
+<li><em>Exam Scenario:</em> If an administrative question asks how to run an AzCopy transfer script immediately from a browser without installing software, downloading binaries, or modifying local machine PATH variables, the answer is <strong>Azure Cloud Shell</strong>.</li>
+</ul>
+<h3 id="relationship-with-azure-storage-explorer">Relationship with Azure Storage Explorer</h3>
+<ul>
+<li><strong>Azure Storage Explorer</strong> is Microsoft's free GUI desktop application for managing storage.</li>
+<li>Storage Explorer uses <strong>AzCopy v10 under the hood</strong> as its primary copy/transfer engine for all high-throughput blob and file operations. Non-technical users requiring GUI drag-and-drop operations leverage AzCopy through Storage Explorer.</li>
+</ul>
+<hr />
+<h2 id="3-authentication-authorization-deep-dive">3. Authentication &amp; Authorization Deep Dive</h2>
+<p>Microsoft AZ-104 rigorously tests the specific authorization method used for each storage service:</p>
+<pre><code>                              ┌── Authentication Method ──┐
+                              │                           │
+                     Microsoft Entra ID              SAS Token
+                     (Identity-Based)             (Signed Query)
+                              │                           │
+          ✅ Azure Blob (Block/Page/Append)       ✅ Azure Blob
+          ✅ ADLS Gen2 (Hierarchical)             ✅ ADLS Gen2
+          ✅ Azure Files (REST Privileged Role)   ✅ Azure Files (Standard)
+</code></pre>
+<h3 id="method-1-microsoft-entra-id-oauth-20-identity-based">Method 1: Microsoft Entra ID (OAuth 2.0 / Identity-Based)</h3>
+<p>Used when assigning least-privilege enterprise identity roles without distributing shared secret strings.</p>
+<h4 id="how-to-authenticate">How to Authenticate:</h4>
+<pre><code class="language-bash"># Interactive browser login:
+azcopy login
+
+# Tenant-specific login:
+azcopy login --tenant-id &quot;&lt;tenant-id&gt;&quot;
+
+# Service Principal with Client Secret:
+export AZCOPY_SPA_CLIENT_SECRET=&quot;&lt;client-secret&gt;&quot;
+azcopy login --service-principal --application-id &quot;&lt;app-id&gt;&quot; --tenant-id &quot;&lt;tenant-id&gt;&quot;
+
+# Service Principal with Certificate:
+azcopy login --service-principal --application-id &quot;&lt;app-id&gt;&quot; --cert-path &quot;/path/to/cert.pem&quot; --tenant-id &quot;&lt;tenant-id&gt;&quot;
+
+# Managed Identity (VM or Container with System-assigned or User-assigned identity):
+azcopy login --identity
+azcopy login --identity --identity-client-id &quot;&lt;client-id&gt;&quot;
+</code></pre>
+<h4 id="mandatory-azure-rbac-roles-required">Mandatory Azure RBAC Roles Required:</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Storage Target</th>
+<th style="text-align: left;">Permitted Built-In Data-Plane Roles</th>
+<th style="text-align: left;">Forbidden / Ineffective Roles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Azure Blob Storage / ADLS Gen2</strong></td>
+<td style="text-align: left;">• <code>Storage Blob Data Owner</code><br>• <strong><code>Storage Blob Data Contributor</code></strong> <em>(Standard)</em><br>• <code>Storage Blob Data Reader</code></td>
+<td style="text-align: left;">❌ <code>Owner</code><br>❌ <code>Contributor</code><br>❌ <code>Reader</code> <em>(ARM Control Plane only)</em></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Files (File Shares)</strong></td>
+<td style="text-align: left;">• <strong><code>Storage File Data Privileged Contributor</code></strong><br>• <code>Storage File Data Privileged Reader</code></td>
+<td style="text-align: left;">❌ <code>Storage File Data SMB Share Contributor</code><br>❌ <code>Storage File Data SMB Share Reader</code><br><em>(SMB client mount roles do NOT work for REST API transfers!)</em></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>[!IMPORTANT]
+<strong>The Azure Files Entra ID Nuance on the Exam:</strong>
+1. Standard SMB share roles (<code>Storage File Data SMB Share Contributor / Reader</code>) are for <strong>SMB protocol drive mounting only</strong> and fail in AzCopy.
+2. AzCopy operates over the <strong>File REST API</strong>, which requires the specialized <strong><code>Storage File Data Privileged Contributor</code></strong> (for uploads/deletions) or <strong><code>Storage File Data Privileged Reader</code></strong> (for downloads) roles.
+3. <em>Exam Duality:</em> Older questions in the AZ-104 pool frequently present <strong>SAS Token</strong> as the only valid answer for Azure Files. Modern questions test whether you know to select the <strong>"Privileged"</strong> role rather than the "SMB Share" role.</p>
+</blockquote>
+<hr />
+<h3 id="method-2-shared-access-signature-sas-tokens">Method 2: Shared Access Signature (SAS) Tokens</h3>
+<p>A SAS token is a signed URI query string granting restricted access rights for a specific timeframe.</p>
+<ul>
+<li><strong>Usage:</strong> Appended directly to the resource URI in the command line (always wrap the URL in quotes to prevent the command line shell from interpreting <code>&amp;</code> or <code>?</code>):
+  <code>bash
+  azcopy copy "C:\data" "https://mystorage.blob.core.windows.net/mycontainer?&lt;SAS-Token&gt;" --recursive</code></li>
+<li><strong>Supported SAS Types:</strong></li>
+<li><strong>Account SAS:</strong> Grants access to services at the account level (Blob, File, Queue, Table).</li>
+<li><strong>Service SAS:</strong> Grants access to specific containers, directories, or individual blobs/file shares.</li>
+<li><strong>User Delegation SAS:</strong> Secured by Microsoft Entra credentials rather than storage account keys (Blob and ADLS Gen2 only). Requires the <strong><code>Storage Blob Data Delegator</code></strong> role.</li>
+</ul>
+<hr />
+<h3 id="method-3-storage-account-access-keys-shared-key">Method 3: Storage Account Access Keys (Shared Key)</h3>
+<ul>
+<li><strong>The CLI Rule:</strong> There is <strong>NO</strong> command-line parameter for account keys (e.g., <code>--account-key</code> does <strong>not</strong> exist).</li>
+<li><strong>The Native Environment Variable Method:</strong> AzCopy v10 natively supports Account Key authorization via environment variables:
+  ```bash
+  # Windows CMD:
+  set AZCOPY_ACCOUNT_NAME=mystorageaccount
+  set AZCOPY_ACCOUNT_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY==</li>
+</ul>
+<p># Linux / macOS / Bash:
+  export AZCOPY_ACCOUNT_NAME="mystorageaccount"
+  export AZCOPY_ACCOUNT_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY=="
+  ```
+  When these variables are set in the session, AzCopy authorizes against the storage account directly without requiring a SAS token.
+* <strong>The SAS Generation Fallback:</strong> If not using environment variables, you must generate a SAS token signed with the key and pass the SAS token in the URL.</p>
+<hr />
+<h3 id="method-4-anonymous-public-read-access">Method 4: Anonymous / Public Read Access</h3>
+<ul>
+<li>Works <strong>only</strong> if the storage account has <code>allowBlobPublicAccess: true</code> and the container has <code>Container</code> or <code>Blob</code> anonymous access enabled.</li>
+<li>Allows read/download operations from <code>https://&lt;account&gt;.blob.core.windows.net/&lt;container&gt;/&lt;blob&gt;</code> with zero credentials.</li>
+</ul>
+<hr />
+<h2 id="4-sas-token-parameter-anatomy-the-exam-anatomy">4. SAS Token Parameter Anatomy (The Exam Anatomy)</h2>
+<p>On the AZ-104 exam, Microsoft frequently presents raw SAS URLs and asks candidates why an upload failed or which parameter must be corrected:</p>
+<pre><code>https://mystorage.blob.core.windows.net/data?sv=2024-11-04&amp;ss=bf&amp;srt=co&amp;sp=rwdlacx&amp;se=2026-12-31T23:59:59Z&amp;st=2026-01-01T00:00:00Z&amp;spr=https&amp;sip=198.51.100.0/24&amp;sig=EXAMPLE
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Valid Values</th>
+<th style="text-align: left;">Exam Validation Rule / Trap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>sv</code></strong></td>
+<td style="text-align: left;">Signed Version</td>
+<td style="text-align: left;">e.g., <code>2024-11-04</code></td>
+<td style="text-align: left;">Storage API version.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>ss</code></strong></td>
+<td style="text-align: left;">Signed Services</td>
+<td style="text-align: left;"><code>b</code> (Blob), <code>f</code> (File), <code>q</code> (Queue), <code>t</code> (Table)</td>
+<td style="text-align: left;"><strong>Account SAS only.</strong> If copying to Azure Files, <code>ss</code> <strong>must contain <code>f</code></strong>. If <code>ss=b</code>, File transfers fail.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>srt</code></strong></td>
+<td style="text-align: left;">Signed Resource Types</td>
+<td style="text-align: left;"><code>s</code> (Service), <code>c</code> (Container/Share), <code>o</code> (Object/File)</td>
+<td style="text-align: left;"><strong>Account SAS only.</strong> Uploading folder trees requires <strong>both <code>c</code> and <code>o</code></strong> (<code>srt=co</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>sp</code></strong></td>
+<td style="text-align: left;">Signed Permissions</td>
+<td style="text-align: left;"><code>r</code>, <code>w</code>, <code>d</code>, <code>l</code>, <code>a</code>, <code>c</code></td>
+<td style="text-align: left;"><strong>Uploads:</strong> Require <strong>Write (<code>w</code>)</strong>, <strong>Add (<code>a</code>)</strong>, and <strong>Create (<code>c</code>)</strong>.<br><strong>Recursive/Tree Copy:</strong> Requires <strong>List (<code>l</code>)</strong> on source.<br><strong>Delete/Sync:</strong> Requires <strong>Delete (<code>d</code>)</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>se</code></strong></td>
+<td style="text-align: left;">Signed Expiry</td>
+<td style="text-align: left;">ISO 8601 UTC timestamp</td>
+<td style="text-align: left;">If expired, transfer drops. Resuming requires supplying a fresh token via <code>--source-sas</code> / <code>--destination-sas</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>st</code></strong></td>
+<td style="text-align: left;">Signed Start Time</td>
+<td style="text-align: left;">ISO 8601 UTC timestamp</td>
+<td style="text-align: left;"><strong>Clock Skew Trap:</strong> If set to exact current time, client clock skew can cause immediate <code>403 Forbidden</code>. Best practice: set 15 minutes in past.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>sip</code></strong></td>
+<td style="text-align: left;">Allowed IP Address</td>
+<td style="text-align: left;">Single IP or CIDR</td>
+<td style="text-align: left;">If client machine runs from an IP outside this CIDR, AzCopy fails with <code>403 Authentication Error</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>spr</code></strong></td>
+<td style="text-align: left;">Allowed Protocol</td>
+<td style="text-align: left;"><code>https</code> or <code>https,http</code></td>
+<td style="text-align: left;">If <code>spr=https</code> and URL uses <code>http://</code>, connection is instantly terminated.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>sr</code></strong></td>
+<td style="text-align: left;">Signed Resource</td>
+<td style="text-align: left;"><code>b</code> (Blob), <code>c</code> (Container), <code>d</code> (Dir), <code>s</code> (Share), <code>f</code> (File)</td>
+<td style="text-align: left;"><strong>Service SAS only.</strong> Identifies scope.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>sig</code></strong></td>
+<td style="text-align: left;">Signature</td>
+<td style="text-align: left;">HMAC-SHA256 string</td>
+<td style="text-align: left;">Cryptographic hash validating the token hasn't been tampered with.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-command-verbs-core-syntax">5. Command Verbs &amp; Core Syntax</h2>
+<pre><code class="language-bash">azcopy &lt;verb&gt; &lt;source&gt; &lt;destination&gt; [flags]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Verb</th>
+<th style="text-align: left;">Purpose</th>
+<th style="text-align: left;">Primary Syntax Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>copy</code></strong></td>
+<td style="text-align: left;">Transfers files/directories between source and destination (Local $\leftrightarrow$ Azure, or Cloud $\leftrightarrow$ Cloud).</td>
+<td style="text-align: left;"><code>azcopy copy "src" "dst" [flags]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>sync</code></strong></td>
+<td style="text-align: left;">One-way directory synchronization (mirrors destination to match source).</td>
+<td style="text-align: left;"><code>azcopy sync "src" "dst" [flags]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>remove</code></strong> (or <code>rm</code>)</td>
+<td style="text-align: left;">Deletes blobs, directories, or files from Azure storage.</td>
+<td style="text-align: left;"><code>azcopy rm "https://&lt;account&gt;.blob.../&lt;container&gt;/file.txt?&lt;SAS&gt;"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>list</code></strong></td>
+<td style="text-align: left;">Lists entities inside a container, directory, or file share.</td>
+<td style="text-align: left;"><code>azcopy list "https://&lt;account&gt;.blob.../&lt;container&gt;?&lt;SAS&gt;"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>make</code></strong> (or <code>mk</code>)</td>
+<td style="text-align: left;">Creates a new container in Blob storage or a new file share in Azure Files.</td>
+<td style="text-align: left;"><code>azcopy make "https://&lt;account&gt;.blob.../newcontainer?&lt;SAS&gt;"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>jobs</code></strong></td>
+<td style="text-align: left;">Manages transfer operations (<code>list</code>, <code>show</code>, <code>resume</code>, <code>clean</code>).</td>
+<td style="text-align: left;"><code>azcopy jobs resume &lt;job-id&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>env</code></strong></td>
+<td style="text-align: left;">Displays all AzCopy environment variables and their active values.</td>
+<td style="text-align: left;"><code>azcopy env</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>doc</code></strong></td>
+<td style="text-align: left;">Generates offline reference documentation in Markdown format.</td>
+<td style="text-align: left;"><code>azcopy doc --output-type=md</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-the-source-to-destination-matrix">6. The Source-to-Destination Matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Source</th>
+<th style="text-align: left;">Destination</th>
+<th style="text-align: left;">Tool Verb</th>
+<th style="text-align: left;">Architectural Mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Local Disk</strong></td>
+<td style="text-align: left;">Azure Blob Storage</td>
+<td style="text-align: left;"><code>copy</code> or <code>sync</code></td>
+<td style="text-align: left;">Network upload.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Blob Storage</strong></td>
+<td style="text-align: left;">Local Disk</td>
+<td style="text-align: left;"><code>copy</code> or <code>sync</code></td>
+<td style="text-align: left;">Network download.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Local Disk</strong></td>
+<td style="text-align: left;">Azure Files (File Share)</td>
+<td style="text-align: left;"><code>copy</code> or <code>sync</code></td>
+<td style="text-align: left;">Network upload (SAS or Privileged Entra ID).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Files</strong></td>
+<td style="text-align: left;">Local Disk</td>
+<td style="text-align: left;"><code>copy</code> or <code>sync</code></td>
+<td style="text-align: left;">Network download.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Blob Storage</strong></td>
+<td style="text-align: left;">Azure Blob Storage</td>
+<td style="text-align: left;"><code>copy</code> or <code>sync</code></td>
+<td style="text-align: left;"><strong>Direct S2S Cloud Copy</strong> (Azure backbone via Put Block From URL). No local download.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Files</strong></td>
+<td style="text-align: left;">Azure Files</td>
+<td style="text-align: left;"><code>copy</code> or <code>sync</code></td>
+<td style="text-align: left;">Direct S2S Cloud Copy.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Blob Storage</strong></td>
+<td style="text-align: left;">Azure Files (or vice-versa)</td>
+<td style="text-align: left;"><code>copy</code></td>
+<td style="text-align: left;">Direct S2S Cloud Copy. (<code>sync</code> between Blob and Files is unsupported).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Amazon S3 Bucket</strong></td>
+<td style="text-align: left;">Azure Blob Storage</td>
+<td style="text-align: left;"><code>copy</code></td>
+<td style="text-align: left;">Direct S2S Cloud Copy. Requires <code>AWS_ACCESS_KEY_ID</code> &amp; <code>AWS_SECRET_ACCESS_KEY</code>. Destination must be Blob Storage.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Google Cloud Storage</strong></td>
+<td style="text-align: left;">Azure Blob Storage</td>
+<td style="text-align: left;"><code>copy</code></td>
+<td style="text-align: left;">Direct S2S Cloud Copy. Requires GCP Storage Access Keys.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-trailing-slash-url-wildcard-rules">7. Trailing Slash &amp; URL Wildcard Rules</h2>
+<h3 id="local-vs-remote-wildcard-rules">Local vs Remote Wildcard Rules:</h3>
+<ul>
+<li><strong>Local paths:</strong> Wildcards (<code>*</code>) can appear anywhere (e.g., <code>C:\logs\2026\*.log</code>).</li>
+<li><strong>Remote Azure URLs (Microsoft Learn Specification):</strong> Wildcards in URLs are strictly restricted to <strong>two locations only</strong>:</li>
+<li>Immediately following the final forward slash (<code>/</code>) of a URL:<br />
+<code>https://&lt;account&gt;.blob.core.windows.net/&lt;container&gt;/folder/*?&lt;SAS&gt;</code></li>
+<li>Inside a container name <em>only</em> when the URL refers strictly to containers:<br />
+<code>https://&lt;account&gt;.blob.core.windows.net/container*?&lt;SAS&gt;</code></li>
+<li><strong>The Fatal Trap:</strong> Placing wildcards in the middle of virtual directories (e.g., <code>https://.../container/2026*/*.pdf</code>) is <strong>INVALID</strong> and causes syntax failure. To filter file types in remote hierarchies, you <strong>must</strong> use <code>--include-pattern "*.pdf"</code>.</li>
+</ul>
+<h3 id="directory-hierarchy-mapping">Directory Hierarchy Mapping:</h3>
+<pre><code class="language-bash"># 1. Source without wildcard:
+azcopy copy &quot;C:\reports&quot; &quot;https://mystorage.blob.core.windows.net/finance?&lt;SAS&gt;&quot; --recursive
+</code></pre>
+<ul>
+<li><strong>Result:</strong> Creates a virtual directory named <code>reports</code> inside the container: <code>finance/reports/file1.txt</code>.</li>
+</ul>
+<pre><code class="language-bash"># 2. Source with wildcard '/*':
+azcopy copy &quot;C:\reports\*&quot; &quot;https://mystorage.blob.core.windows.net/finance?&lt;SAS&gt;&quot; --recursive
+</code></pre>
+<ul>
+<li><strong>Result:</strong> Copies the <em>contents</em> of <code>reports</code> directly into the root of <code>finance</code>: <code>finance/file1.txt</code> (no <code>reports</code> subfolder created).</li>
+</ul>
+<hr />
+<h2 id="8-comprehensive-flag-reference-for-az-104">8. Comprehensive Flag Reference for AZ-104</h2>
+<h3 id="1-directory-traversal-flags">1. Directory &amp; Traversal Flags</h3>
+<ul>
+<li><strong><code>--recursive</code></strong> (Boolean):</li>
+<li><strong>Critical Exam Discrepancy:</strong><ul>
+<li>In <strong><code>azcopy copy</code></strong>, <code>--recursive</code> defaults to <strong><code>false</code></strong>. (Omitting it copies only loose root files).</li>
+<li>In <strong><code>azcopy sync</code></strong>, <code>--recursive</code> defaults to <strong><code>true</code></strong>!</li>
+</ul>
+</li>
+<li><strong><code>--follow-symlinks</code></strong> (Boolean, default: <code>false</code>): Resolves and follows symbolic links on local filesystems.</li>
+</ul>
+<h3 id="2-overwrite-dry-run-comparison-flags">2. Overwrite, Dry Run &amp; Comparison Flags</h3>
+<ul>
+<li><strong><code>--overwrite</code></strong> (String, default: <code>true</code>): Supported values: <code>true</code>, <code>false</code>, <code>prompt</code>, <code>ifSourceNewer</code>.</li>
+<li><strong><code>--dry-run</code></strong> (Boolean, default: <code>false</code>): Prints the files that would be copied, synced, or deleted without modifying any data. Essential for migration change-control validation.</li>
+<li><strong><code>--compare-hash</code></strong> (String, default: <code>None</code>): In <code>azcopy sync</code>, compares MD5 hashes (<code>None</code> or <code>MD5</code>) in addition to timestamps.</li>
+</ul>
+<h3 id="3-storage-tiering-blob-types">3. Storage Tiering &amp; Blob Types</h3>
+<ul>
+<li><strong><code>--block-blob-tier</code></strong> (String): Sets tier at upload: <code>Hot</code>, <code>Cool</code>, <code>Cold</code>, <code>Archive</code>.</li>
+<li><strong>The Archive Rehydration Trap:</strong> AzCopy <strong>cannot download or read directly from the Archive tier</strong>. Attempting to copy an archived blob throws an HTTP 409 / <code>BlobArchived</code> error. Blobs must first be <strong>rehydrated</strong> to Hot or Cool tier before AzCopy can transfer them.</li>
+<li><strong><code>--blob-type</code></strong> (String, default: <code>BlockBlob</code>): Supported values: <code>BlockBlob</code>, <code>PageBlob</code>, <code>AppendBlob</code>.</li>
+<li><strong>The VHD Disk Trap:</strong> Uploading an on-premises <code>.vhd</code> for an Azure VM <strong>must</strong> specify <code>--blob-type=PageBlob</code>, must be fixed-size, must be aligned to a <strong>512-byte boundary</strong>, and <strong>must be <code>.vhd</code> (not <code>.vhdx</code>)</strong>.</li>
+<li><strong><code>--s2s-preserve-access-tier</code></strong> (Boolean, default: <code>true</code>): Preserves tier in cloud-to-cloud copies (set to <code>false</code> when targeting Premium Block Blob accounts).</li>
+</ul>
+<h3 id="4-windows-file-share-migration-flags-smb-ntfs">4. Windows File Share Migration Flags (SMB / NTFS)</h3>
+<ul>
+<li><strong><code>--preserve-smb-permissions</code></strong> (Boolean, default: <code>false</code> for Blobs, <code>true</code> for Files): Preserves Windows NTFS Access Control Lists (ACLs). Mandatory for file server migrations to Azure Files.</li>
+<li><strong><code>--preserve-smb-info</code></strong> (Boolean, default: <code>true</code> for SMB-aware transfers): Preserves creation time, last write time, and attribute bits (ReadOnly, Hidden, System).</li>
+<li><strong><code>--preserve-owner</code></strong> (Boolean, default: <code>false</code>): Preserves user and group ownership in ADLS Gen2 alongside POSIX ACLs (<code>--preserve-permissions</code>).</li>
+</ul>
+<h3 id="5-filtering-delimiter-syntax">5. Filtering &amp; Delimiter Syntax</h3>
+<ul>
+<li><strong><code>--include-pattern</code></strong>: Semicolon-separated list of file names/wildcards (e.g. <code>--include-pattern "*.jpg;*.png"</code>).</li>
+<li><strong><code>--exclude-pattern</code></strong>: Semicolon-separated list of file names/wildcards to exclude.</li>
+<li><strong><code>--include-path</code></strong>: Semicolon-separated list of relative directory paths (no wildcards).</li>
+<li><strong><code>--exclude-path</code></strong>: Semicolon-separated list of relative directory paths to exclude.</li>
+<li><strong><code>--include-after</code> / <code>--include-before</code></strong>: Filters by ISO 8601 UTC timestamp (<code>2026-11-01T00:00:00Z</code>).</li>
+<li><strong>Delimiter Difference:</strong></li>
+<li><code>--metadata</code> uses <strong>semicolons</strong>: <code>"dept=finance;audit=2026"</code></li>
+<li><code>--blob-tags</code> uses <strong>ampersands</strong>: <code>"dept=finance&amp;audit=2026"</code></li>
+</ul>
+<h3 id="6-throttling-integrity">6. Throttling &amp; Integrity</h3>
+<ul>
+<li><strong><code>--cap-mbps</code></strong> (Float): Caps transfer throughput in <strong>Megabits per second (Mbps)</strong> to prevent saturating production internet pipes.</li>
+<li><strong><code>--put-md5</code></strong> (Boolean): Computes MD5 hash and stores it in blob <code>Content-MD5</code> header.</li>
+<li><strong><code>--check-md5</code></strong>: Validates MD5 on download (<code>FailIfDifferent</code>, <code>NoCheck</code>, <code>LogOnly</code>).</li>
+</ul>
+<hr />
+<h2 id="9-azcopy-copy-vs-azcopy-sync-the-deep-dive">9. <code>azcopy copy</code> vs <code>azcopy sync</code> (The Deep Dive)</h2>
+<pre><code>┌──────────────────────────────────────────┬──────────────────────────────────────────┐
+│               azcopy copy                │               azcopy sync                │
+├──────────────────────────────────────────┼──────────────────────────────────────────┤
+│ Direction: Point A to Point B            │ Direction: Source MIRRORS to Destination │
+│ Copies everything matching filter        │ Compares timestamps / hashes (Delta)     │
+│ Overwrites identical files by default    │ SKIPS identical, unmodified files        │
+│ Orphan files at destination: KEPT        │ Orphan files: DELETED with               │
+│                                          │ --delete-destination=true                │
+│ Default recursive: FALSE                 │ Default recursive: TRUE                  │
+│ Supports S3 &amp; GCS as source              │ Only supports Local and Azure Storage    │
+└──────────────────────────────────────────┴──────────────────────────────────────────┘
+</code></pre>
+<h3 id="the-delete-destination-flag">The <code>--delete-destination</code> Flag:</h3>
+<ul>
+<li>Values: <code>false</code> (default), <code>true</code>, <code>prompt</code>.</li>
+<li>If <code>true</code>: Deletes files from destination that no longer exist in source.</li>
+<li><em>Exam Rule:</em> Any question requiring destination cleanup / exact mirror synchronization requires <strong><code>azcopy sync ... --delete-destination=true</code></strong>.</li>
+</ul>
+<hr />
+<h2 id="10-job-engine-resume-mechanics-logging">10. Job Engine, Resume Mechanics &amp; Logging</h2>
+<h3 id="architecture">Architecture</h3>
+<ul>
+<li>Generates a unique <strong>Job ID</strong> (GUID) per execution.</li>
+<li>Tracks progress in binary <strong>Plan (<code>.plan</code>)</strong> and <strong>Journal (<code>.jnl</code>)</strong> files saved to:</li>
+<li>Windows: <code>%USERPROFILE%\.azcopy\</code></li>
+<li>Linux/macOS: <code>~/.azcopy/</code></li>
+<li>Chunks are committed transactionally to the plan file.</li>
+</ul>
+<h3 id="job-management-commands">Job Management Commands:</h3>
+<pre><code class="language-bash">azcopy jobs list
+azcopy jobs show &lt;job-id&gt; --with-status=Failed
+azcopy jobs resume &lt;job-id&gt;
+azcopy jobs clean
+</code></pre>
+<h3 id="the-expired-sas-resume-trap-high-yield-exam-trap">The Expired SAS Resume Trap (High-Yield Exam Trap):</h3>
+<ul>
+<li>If an 8-hour transfer fails at 90% and the original SAS token expires, executing <code>azcopy jobs resume &lt;job-id&gt;</code> <strong>FAILS</strong> because AzCopy does not store plaintext secrets in plan files.</li>
+<li><strong>The Solution:</strong> Pass new SAS tokens directly into the resume command:
+  <code>bash
+  azcopy jobs resume &lt;job-id&gt; --source-sas="&lt;new-sas&gt;" --destination-sas="&lt;new-sas&gt;"</code></li>
+</ul>
+<hr />
+<h2 id="11-performance-tuning-environment-variables">11. Performance Tuning &amp; Environment Variables</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Valid Values</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>AZCOPY_CONCURRENCY_VALUE</code></strong></td>
+<td style="text-align: left;"><code>AUTO</code> (default) or Integer</td>
+<td style="text-align: left;">Adjusts concurrent HTTP connections (auto-scales up to 300).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>AZCOPY_BUFFER_GB</code></strong></td>
+<td style="text-align: left;">Float (e.g. <code>4</code>, <code>0.5</code>)</td>
+<td style="text-align: left;">Caps max system RAM AzCopy can use for buffering.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>AZCOPY_JOB_PLAN_LOCATION</code></strong></td>
+<td style="text-align: left;">File path</td>
+<td style="text-align: left;">Redirects <code>.plan</code> files away from OS drive (<code>C:\</code>) to high-capacity storage during massive migrations.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>AZCOPY_ACCOUNT_NAME</code></strong></td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Storage account name for native Account Key authentication.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>AZCOPY_ACCOUNT_KEY</code></strong></td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Storage account access key for native Account Key authentication.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>AZCOPY_AUTO_LOGIN_TYPE</code></strong></td>
+<td style="text-align: left;"><code>SPN</code>, <code>MSI</code>, <code>DEVICE</code>, <code>AZCLI</code>, <code>PSCRED</code></td>
+<td style="text-align: left;">Unattended auto-login for CI/CD pipelines without running <code>azcopy login</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>HTTPS_PROXY</code></strong></td>
+<td style="text-align: left;">Proxy URL</td>
+<td style="text-align: left;">Defines outbound corporate proxy server (<code>http://user:pass@proxy:8080</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>NO_PROXY</code></strong></td>
+<td style="text-align: left;">Domain/IP list</td>
+<td style="text-align: left;">Bypasses proxy for direct Azure backbone endpoints.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-network-routing-tcp-445-smb-vs-tcp-443-https-rest">12. Network Routing: TCP 445 (SMB) vs TCP 443 (HTTPS REST)</h2>
+<p>This is a classic real-world and exam scenario:</p>
+<ul>
+<li><strong>The Problem:</strong> Many residential ISPs and corporate firewalls block outbound <strong>TCP Port 445</strong> to prevent SMB malware exploits.</li>
+<li><strong>The Symptom:</strong> Mounting an Azure File Share via <code>net use</code>, Windows Explorer, or Robocopy fails with network errors.</li>
+<li><strong>The AzCopy Solution:</strong> AzCopy communicates with Azure Files over the <strong>File REST API using TCP Port 443 (HTTPS)</strong>.</li>
+<li><em>Exam Takeaway:</em> When SMB port 445 is blocked, use <strong>AzCopy</strong> to upload and download files to Azure File Shares.</li>
+</ul>
+<hr />
+<h2 id="13-data-migration-decision-matrix-azcopy-vs-all-alternatives">13. Data Migration Decision Matrix: AzCopy vs All Alternatives</h2>
+<pre><code>                                  DATA MIGRATION DECISION TREE
+                                                │
+                       Is the data transfer Online (over network)
+                               or Offline (physical shipping)?
+                                       ┌────────┴────────┐
+                                    ONLINE            OFFLINE
+                                       │                 │
+                What is the nature of the sync?    Data Volume?
+                    ┌───────────────┴───────────────┐    │
+               One-time / Scripted      Continuous  │    ├─ &lt; 35 TB: Azure Data Box Disk
+                        │               File Share  │    │           (8 TB SSDs)
+            Interface Preference?          Sync     │    │
+               ┌────────┴────────┐          │       │    ├─ &lt; 80 TB: Azure Data Box
+           CLI / Script       Desktop GUI   │       │    │           (100 TB appliance)
+               │                 │          │       │    │
+            AzCopy         Azure Storage  Azure     │    ├─ &gt; 500 TB: Azure Data Box Heavy
+             v10             Explorer     File      │    │            (1 PB unit)
+                                          Sync      │    │
+                                                    │    └─ Customer ships OWN hard drives:
+                                                    │       Azure Import/Export Service
+</code></pre>
+<h3 id="complete-comparative-matrix">Complete Comparative Matrix:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Technology</th>
+<th style="text-align: left;">Best Suited Scenario</th>
+<th style="text-align: left;">Network Dependency</th>
+<th style="text-align: left;">Key Distinguishing Factor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>AzCopy v10</strong></td>
+<td style="text-align: left;">High-throughput scripted migration of files, folders, or blobs up to tens of TBs.</td>
+<td style="text-align: left;">Online (Internet / ExpressRoute)</td>
+<td style="text-align: left;">Command-line, multi-threaded, supports S2S cloud copy, SAS/Entra ID. Works over Port 443.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Storage Explorer</strong></td>
+<td style="text-align: left;">Non-technical users, ad-hoc uploads/downloads, visual container management.</td>
+<td style="text-align: left;">Online</td>
+<td style="text-align: left;">GUI desktop app; uses AzCopy engine under the hood.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure File Sync (AFS)</strong></td>
+<td style="text-align: left;">Hybrid file server tiering; branch office multi-site caching; bi-directional Windows Server sync.</td>
+<td style="text-align: left;">Online (Continuous background sync)</td>
+<td style="text-align: left;">Requires agent on Windows Server; features <strong>Cloud Tiering</strong> (keeps hot files local).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Storage Mover</strong></td>
+<td style="text-align: left;">Fully managed, cloud-orchestrated hybrid migration for large-scale on-premises SMB/NFS file shares.</td>
+<td style="text-align: left;">Online</td>
+<td style="text-align: left;">Agent VM deployed on Hyper-V/VMware; managed and scheduled centrally via Azure Portal.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Data Factory (ADF)</strong></td>
+<td style="text-align: left;">Enterprise data transformation (ETL/ELT), multi-source pipelines across 90+ connectors.</td>
+<td style="text-align: left;">Online</td>
+<td style="text-align: left;">Complex orchestration service; handles transformation rather than pure file transfer.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Data Box Disk</strong></td>
+<td style="text-align: left;">Small-to-medium offline shipments (up to 35 TB total, shipped in sets of up to 5x 8TB SSDs).</td>
+<td style="text-align: left;">Offline (Courier via DHL/FedEx)</td>
+<td style="text-align: left;">Pre-encrypted with BitLocker; USB/SATA interface.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Data Box (Standard)</strong></td>
+<td style="text-align: left;">Medium-to-large offline migrations (up to 80 TB usable data).</td>
+<td style="text-align: left;">Offline (Ruggedized 100 TB appliance)</td>
+<td style="text-align: left;">Microsoft ships the appliance; connects via RJ45/SFP+ 10GbE network cables.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Data Box Heavy</strong></td>
+<td style="text-align: left;">Massive enterprise datacenter evacuations (up to 800 TB usable data).</td>
+<td style="text-align: left;">Offline (Huge wheeled device on casters)</td>
+<td style="text-align: left;">Dual 40GbE interfaces; 1 Petabyte raw capacity.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Azure Import/Export</strong></td>
+<td style="text-align: left;">Customer <strong>owns their own 2.5" or 3.5" SATA hard drives</strong> and wants to mail them directly to an Azure datacenter.</td>
+<td style="text-align: left;">Offline</td>
+<td style="text-align: left;">Must prepare disks with <code>WAImportExport.exe</code> tool and encrypt with BitLocker.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="14-the-9-classic-az-104-exam-scenarios-traps">14. The 9 Classic AZ-104 Exam Scenarios &amp; Traps</h2>
+<h3 id="scenario-1-migrating-windows-file-server-with-acls">Scenario 1: Migrating Windows File Server with ACLs</h3>
+<ul>
+<li><strong>Requirement:</strong> Copy 5 TB from Windows Server to Azure Files preserving NTFS ACLs and timestamps.</li>
+<li><strong>Solution:</strong> Run <code>azcopy copy</code> using a SAS token (or Privileged Entra role) and append:
+  <code>bash
+  --preserve-smb-permissions=true --preserve-smb-info=true --recursive</code></li>
+</ul>
+<h3 id="scenario-2-synchronizing-directory-and-deleting-deprecated-files">Scenario 2: Synchronizing Directory and Deleting Deprecated Files</h3>
+<ul>
+<li><strong>Requirement:</strong> Mirror local <code>D:\Web</code> to an Azure Blob container, removing files from Azure that were deleted locally.</li>
+<li><strong>Solution:</strong>
+  <code>bash
+  azcopy sync "D:\Web" "https://mystorage.blob.core.windows.net/web?&lt;SAS&gt;" --delete-destination=true</code></li>
+</ul>
+<h3 id="scenario-3-uploading-directly-to-archive-tier">Scenario 3: Uploading Directly to Archive Tier</h3>
+<ul>
+<li><strong>Requirement:</strong> Upload financial records directly into the lowest-cost storage tier without post-upload lifecycle rules.</li>
+<li><strong>Solution:</strong> Append <code>--block-blob-tier=Archive</code> to the <code>azcopy copy</code> command.</li>
+</ul>
+<h3 id="scenario-4-interrupted-transfer-with-expired-sas-token">Scenario 4: Interrupted Transfer with Expired SAS Token</h3>
+<ul>
+<li><strong>Requirement:</strong> Resume a failed 15 TB upload after the original 8-hour SAS token expired.</li>
+<li><strong>Solution:</strong> Generate a new SAS token and execute:
+  <code>bash
+  azcopy jobs resume &lt;job-id&gt; --source-sas="&lt;new-sas&gt;" --destination-sas="&lt;new-sas&gt;"</code></li>
+</ul>
+<h3 id="scenario-5-direct-cloud-to-cloud-migration-s3-to-azure-blob">Scenario 5: Direct Cloud-to-Cloud Migration (S3 to Azure Blob)</h3>
+<ul>
+<li><strong>Requirement:</strong> Migrate 20 TB from AWS S3 to Azure Blob without downloading to the admin workstation.</li>
+<li><strong>Solution:</strong> Set <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> in environment, then run <code>azcopy copy</code> from the S3 URL to the Azure Blob URL. (Bytes transfer directly cloud-to-cloud).</li>
+</ul>
+<h3 id="scenario-6-uploading-bootable-vhd-disks">Scenario 6: Uploading Bootable VHD Disks</h3>
+<ul>
+<li><strong>Requirement:</strong> Upload an on-premises Windows Server VM disk image to create an Azure VM image.</li>
+<li><strong>Solution:</strong> Must specify <code>--blob-type=PageBlob</code>, ensure 512-byte boundary alignment, and ensure the format is <code>.vhd</code> (never <code>.vhdx</code>).</li>
+</ul>
+<h3 id="scenario-7-outbound-port-445-blocked-by-isp">Scenario 7: Outbound Port 445 Blocked by ISP</h3>
+<ul>
+<li><strong>Requirement:</strong> Admin cannot mount Azure File Share over SMB because residential ISP blocks TCP 445.</li>
+<li><strong>Solution:</strong> Use <strong>AzCopy</strong> (or Azure Storage Explorer) to transfer files over HTTPS port 443.</li>
+</ul>
+<h3 id="scenario-8-downloading-blobs-from-archive-tier">Scenario 8: Downloading Blobs from Archive Tier</h3>
+<ul>
+<li><strong>Requirement:</strong> Admin attempts to download archived blobs using AzCopy and gets <code>BlobArchived</code> error.</li>
+<li><strong>Solution:</strong> Blobs must first be <strong>rehydrated</strong> to Hot or Cool tier before AzCopy can read them.</li>
+</ul>
+<h3 id="scenario-9-s2s-transfer-between-firewalled-storage-accounts">Scenario 9: S2S Transfer Between Firewalled Storage Accounts</h3>
+<ul>
+<li><strong>Requirement:</strong> Direct cloud copy between two storage accounts fails with <code>403 Forbidden</code>.</li>
+<li><strong>Solution:</strong> In direct S2S transfers, the destination cluster pulls directly from the source via <code>Put Block From URL</code>. The source account firewall must be configured to allow inbound access from the destination service or public endpoints.</li>
+</ul>
+<hr />
+<h2 id="15-the-top-10-fatal-traps-quick-reference-card">15. The Top 10 "Fatal Traps" Quick-Reference Card</h2>
+<pre><code>┌────────────────────────────────────────┬────────────────────────────────────────────────────────┐
+│ Trap / Question Pattern                │ The Winning Exam Answer                                │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 1. ISP blocks outbound TCP port 445    │ Use AzCopy (TCP 443 / HTTPS REST) instead of Robocopy  │
+│    to Azure Files.                     │ or standard SMB network drive mapping.                 │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 2. Use Entra ID with AzCopy against    │ Assign &quot;Storage File Data PRIVILEGED Contributor&quot; role.│
+│    Azure Files.                        │ (Standard &quot;SMB Share Contributor&quot; roles FAIL).         │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 3. Can you pass Account Key on CLI?    │ NO. No --account-key flag. Use SAS token, OR set       │
+│                                        │ AZCOPY_ACCOUNT_NAME &amp; AZCOPY_ACCOUNT_KEY env vars.     │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 4. Resume interrupted job after SAS    │ Must provide new SAS via --source-sas and              │
+│    has expired.                        │ --destination-sas on `azcopy jobs resume`.             │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 5. AzCopy downloading Archive blob.    │ FAILS (BlobArchived). Must rehydrate to Hot/Cool first.│
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 6. Upload on-prem VHD for Azure VM.    │ Must be PageBlob (--blob-type=PageBlob), 512-byte      │
+│                                        │ aligned, and fixed .vhd format (.vhdx not supported).  │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 7. Delete orphan files at destination. │ Use `azcopy sync` with `--delete-destination=true`.    │
+│                                        │ (`azcopy copy` can NEVER delete orphan files).         │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 8. Recursive behavior defaults.        │ `azcopy copy` defaults to recursive=false.             │
+│                                        │ `azcopy sync` defaults to recursive=true.              │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 9. S2S direct cloud copy across        │ Destination cluster pulls directly from source.        │
+│    storage accounts with firewalls.    │ Source firewall must allow destination access.         │
+├────────────────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 10. Run AzCopy with zero installation. │ Use Azure Cloud Shell (AzCopy is pre-installed).       │
+└────────────────────────────────────────┴────────────────────────────────────────────────────────┘
+</code></pre>
+    </div>
+  </div>
+</body>
+</html>

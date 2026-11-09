@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AZ-104 Active Error Journal</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1rem 0.75rem 4rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.6rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      font-size: 0.85rem;
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    @media (min-width: 768px) {
+      body { padding: 1.5rem 1rem 4rem; }
+      .content { padding: 2.25rem; }
+    }
+    h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-top: 1.8rem; margin-bottom: 0.6rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.35rem; }
+    h3 { font-size: 1.05rem; font-weight: 700; color: var(--accent-indigo); margin-top: 1.5rem; margin-bottom: 0.4rem; }
+    p { margin-bottom: 0.85rem; font-size: 0.925rem; color: #334155; }
+    ul, ol { margin-left: 1.25rem; margin-bottom: 1rem; font-size: 0.925rem; color: #334155; }
+    li { margin-bottom: 0.35rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.825rem; margin: 1rem 0; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    th, td { padding: 0.6rem 0.75rem; text-align: left; border: 1px solid var(--border); }
+    th { background: #f8fafc; font-weight: 700; color: #1e293b; }
+    tr:nth-child(even) { background: #fbfcfe; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; color: #0f172a; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85rem; word-break: break-word; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
+    pre code { background: transparent; color: inherit; padding: 0; font-size: 0.85rem; }
+    blockquote { border-left: 4px solid var(--accent-blue); background: #f0f9ff; padding: 0.75rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; color: #0369a1; }
+    hr { border: 0; height: 1px; background: var(--border); margin: 1.75rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Master Command Hub</a>
+      <span style="font-size:0.775rem; color:var(--text-muted); font-weight:600;">AZ-104 Mobile Ready</span>
+      <a href="#top">Top ↑</a>
+    </div>
+    <div class="content">
+      <h1 id="az-104-active-error-journal">AZ-104 Active Error Journal</h1>
+<p><strong>Personalized High-Yield Mistake Tracker &amp; Distractor Dissection</strong></p>
+<blockquote>
+<p><em>Protocol Reference:</em> See <a href="file:///home/actual/projects/az-104/error_logging_guide.md">error_logging_guide.md</a> for the diagnostic framework.<br />
+<em>Core Rule:</em> Every logged entry breaks down the scenario trigger, flawed assumption, underlying Azure mechanic, distractor killers, and exam heuristic.</p>
+</blockquote>
+<hr />
+<h3 id="domain-2-storage-secondary-region-read-access-without-failover-q12">[Domain 2: Storage] Secondary Region Read Access Without Failover (Q12)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Read-only access to blobs during primary region outage.</li>
+<li>Constraint: <em>Must not initiate customer failover</em> (minimal administrative overhead).</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed standard GRS makes secondary copy available automatically during a read request.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>Standard GRS replicates 3x locally + 3x asynchronously to paired region, but the secondary endpoint (<code>*.secondary.core.windows.net</code>) is <strong>completely inaccessible</strong> unless <strong>RA-GRS</strong> (Read-Access Geo-Redundant Storage) is enabled. Initiating failover converts the secondary to LRS primary and changes DNS endpoints, which is high impact.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>Customer Failover:</em> Changes primary endpoint and incurs potential RPO data loss.</li>
+<li><em>AzCopy Sync:</em> Unnecessary custom scripting overhead.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"Secondary read access without failover = Always RA-GRS / RA-GZRS."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-3-compute-resizing-vms-in-an-availability-set-q16">[Domain 3: Compute] Resizing VMs in an Availability Set (Q16)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Resize a VM within an Availability Set to a larger size family (e.g., D-series to E-series).</li>
+<li>Error: Allocation failure (<code>AllocationFailed</code>) when attempting resize while other VMs are running.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed stopping only the target VM frees up cluster allocation resources.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>An Availability Set is pinned to an underlying hardware cluster. If the new target VM size is not supported on that specific physical cluster, resizing fails unless <strong>ALL VMs in the Availability Set are stopped (deallocated)</strong>. Deallocating all VMs allows Azure to reallocate the entire set to a modern cluster supporting the target SKU.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>Restarting the single VM:</em> Retries allocation on the same incompatible hardware cluster.</li>
+<li><em>Moving to another Resource Group:</em> Does not change physical hardware cluster binding.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"AllocationFailed resizing an Availability Set VM = Deallocate ALL VMs in the set first."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-2-storage-uploading-on-premises-vhd-disks-to-azure-q22">[Domain 2: Storage] Uploading On-Premises VHD Disks to Azure (Q22)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Upload a generalized on-prem <code>.vhd</code> disk image to Azure Storage for VM deployment.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Selected <code>Add-AzImage</code> or assumed disks are uploaded as Block Blobs.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>Azure OS disks and data disks are stored as <strong>Page Blobs</strong> (512-byte aligned). The native PowerShell cmdlet designed specifically for uploading on-prem VHDs to Page Blobs is <strong><code>Add-AzVhd</code></strong>. <code>Add-AzImage</code> creates an image object from an already-uploaded disk, but does not transfer the file bytes over the wire.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em><code>Set-AzStorageBlobContent</code>:</em> Uploads as Block Blob by default (invalid for bootable VHDs).</li>
+<li><em><code>Add-AzImage</code>:</em> Requires the VHD to already exist in Azure storage.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"Upload on-prem .vhd to Azure = Always <code>Add-AzVhd</code> (Page Blob, 512-byte boundary)."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-4-virtual-networking-point-to-site-vpn-vnet-peering-route-propagation-q24q25">[Domain 4: Virtual Networking] Point-to-Site VPN &amp; VNet Peering Route Propagation (Q24/Q25)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Point-to-Site (P2S) VPN users connected to VNet-Hub need to reach VMs in peered VNet-Spoke.</li>
+<li>State: Peering is configured with "Allow Gateway Transit", but P2S clients cannot route to Spoke IPs.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed Azure SDN pushes route updates dynamically to connected client VPN virtual network adapters.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>P2S clients (Windows/macOS) receive their route table upon downloading the VPN configuration file package. When new VNet peerings or routes are added to the gateway, <strong>existing client software does not dynamically learn the new routes</strong>. The VPN client configuration package <strong>must be re-downloaded and re-installed</strong> on client devices.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>UDR on GatewaySubnet:</em> P2S clients are remote endpoints outside the VNet fabric.</li>
+<li><em>Restart VPN Gateway:</em> Tears down active sessions but doesn't modify client routing tables.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"P2S VPN clients cannot reach newly peered VNet = Re-download and re-install client VPN package."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-1-governance-azure-policy-enforcement-region-restrictions">[Domain 1: Governance] Azure Policy Enforcement &amp; Region Restrictions</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ⚠️ Lab Observation</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Tenant-level Azure Policy <code>sys.regionrestriction</code> enforces allowed deployment regions.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed resources deploy to default <code>eastus</code> if not explicitly specified.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li><code>Deny</code> policies evaluate before resource provisioning starts (during ARM pre-flight request validation). Allowed regions in this subscription are strictly: <strong>Spain Central</strong>, <strong>UAE North</strong>, and <strong>Central India</strong>.</li>
+<li><strong>5. Exam Heuristic:</strong></li>
+<li><strong>"Azure Policy Deny action blocks ARM deployment at template validation before any cost or provisioning occurs."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-2-storage-storage-firewalls-dynamic-client-ips">[Domain 2: Storage] Storage Firewalls &amp; Dynamic Client IPs</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ⚠️ Lab Observation</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Restricting storage account access to specific IPv4 addresses while working from home.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed a single whitelisted IP remains valid permanently.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>Home ISPs rotate dynamic public IPs. If Azure Storage Firewall returns 403 Forbidden the next day, re-check the <strong>"Add your client IP address"</strong> box in the Networking blade or access via Entra ID RBAC from an authenticated portal session.</li>
+<li><strong>5. Exam Heuristic:</strong></li>
+<li><strong>"Storage Account Firewall 403 on known network = Check dynamic ISP IP rotation or missing VNet Service Endpoint."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-2-storage-blob-container-leases-error-412-precondition-failed">[Domain 2: Storage] Blob Container Leases (Error 412 Precondition Failed)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ⚠️ Lab Observation</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Modifying or deleting a container or blob with an active lease.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed Subscription Owner can immediately overwrite or delete a leased container.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>An active exclusive lease locks the container against concurrent writes and deletion. Modifying policies returns <code>HTTP 412 (Precondition Failed)</code>. You must explicitly select <strong>"Break lease"</strong> in the Azure Portal or provide the <code>LeaseId</code> in the API call.</li>
+<li><strong>5. Exam Heuristic:</strong></li>
+<li><strong>"HTTP 412 on Storage Blob / Container = Active lease lock. Must break lease."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-1-identity-governance-control-plane-vs-data-plane-rbac">[Domain 1: Identity &amp; Governance] Control Plane vs Data Plane RBAC</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ⚠️ Critical Distractor Trap</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Subscription <code>Owner</code> or <code>Contributor</code> tries to read/write blob containers or queue messages via Azure Portal and receives access denied.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed Subscription <code>Owner</code> has full access to everything inside the subscription including data.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>ARM RBAC divides operations into <strong>Control Plane</strong> (<code>Microsoft.Storage/storageAccounts/*</code>) and <strong>Data Plane</strong> (<code>Microsoft.Storage/storageAccounts/blobServices/containers/blobs/*</code>). <code>Owner</code> and <code>Contributor</code> grant control plane only. Reading and writing blob data requires explicit data-plane roles: <strong><code>Storage Blob Data Owner</code></strong>, <strong><code>Storage Blob Data Contributor</code></strong>, or <strong><code>Storage Blob Data Reader</code></strong>.</li>
+<li><strong>5. Exam Heuristic:</strong></li>
+<li><strong>"Subscription Owner/Contributor cannot read/write blob data without <code>Storage Blob Data [Role]</code> or Access Keys."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-3-compute-azure-virtual-machine-licensing-azure-hybrid-benefit-ahb">[Domain 3: Compute] Azure Virtual Machine Licensing &amp; Azure Hybrid Benefit (AHB)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> 💡 High-Yield Architecture Standard</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Minimize ongoing compute costs when deploying Windows Server or Enterprise Linux (RHEL/SLES) VMs in Azure, or understand what software costs are bundled into Linux vs. Windows VMs.</li>
+<li>Constraint: Enterprise has existing on-premises Windows Server or RHEL/SLES licenses with Software Assurance (SA) or active subscriptions. Must not incur VM downtime or redeployment when converting licensing models.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assuming all Linux distributions have zero software licensing costs, or assuming a Windows VM must be destroyed and redeployed from scratch to apply Azure Hybrid Benefit (AHB).</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li><strong>Open-Source Linux (Ubuntu, Debian, Rocky, AlmaLinux):</strong> $0.00 OS software fee. You pay only base compute (vCPU/RAM) and managed disk storage.</li>
+<li><strong>Commercial Linux (RHEL, SLES):</strong> Hourly software premium is billed for vendor support updates unless Bring-Your-Own-Subscription (BYOS) / Azure Hybrid Benefit for Linux is toggled (<code>--license-type RHEL_BYOS</code> or <code>SLES_BYOS</code>).</li>
+<li><strong>Windows Server:</strong> Default Pay-As-You-Go (PAYG) includes the Windows Server license (~30%–45% hourly premium over base Linux compute).</li>
+<li><strong>Azure Hybrid Benefit (AHB):</strong> Strips the Windows OS license fee down to $0, billing the Windows VM at the <strong>base Linux compute rate</strong>. Requires on-prem Windows Server licenses with active Software Assurance (SA) (minimum 16-core allocation rule per VM, licensed in 8-core increments).</li>
+<li><strong>Dynamic Zero-Downtime Conversion:</strong> You can switch an active, running VM between PAYG and AHB live in the portal or via CLI (<code>az vm update --license-type Windows_Server</code>) with <strong>no redeployment and no downtime</strong>.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>Redeploying the VM from a custom image:</em> Unnecessary administrative overhead; AHB is a runtime metadata property of the ARM VM resource model (<code>licenseType</code>).</li>
+<li><em>Assuming RHEL/SLES has no OS charge:</em> Enterprise Linux incurs vendor support fees unless enrolled in AHB/BYOS.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"Azure Hybrid Benefit (AHB) = Eliminates OS license fees (runs at base Linux compute rate). Minimum 16 cores. Zero-downtime toggle via <code>licenseType</code>."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-1-identity-governance-resource-group-deployments-vs-properties-blade-td-sampler-q6">[Domain 1: Identity &amp; Governance] Resource Group Deployments vs. Properties Blade (TD Sampler Q6)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User picked "Yes"; Correct is "No")</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Retrieve the exact date, time, and execution history when ARM-template deployed resources were provisioned in a Resource Group (<code>TD-RG</code>).</li>
+<li>Proposed Solution: Navigate to Resource Group settings and select <strong><code>Properties</code></strong>.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assumed Azure Portal <code>Properties</code> functions like file properties in an OS (showing creation date, modification history, and deployment timestamps).</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li><strong><code>Properties</code> blade:</strong> Contains static identity metadata only: Subscription Name/ID, Resource Group Name, Location, Location ID, Resource ID, and Tags. It does <strong>NOT</strong> contain deployment history or timestamps.</li>
+<li><strong><code>Deployments</code> blade:</strong> The dedicated ARM engine history log. Displays every deployment name, status (Succeeded/Failed), duration, exact start/end timestamp, inputs, outputs, and the raw ARM/Bicep template used.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><code>Properties</code> blade: Static identification metadata only.</li>
+<li><code>Activity Log</code>: Shows management events for the last 90 days, but does not provide structured ARM template inputs, outputs, and duration metrics.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"ARM template history, inputs, outputs, and deployment timestamps = Always the <code>Deployments</code> blade under the Resource Group (never <code>Properties</code>)."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-3-compute-app-service-deployment-slots-scaling-dimensions-td-sampler-q3">[Domain 3: Compute] App Service Deployment Slots &amp; Scaling Dimensions (TD Sampler Q3)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Add a staging/deployment slot to a Web App running on an <strong>F1 (Free)</strong> App Service plan.</li>
+<li>Constraint: The deployment slot option is greyed out / unavailable in the Azure portal. What must be done first?</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Confusing <strong>Scale Up</strong> (changing SKU tier / CPU / RAM / features) with <strong>Scale Out</strong> (adding more horizontal VM instances), or assuming deployment slots can be enabled on the Free tier.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>Deployment slots require a minimum of the <strong>Standard (S1)</strong> tier (Standard, Premium, or Isolated). Free (F1), Shared (D1), and Basic (B1) do <strong>NOT</strong> support staging slots.</li>
+<li>Moving from F1 to Standard/Premium requires changing the pricing tier, which is defined in Azure App Service as <strong>"Scale Up (App Service plan)"</strong>.</li>
+<li><strong>Scale Out</strong> only increases the instance count for load balancing/autoscaling—it never changes the feature tier.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>Scale out:</em> Adds more instances of the exact same tier; does not unlock enterprise features.</li>
+<li><em>Add a new deployment slot:</em> Impossible to click while restricted to F1.</li>
+<li><em>Create a CNAME record:</em> Used for custom domain mapping, completely unrelated to deployment slots.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"App Service Staging Slots = Requires Standard (S1) tier or higher. Changing pricing tiers = Always 'Scale Up'."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-5-monitoring-backup-cost-optimization-azure-advisor-vs-azure-monitor-td-sampler-q5">[Domain 5: Monitoring &amp; Backup] Cost Optimization: Azure Advisor vs. Azure Monitor (TD Sampler Q5)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Analyze 50 virtual machines to identify <strong>idle and underutilized resources</strong> to reduce overall costs, and recommend downsizing development VMs to less expensive tiers.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Selecting <strong>Azure Monitor</strong> because it monitors VM CPU and memory performance graphs.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li><strong>Azure Monitor:</strong> Telemetry engine. Collects metrics, logs, application traces, and triggers alert rules. It tells you <em>what is currently happening</em>, but does <strong>NOT</strong> provide proactive optimization recommendations or right-sizing guidance.</li>
+<li><strong>Azure Advisor:</strong> Personalized cloud consultant and recommendation engine. Analyzes resource telemetry against best practices across 5 pillars: <strong>Cost</strong> (right-sizing/shutting down idle VMs, reserved instances), <strong>Security</strong>, <strong>Reliability</strong>, <strong>Performance</strong>, and <strong>Operational Excellence</strong>.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>Azure Monitor:</em> Stores metrics and logs; does not generate cost reduction recommendations.</li>
+<li><em>Azure Compliance Manager:</em> Evaluates regulatory standards and compliance postures (ISO, HIPAA, NIST).</li>
+<li><em>Azure Event Hubs:</em> Big data streaming event ingestion service.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"Identify underutilized/idle VMs to cut costs or right-size = Always Azure Advisor (never Azure Monitor)."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-2-storage-azcopy-cli-syntax-recursive-directory-migration-td-sampler-q7">[Domain 2: Storage] AzCopy CLI Syntax &amp; Recursive Directory Migration (TD Sampler Q7)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Migrate an on-premises local directory <code>E:\TutorialsDojoMedia</code> <strong>and all its subdirectories</strong> to an Azure Storage Blob container named <code>public</code> in <code>TutorialsDojoAccount</code>.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Mixing up the parameter order of source vs. destination, forgetting the directory recursion flag, or confusing AzCopy with Azure CLI <code>az storage blob copy</code>.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li><strong>AzCopy v10 syntax</strong> is strictly: <code>azcopy copy &lt;SOURCE&gt; &lt;DESTINATION&gt; [FLAGS]</code>.</li>
+<li>When uploading from local storage to Azure: Source = Local Path (<code>E:\TutorialsDojoMedia</code>), Destination = Storage Blob URL (<code>https://&lt;account&gt;.blob.core.windows.net/&lt;container&gt;</code>).</li>
+<li>To include nested folders and subdirectories, the <strong><code>--recursive</code></strong> flag is mandatory. Without <code>--recursive</code>, AzCopy copies only top-level files or skips folders entirely.</li>
+<li><code>az storage blob copy start-batch</code> is Azure CLI for asynchronous server-side copying <em>between</em> cloud containers, not for uploading a local folder over the network.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>Inverted arguments (<code>azcopy copy https://... E:\...</code>):</em> Downloads from Azure down to local disk.</li>
+<li><em>Without <code>--recursive</code>:</em> Leaves subdirectories behind.</li>
+<li><em><code>az storage blob copy start-batch</code>:</em> Designed for cloud-to-cloud container transfers, not local drive uploads.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"Upload local folder + subfolders to Azure Blob = <code>azcopy copy &lt;LocalPath&gt; &lt;BlobURL&gt; --recursive</code>."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-3-compute-app-service-os-isolation-multi-runtime-plan-sizing-td-timed-q2">[Domain 3: Compute] App Service OS Isolation &amp; Multi-Runtime Plan Sizing (TD Timed Q2)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Deploy 5 applications (ASP.NET v4.8, Node 16 LTS, PHP 8.2, Python 3.10, Java 11) in Azure App Service.</li>
+<li>Constraint: Deploy with the <strong>minimum number of App Service Plans</strong>.</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assuming each runtime stack requires its own dedicated plan (5 plans), or assuming all 5 runtimes can be mixed into a single plan (1 plan).</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>An App Service Plan is strictly bound to <strong>ONE operating system</strong> (Windows OR Linux).</li>
+<li><strong>ASP.NET v4.8 (.NET Framework):</strong> Runs <strong>only on Windows</strong>.</li>
+<li><strong>PHP and Python:</strong> In Azure App Service, runtime support is provided <strong>only on Linux</strong> (Windows runtime for PHP/Python is retired).</li>
+<li><strong>Node.js and Java:</strong> Cross-platform (can run on either Windows or Linux plans).</li>
+<li>Therefore, you must provision at least <strong>1 Windows Plan</strong> (for ASP.NET) and <strong>1 Linux Plan</strong> (for PHP and Python) = <strong>2 Plans minimum</strong>.</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>One plan:</em> Cannot mix Windows and Linux web apps inside the same App Service Plan.</li>
+<li><em>Five plans:</em> Redundant; apps sharing the same OS can share the same underlying plan.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux $\rightarrow$ Minimum 2 plans."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-3-compute-regional-vcpu-quotas-stopped-deallocated-vms-trap-td-timed-q3">[Domain 3: Compute] Regional vCPU Quotas: Stopped (Deallocated) VMs Trap (TD Timed Q3)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (Partial 1/3)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Subscription Quota: North Central US Regional = 15 vCPUs. Av2 family = 15. DSv3 family = 15.</li>
+<li>Currently deployed:<ul>
+<li>VM1: A4_v2 (4 vCPUs) - Running in North Central US.</li>
+<li>VM2: D8s_v3 (8 vCPUs) - <strong>Stopped (Deallocated)</strong> in North Central US.</li>
+<li>VM3: F2s_v2 (2 vCPUs) - Running in South Central US (different region, ignored).</li>
+</ul>
+</li>
+<li>Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) $\rightarrow$ VM5 (D2s_v3, 2 vCPUs) $\rightarrow$ VM6 (A8_v2, 8 vCPUs).</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assuming <code>Stopped (Deallocated)</code> releases the VM's vCPU quota allocation.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li><strong>Billing vs. Quota:</strong> Deallocating a VM stops hourly compute charges, <strong>BUT DOES NOT RELEASE THE vCPU QUOTA</strong>. Azure reserves the quota so the VM can be restarted.</li>
+<li>Quota consumed = VM1 (4) + VM2 (8) = <strong>12 of 15 vCPUs used</strong>.</li>
+<li>Remaining regional quota = $15 - 12 = \mathbf{3\text{ vCPUs}}$.</li>
+<li><strong>Sequential execution:</strong><ol>
+<li>VM4 (needs 2 vCPUs): $3 \ge 2 \rightarrow$ <strong>Created (YES)</strong>. Remaining quota = $3 - 2 = \mathbf{1\text{ vCPU}}$.</li>
+<li>VM5 (needs 2 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
+<li>VM6 (needs 8 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
+</ol>
+</li>
+<li><strong>5. Exam Heuristic:</strong></li>
+<li><strong>"Stopped (Deallocated) VMs stop billing, but STILL CONSUME vCPU quota. Only deleting the VM frees quota."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-4-virtual-networking-azure-load-balancer-session-persistence-td-timed-q4">[Domain 4: Virtual Networking] Azure Load Balancer Session Persistence (TD Timed Q4)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Public Azure Load Balancer <code>TD1</code> must consistently route a specific user's requests to the <strong>same backend web server</strong> every time they access it (stateful sessions / sticky sessions).</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Assuming default hash-based load balancing guarantees sticky routing, or confusing Health Probes with distribution modes.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li><strong>Default Distribution:</strong> 5-tuple hash (<code>Source IP</code>, <code>Source Port</code>, <code>Destination IP</code>, <code>Destination Port</code>, <code>Protocol</code>) with <code>Session persistence: None</code>. Successive requests from the same client can hit different backend servers.</li>
+<li><strong>Sticky Sessions / Session Affinity:</strong> Configured via <strong>Session persistence</strong>:<ul>
+<li><strong><code>Client IP</code> (2-tuple):</strong> <code>Source IP</code> + <code>Destination IP</code>. All requests from that client IP go to the same backend instance.</li>
+<li><strong><code>Client IP and protocol</code> (3-tuple):</strong> <code>Source IP</code> + <code>Destination IP</code> + <code>Protocol</code>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>Hash based / None:</em> Distributes requests randomly across all healthy instances.</li>
+<li><em>Health probe:</em> Only monitors whether an instance is responsive; does not control traffic distribution affinity.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"Route user requests to the SAME backend VM on Azure Load Balancer = Session persistence: Client IP."</strong></li>
+</ul>
+<hr />
+<h3 id="domain-1-identity-governance-entra-id-custom-domain-verification-dns-records-td-timed-q5">[Domain 1: Identity &amp; Governance] Entra ID Custom Domain Verification DNS Records (TD Timed Q5)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Requirement: Add custom domain <code>tutorialsdojo.com</code> to Microsoft Entra ID. Need to configure DNS record in public DNS zone to verify domain ownership.</li>
+<li>Constraint: <code>TXT</code> record is <strong>not</strong> listed among the choices (Options: SOA, A, MX, RRSIG).</li>
+<li><strong>3. Flawed Mental Model:</strong></li>
+<li>Memorizing only <code>TXT</code> records for domain verification and getting stumped when <code>TXT</code> is missing from the options.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>Microsoft Entra ID supports exactly <strong>TWO DNS record types</strong> for proving domain ownership:<ol>
+<li><strong><code>TXT</code> record:</strong> Primary/recommended method (<code>MS=ms12345678</code>).</li>
+<li><strong><code>MX</code> record:</strong> Official fallback verification method (<code>ms12345678.msv1.invalid</code> with Priority e.g. 32767). Used when a DNS registrar or hosting provider does not support TXT records.</li>
+</ol>
+</li>
+<li><strong>5. Distractor Killers:</strong></li>
+<li><em>A record:</em> Maps domain name to an IPv4 address; does not verify identity.</li>
+<li><em>SOA (Start of Authority):</em> DNS zone metadata; cannot prove administrative domain ownership to Azure.</li>
+<li><em>RRSIG:</em> DNSSEC cryptographic signature; unrelated to domain validation.</li>
+<li><strong>6. Exam Heuristic:</strong></li>
+<li><strong>"Entra ID Custom Domain verification DNS record = TXT (primary) or MX (fallback). Never A, CNAME, or SOA."</strong></li>
+</ul>
+    </div>
+  </div>
+</body>
+</html>

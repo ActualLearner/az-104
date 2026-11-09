@@ -1,0 +1,27 @@
+location: northeurope
+apiVersion: 2023-05-01
+name: courses-group
+type: Microsoft.ContainerInstance/containerGroups
+properties:
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+      - protocol: Tcp
+        port: 80
+  containers:
+    - name: mysql
+      properties:
+        image: cloudhubacrdev.azurecr.io/mysql-courses:latest
+        resources: { requests: { cpu: 0.5, memoryInGB: 1.5 } }
+        ports: [ { protocol: Tcp, port: 3306 } ]
+    - name: php
+      properties:
+        image: cloudhubacrdev.azurecr.io/phpapp01:v1
+        resources: { requests: { cpu: 0.5, memoryInGB: 0.5 } }
+        ports: [ { protocol: Tcp, port: 80 } ]
+
+  imageRegistryCredentials:
+    - server: cloudhubacrdev.azurecr.io
+      username: cloudhubacrdev
+      password: ""

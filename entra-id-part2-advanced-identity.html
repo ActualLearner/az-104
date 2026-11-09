@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft Entra ID Architecture — Part 2: Advanced Identity, Devices, Governance & Hybrid Provisioning | AZ-104 Master Architecture Notes</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-card: #182234;
+      --border: #334155;
+      --border-focus: #38bdf8;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --accent-purple: #c084fc;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-red: #f87171;
+      --code-bg: #0b1120;
+      --table-header: #1e293b;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 4.5rem;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      font-size: 15px;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Top Navigation Banner */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .nav-brand:hover {
+      color: #fff;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .nav-button:hover {
+      color: #fff;
+      background: #334155;
+      border-color: var(--accent);
+    }
+
+    .nav-button.primary {
+      background: #0284c7;
+      color: #fff;
+      border-color: #38bdf8;
+    }
+
+    .nav-button.primary:hover {
+      background: #0369a1;
+    }
+
+    /* Main Container & Layout */
+    .page-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2.5rem;
+    }
+
+    @media (max-width: 992px) {
+      .page-layout {
+        grid-template-columns: 1fr;
+        padding: 1.5rem 1rem 4rem;
+      }
+      .toc-sidebar {
+        display: none;
+      }
+    }
+
+    /* Sticky Sidebar Navigation */
+    .toc-sidebar {
+      position: sticky;
+      top: 4.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .toc-sidebar h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .toc-sidebar ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .toc-sidebar li {
+      margin-bottom: 0.45rem;
+    }
+
+    .toc-sidebar li ul {
+      padding-left: 0.9rem;
+      margin-top: 0.35rem;
+    }
+
+    .toc-sidebar a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.825rem;
+      line-height: 1.4;
+      display: block;
+      transition: color 0.15s ease;
+    }
+
+    .toc-sidebar a:hover {
+      color: var(--accent);
+    }
+
+    /* Content Area Typography */
+    .content-area {
+      min-width: 0;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .content-area {
+        padding: 1.5rem 1.25rem;
+      }
+    }
+
+    .content-area h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #f8fafc;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .content-area h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-area h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content-area h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .content-area p {
+      margin-bottom: 1.2rem;
+      color: #cbd5e1;
+    }
+
+    .content-area strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .content-area ul, .content-area ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: #cbd5e1;
+    }
+
+    .content-area li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* Code & Pre Blocks */
+    .content-area pre {
+      background-color: var(--code-bg);
+      border: 1px solid #1e293b;
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1.25rem 0 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .content-area code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: #0b1120;
+      color: #38bdf8;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .content-area pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      color: inherit;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .table-container table,
+    .content-area table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    .content-area th, .content-area td {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-area th {
+      background: var(--table-header);
+      color: #ffffff;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .content-area tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Blockquotes / Callouts */
+    .content-area blockquote {
+      border-left: 4px solid var(--accent-amber);
+      background: rgba(251, 191, 36, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0 1.5rem;
+      color: #fef3c7;
+      font-style: normal;
+    }
+
+    .content-area hr {
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* Link styling */
+    .content-area a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .content-area a:hover {
+      color: #ffffff;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="site-nav">
+    <a href="index.html" class="nav-brand">
+      <span>🛡️ AZ-104 Command Hub</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-button">🏠 Dashboard</a>
+      <a href="index.html#notes-library" class="nav-button primary">📚 Notes Library</a>
+      <a href="scenario_01_deep_dive.html" class="nav-button">⚡ Scenario 01 Deep Dive</a>
+      <a href="entra-id-master-architecture-and-governance.html" class="nav-button">📘 Master Guide</a>
+      <a href="reddit-az104-research-2024-2025.html" class="nav-button">📊 Reddit N=38</a>
+    </div>
+  </header>
+
+  <!-- Page Layout -->
+  <div class="page-layout">
+    
+    <!-- Sidebar Table of Contents -->
+    <aside class="toc-sidebar">
+      <h3>📑 Table of Contents</h3>
+      <div class="toc">
+<ul>
+<li><a href="#microsoft-entra-id-architecture-part-2-advanced-identity-devices-governance-hybrid-provisioning">Microsoft Entra ID Architecture — Part 2: Advanced Identity, Devices, Governance &amp; Hybrid Provisioning</a><ul>
+<li><a href="#1-deep-dive-devices-in-microsoft-entra-id">1. Deep Dive: Devices in Microsoft Entra ID</a><ul>
+<li><a href="#11-device-as-an-independent-security-principal">1.1 Device as an Independent Security Principal</a></li>
+<li><a href="#12-the-three-device-join-types-architectural-comparison">1.2 The Three Device Join Types (Architectural Comparison)</a></li>
+<li><a href="#13-deep-breakdown-registered-vs-joined-vs-hybrid-joined">1.3 Deep Breakdown: Registered vs. Joined vs. Hybrid Joined</a><ul>
+<li><a href="#a-microsoft-entra-registered-byod">A. Microsoft Entra Registered (BYOD)</a></li>
+<li><a href="#b-microsoft-entra-joined-cloud-native-enterprise">B. Microsoft Entra Joined (Cloud-Native Enterprise)</a></li>
+<li><a href="#c-microsoft-entra-hybrid-joined-the-enterprise-bridge">C. Microsoft Entra Hybrid Joined (The Enterprise Bridge)</a></li>
+</ul>
+</li>
+<li><a href="#14-the-primary-refresh-token-prt-and-hardware-tpm">1.4 The Primary Refresh Token (PRT) and Hardware TPM</a><ul>
+<li><a href="#what-is-the-primary-refresh-token-prt">What is the Primary Refresh Token (PRT)?</a></li>
+<li><a href="#hardware-bound-security-via-tpm-trusted-platform-module">Hardware-Bound Security via TPM (Trusted Platform Module)</a></li>
+<li><a href="#how-the-prt-enables-zero-prompt-sso">How the PRT Enables Zero-Prompt SSO:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-groups-architecture-group-based-licensing">2. Groups Architecture &amp; Group-Based Licensing</a><ul>
+<li><a href="#21-security-groups-vs-microsoft-365-groups">2.1 Security Groups vs. Microsoft 365 Groups</a><ul>
+<li><a href="#detailed-feature-comparison-matrix">Detailed Feature Comparison Matrix</a></li>
+</ul>
+</li>
+<li><a href="#22-role-assignable-security-groups-high-security">2.2 Role-Assignable Security Groups (High Security)</a></li>
+<li><a href="#23-group-based-licensing-mechanics-rules-gotchas">2.3 Group-Based Licensing: Mechanics, Rules &amp; Gotchas</a><ul>
+<li><a href="#how-it-works-the-paid-pool-model">How it Works: The Paid Pool Model</a></li>
+<li><a href="#critical-az-104-exam-rules-traps-for-group-licensing">Critical AZ-104 Exam Rules &amp; Traps for Group Licensing:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-microsoft-first-party-applications-saas-integration">3. Microsoft First-Party Applications &amp; SaaS Integration</a><ul>
+<li><a href="#31-where-microsoft-apps-fit-in-the-entra-id-architecture">3.1 Where Microsoft Apps Fit in the Entra ID Architecture</a></li>
+<li><a href="#32-special-controls-for-first-party-microsoft-apps">3.2 Special Controls for First-Party Microsoft Apps</a></li>
+</ul>
+</li>
+<li><a href="#4-the-two-distinct-rbac-planes-directory-vs-azure-arm">4. The Two Distinct RBAC Planes: Directory vs. Azure ARM</a><ul>
+<li><a href="#41-the-complete-separation-principle">4.1 The Complete Separation Principle</a></li>
+<li><a href="#42-the-emergency-elevation-mechanism-break-glass">4.2 The Emergency Elevation Mechanism ("Break Glass")</a></li>
+<li><a href="#43-administrative-units-aus-scoping-entra-id-roles">4.3 Administrative Units (AUs) — Scoping Entra ID Roles</a></li>
+</ul>
+</li>
+<li><a href="#5-automated-hybrid-provisioning-authentication-architecture">5. Automated Hybrid Provisioning &amp; Authentication Architecture</a><ul>
+<li><a href="#51-entra-connect-sync-vs-entra-cloud-sync">5.1 Entra Connect Sync vs. Entra Cloud Sync</a></li>
+<li><a href="#52-the-three-core-hybrid-authentication-protocols">5.2 The Three Core Hybrid Authentication Protocols</a><ul>
+<li><a href="#detailed-breakdown-of-phs-mechanics-addressing-common-misconceptions">Detailed Breakdown of PHS Mechanics (Addressing Common Misconceptions):</a></li>
+</ul>
+</li>
+<li><a href="#53-seamless-single-sign-on-seamless-sso">5.3 Seamless Single Sign-On (Seamless SSO)</a><ul>
+<li><a href="#what-problem-does-seamless-sso-solve">What Problem Does Seamless SSO Solve?</a></li>
+<li><a href="#the-underlying-mechanics">The Underlying Mechanics:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#6-real-world-az-104-exam-traps-gotchas-summary">6. Real-World AZ-104 Exam Traps &amp; Gotchas Summary</a></li>
+<li><a href="#7-architectural-cheat-sheet-quick-revision">7. Architectural Cheat Sheet (Quick Revision)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </aside>
+
+    <!-- Main Content Reader -->
+    <main class="content-area">
+      <h1 id="microsoft-entra-id-architecture-part-2-advanced-identity-devices-governance-hybrid-provisioning">Microsoft Entra ID Architecture — Part 2: Advanced Identity, Devices, Governance &amp; Hybrid Provisioning</h1>
+<blockquote>
+<p><strong>Target Exam:</strong> Microsoft Certified: Azure Administrator Associate (AZ-104)<br />
+<strong>Status:</strong> Current Architecture (2026 Standard)<br />
+<strong>Prerequisite:</strong> <a href="entra-id-part1-core-architecture.html">entra-id-part1-core-architecture.md</a></p>
+</blockquote>
+<hr />
+<h2 id="1-deep-dive-devices-in-microsoft-entra-id">1. Deep Dive: Devices in Microsoft Entra ID</h2>
+<h3 id="11-device-as-an-independent-security-principal">1.1 Device as an Independent Security Principal</h3>
+<p>In legacy environments, identity was synonymous with the human user. In modern Microsoft Entra ID and Zero Trust architecture, a <strong>device is an independent security principal</strong>:
+- Every managed or registered device receives its own distinct <strong>Object ID</strong> in Microsoft Entra ID.
+- Devices have their own security attributes, compliance flags, certificate pairs, and directory status.
+- <strong>Zero Trust Authentication Principle:</strong> Authentication and authorization decisions evaluate <strong>User Identity + Device Identity + Real-time Health/Compliance Context</strong> simultaneously. Even if a user enters valid credentials and completes MFA, access will be blocked if the device object fails Conditional Access compliance checks (e.g., outdated OS, unencrypted disk, missing corporate compliance flag).</p>
+<pre><code>       [ Human User: alice@contoso.com ]      +      [ Device Object ID: dev-8f4b-229a ]
+                     \                                      /
+                      \                                    /
+                       ▼                                  ▼
+               [ Conditional Access Engine (Signals &amp; Context) ]
+                                      │
+                     Evaluates: User Risk + Device Compliance + Location
+                                      │
+                                      ▼
+                      [ Grant Access with PRT / Deny ]
+</code></pre>
+<hr />
+<h3 id="12-the-three-device-join-types-architectural-comparison">1.2 The Three Device Join Types (Architectural Comparison)</h3>
+<p>Microsoft Entra ID supports three distinct device states. Understanding the technical boundaries between them is one of the most heavily tested areas on the AZ-104 exam.</p>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Dimension</th>
+<th style="text-align: left;">Microsoft Entra Registered (BYOD)</th>
+<th style="text-align: left;">Microsoft Entra Joined (Cloud-Native)</th>
+<th style="text-align: left;">Microsoft Entra Hybrid Joined (Dual-State)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Ownership Model</strong></td>
+<td style="text-align: left;">Personal device / BYOD (Windows, macOS, iOS, Android, Linux)</td>
+<td style="text-align: left;">Corporate-owned modern asset</td>
+<td style="text-align: left;">Corporate-owned legacy or transition asset</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Directory Authority</strong></td>
+<td style="text-align: left;">Local OS database / Personal Microsoft Account / Apple ID / Google</td>
+<td style="text-align: left;"><strong>Microsoft Entra ID ONLY</strong> (Pure Cloud)</td>
+<td style="text-align: left;"><strong>Dual Authority:</strong> On-Premises Active Directory DS <strong>AND</strong> Microsoft Entra ID</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Windows Lock Screen Sign-in</strong></td>
+<td style="text-align: left;">Personal/Local OS Account (e.g., local admin, personal MS account). Work account is added later under &ldquo;Access work or school&rdquo;.</td>
+<td style="text-align: left;"><strong>Entra ID UPN directly</strong> (e.g., <code>user@contoso.com</code>). No local domain controllers required.</td>
+<td style="text-align: left;"><strong>On-Premises AD Domain Credentials</strong> (or cached domain credentials).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>On-Prem AD Domain Membership</strong></td>
+<td style="text-align: left;"><strong>No</strong></td>
+<td style="text-align: left;"><strong>No</strong> (Never joins on-prem AD DS domain)</td>
+<td style="text-align: left;"><strong>Yes</strong> (Joined to traditional on-prem AD domain)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Device Management</strong></td>
+<td style="text-align: left;"><strong>MAM (Mobile Application Management)</strong> via Intune. Lightweight app protection policies.</td>
+<td style="text-align: left;"><strong>Full MDM (Mobile Device Management)</strong> via Microsoft Intune or modern MDM.</td>
+<td style="text-align: left;"><strong>Co-Management:</strong> On-prem Group Policy (GPO) / Microsoft Configuration Manager (SCCM) + Intune MDM.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Administrative Control &amp; Remote Wipe</strong></td>
+<td style="text-align: left;"><strong>Selective App Wipe Only</strong>. IT cannot wipe personal photos, OS, or personal files.</td>
+<td style="text-align: left;"><strong>Full Remote OS Wipe</strong> &amp; Device Factory Reset capability. IT has complete hardware/OS ownership.</td>
+<td style="text-align: left;"><strong>Full OS Wipe</strong> via SCCM/Intune or on-prem administrative control.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Local Admin Rights</strong></td>
+<td style="text-align: left;">User remains local admin of their own personal machine.</td>
+<td style="text-align: left;">Controlled via Entra ID: Global Admins, Device Admins, or Intune Local Admin Service.</td>
+<td style="text-align: left;">Managed via on-premises Active Directory GPO (Restricted Groups).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>BitLocker Key Storage</strong></td>
+<td style="text-align: left;">User&rsquo;s personal OneDrive or local backup (not corporate tenant by default).</td>
+<td style="text-align: left;">Automatically backed up into <strong>Microsoft Entra ID device object</strong>.</td>
+<td style="text-align: left;">Backed up to <strong>On-Prem AD DS</strong> (via GPO) and synced/escrowed to <strong>Entra ID</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary SSO Artifact</strong></td>
+<td style="text-align: left;">PRT issued scoped only to registered work applications.</td>
+<td style="text-align: left;">Full Enterprise <strong>Primary Refresh Token (PRT)</strong> stored in TPM.</td>
+<td style="text-align: left;">Full Enterprise <strong>Primary Refresh Token (PRT)</strong> + On-Prem <strong>Kerberos TGT</strong>.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3 id="13-deep-breakdown-registered-vs-joined-vs-hybrid-joined">1.3 Deep Breakdown: Registered vs. Joined vs. Hybrid Joined</h3>
+<h4 id="a-microsoft-entra-registered-byod">A. Microsoft Entra Registered (BYOD)</h4>
+<ul>
+<li><strong>What it is:</strong> Designed for contractor machines, mobile phones (iOS/Android), and employee personal laptops.</li>
+<li><strong>The Registration Process:</strong> The user logs in with their personal account, opens an application (like Word or Teams) or goes to <em>Windows Settings $\rightarrow$ Accounts $\rightarrow$ Access work or school $\rightarrow$ Connect</em>.</li>
+<li><strong>The Separation of Church and State:</strong> Registering a personal device does <strong>not</strong> hand over full control of the machine to company IT. It installs a workplace management profile. IT can enforce PIN length on the Outlook app, wipe corporate emails if the device is lost, or prevent copying text from Teams to personal WhatsApp. IT cannot see personal browsing history or wipe personal photos.</li>
+</ul>
+<h4 id="b-microsoft-entra-joined-cloud-native-enterprise">B. Microsoft Entra Joined (Cloud-Native Enterprise)</h4>
+<ul>
+<li><strong>What it is:</strong> The gold standard for modern, cloud-first, zero-on-prem enterprises. Laptops ship directly from the manufacturer to the user&rsquo;s home via <strong>Windows Autopilot</strong>.</li>
+<li><strong>How it Works:</strong> The machine is taken out of the box, turned on, connects to Wi-Fi, and at the Windows Out-of-Box Experience (OOBE) lock screen, the user types <code>user@contoso.com</code> and password.</li>
+<li><strong>No Domain Controllers:</strong> The device never communicates with a traditional Windows Server Active Directory domain controller. It has no LDAP, no Kerberos TGT from on-prem, and no on-premises Group Policy Objects (GPOs). Everything is governed by Microsoft Intune configuration profiles and Entra ID Conditional Access.</li>
+<li><strong>Can it access on-prem resources?</strong> <strong>YES!</strong> If an Entra Joined device is brought into the corporate office or connects via VPN, Entra ID passes Kerberos hints. If Microsoft Entra Connect is syncing users, the device can obtain Kerberos tickets from local domain controllers to access legacy file shares without being domain-joined.</li>
+</ul>
+<h4 id="c-microsoft-entra-hybrid-joined-the-enterprise-bridge">C. Microsoft Entra Hybrid Joined (The Enterprise Bridge)</h4>
+<ul>
+<li><strong>What it is:</strong> Existing enterprise machines that are already domain-joined to on-premises Windows Server Active Directory (<code>corp.contoso.com</code>), but need cloud features (Conditional Access, Intune compliance, cloud SSO).</li>
+<li><strong>The Crucial Clarification:</strong> A Hybrid Joined device is <strong>NOT</strong> merely an on-prem computer. It is a <strong>dual-registered entity</strong>. It exists as a Computer object in on-prem Active Directory DS <strong>AND</strong> as a synchronized Device object in Microsoft Entra ID.</li>
+<li><strong>How Registration Happens:</strong>
+  1. The computer joins the local on-premises AD domain via standard domain join.
+  2. A Group Policy Object (GPO) or Entra Connect setup configures the <strong>Service Connection Point (SCP)</strong> in on-prem AD (in the Configuration partition: <code>CN=62a0ff2e-7c21-42c6-829d-4288b5638c38,CN=Device Registration Configuration,CN=Services</code>).
+  3. The local computer reads the SCP to discover the Entra ID tenant information.
+  4. The computer generates a public/private key pair, writes the public key to its own computer object attribute in on-prem AD (<code>userCertificate</code>).
+  5. Microsoft Entra Connect synchronizes that computer object and public key to Microsoft Entra ID.
+  6. The machine contacts Entra ID over the internet (port 443) to complete registration and obtain its cloud device certificate and PRT.</li>
+</ul>
+<hr />
+<h3 id="14-the-primary-refresh-token-prt-and-hardware-tpm">1.4 The Primary Refresh Token (PRT) and Hardware TPM</h3>
+<h4 id="what-is-the-primary-refresh-token-prt">What is the Primary Refresh Token (PRT)?</h4>
+<p>The <strong>PRT</strong> is the crown jewel of Windows 10/11 and Entra ID authentication. It is an encrypted JSON Web Token (JWT) issued by Microsoft Entra ID to a device after successful user logon.</p>
+<pre><code>+-----------------------------------------------------------------------------------+
+|                        PRIMARY REFRESH TOKEN (PRT)                                |
+|-----------------------------------------------------------------------------------|
+|  * Header &amp; Device ID: dev-8f4b-229a                                              |
+|  * User ID: alice@contoso.com                                                     |
+|  * Claims: MFA Satisfied = TRUE, Compliance = PASS                                |
+|  * Lifetime: Valid up to 14 days; rolling renewal on active device usage          |
+|  * Security Binding: Cryptographically bound to TPM (Transport Key / Context)     |
++-----------------------------------------------------------------------------------+
+</code></pre>
+<h4 id="hardware-bound-security-via-tpm-trusted-platform-module">Hardware-Bound Security via TPM (Trusted Platform Module)</h4>
+<ul>
+<li>On modern devices with a TPM 2.0 chip, the cryptographic keys that sign and unlock the PRT are generated inside the physical hardware TPM chip.</li>
+<li><strong>The Private Key NEVER leaves the TPM.</strong> Even if malware runs on the machine with local administrator rights, it cannot export the PRT&rsquo;s underlying private key to another computer. An attacker copying tokens to an external laptop cannot impersonate the device.</li>
+</ul>
+<h4 id="how-the-prt-enables-zero-prompt-sso">How the PRT Enables Zero-Prompt SSO:</h4>
+<ol>
+<li>When Alice logs into her Windows lock screen in the morning, the Windows Cloud Authentication Provider (<code>CloudAP</code>) authenticates her credentials with Entra ID.</li>
+<li>Entra ID issues the PRT to the Windows Web Account Manager (<code>WAM</code>).</li>
+<li>When Alice opens Microsoft Edge, Teams, Outlook, or Azure Portal, the application does not ask for her username or password.</li>
+<li>The application requests a token from WAM. WAM uses the PRT to request an Entra ID Access Token silently in the background.</li>
+<li>Result: Instant, zero-friction Single Sign-On across all corporate web and desktop apps.</li>
+</ol>
+<hr />
+<h2 id="2-groups-architecture-group-based-licensing">2. Groups Architecture &amp; Group-Based Licensing</h2>
+<h3 id="21-security-groups-vs-microsoft-365-groups">2.1 Security Groups vs. Microsoft 365 Groups</h3>
+<p>Understanding the fundamental dichotomy between Security Groups and Microsoft 365 Groups is essential for both administration and the AZ-104 exam.</p>
+<pre><code>                          ┌─────────────────────────────────────┐
+                          │         GROUPS IN ENTRA ID          │
+                          └──────────────────┬──────────────────┘
+                                             │
+                    ┌────────────────────────┴────────────────────────┐
+                    ▼                                                 ▼
+       ┌────────────────────────┐                        ┌────────────────────────┐
+       │     SECURITY GROUP     │                        │  MICROSOFT 365 GROUP   │
+       ├────────────────────────┤                        ├────────────────────────┤
+       │ * Pure Access &amp; RBAC   │                        │ * Collaboration Hub    │
+       │ * Licensing Target     │                        │ * Auto-provisions:     │
+       │ * Role-Assignable Opt  │                        │   - Exchange Mailbox   │
+       │ * Nesting Supported    │                        │   - SharePoint Site    │
+       │ * No Mailbox/Sites     │                        │   - Teams Channel      │
+       │                        │                        │   - OneNote / Planner  │
+       │                        │                        │ * No Nesting           │
+       └────────────────────────┘                        └────────────────────────┘
+</code></pre>
+<h4 id="detailed-feature-comparison-matrix">Detailed Feature Comparison Matrix</h4>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Architectural Feature</th>
+<th style="text-align: left;">Security Group</th>
+<th style="text-align: left;">Microsoft 365 Group (Formerly Office 365 Group)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Purpose</strong></td>
+<td style="text-align: left;">Access control, RBAC role assignment, software distribution, Conditional Access policy targeting, group-based licensing.</td>
+<td style="text-align: left;">Multi-user team collaboration across Microsoft&rsquo;s productivity SaaS ecosystem.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Associated SaaS Resources</strong></td>
+<td style="text-align: left;"><strong>None.</strong> A security group has no mailbox, no calendar, no SharePoint site, and no Teams workspace.</td>
+<td style="text-align: left;"><strong>Automatic Bundle:</strong> Every M365 group automatically provisions: <br>1. Shared Exchange Mailbox &amp; Calendar (<code>group@contoso.com</code>)<br>2. Dedicated SharePoint Online Team Site Document Library<br>3. Shared OneNote Notebook<br>4. Shared Microsoft Planner board<br>5. Optional connected Microsoft Teams channel.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Group Nesting</strong></td>
+<td style="text-align: left;"><strong>Supported</strong> (A security group can be placed inside another security group).</td>
+<td style="text-align: left;"><strong>NOT Supported.</strong> Microsoft 365 groups cannot contain other groups; they only accept direct user members.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Licensing Assignment</strong></td>
+<td style="text-align: left;"><strong>Yes</strong> (Standard practice for Group-Based Licensing).</td>
+<td style="text-align: left;"><strong>Yes</strong> (Can also be targeted for licensing, though Security Groups are preferred for infrastructure).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Role-Assignable Groups</strong></td>
+<td style="text-align: left;"><strong>Yes</strong> (Can be designated as <code>isRoleAssignable=true</code> at creation time to hold Entra ID directory roles).</td>
+<td style="text-align: left;"><strong>No</strong> (Cannot be used for Entra ID role assignments).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Membership Types</strong></td>
+<td style="text-align: left;">Assigned (Static), Dynamic User, Dynamic Device.</td>
+<td style="text-align: left;">Assigned (Static), Dynamic User. <em>(Cannot have Dynamic Device membership because devices don&rsquo;t collaborate in email/Teams).</em></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>External/Guest Access</strong></td>
+<td style="text-align: left;">Can contain B2B Guest users for access control.</td>
+<td style="text-align: left;">Native guest sharing model; guests get access to the group&rsquo;s SharePoint files, Teams chats, and group emails.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3 id="22-role-assignable-security-groups-high-security">2.2 Role-Assignable Security Groups (High Security)</h3>
+<p>By default in Microsoft Entra ID, normal security groups cannot have Entra ID roles (like <em>User Administrator</em> or <em>Helpdesk Administrator</em>) assigned to them. Why? Because a delegated User Administrator could add themselves to the group and escalate their own privileges to Global Administrator!</p>
+<p>To solve this, Entra ID introduced <strong>Role-Assignable Groups</strong>:
+- Must be set at creation time: <strong>&ldquo;Microsoft Entra roles can be assigned to the group&rdquo; = Yes</strong> (<code>isRoleAssignable=true</code>).
+- <strong>Permanent Flag:</strong> This setting can <strong>NEVER</strong> be changed after creation.
+- <strong>Anti-Tampering Protection:</strong> Only a <strong>Global Administrator</strong> or <strong>Privileged Role Administrator</strong> can modify the membership of this group. A standard User Administrator cannot add members to it.
+- <strong>No Dynamic Membership:</strong> Role-assignable groups must have <strong>Assigned (static)</strong> membership. Dynamic rules are forbidden to prevent algorithmic privilege escalation.</p>
+<hr />
+<h3 id="23-group-based-licensing-mechanics-rules-gotchas">2.3 Group-Based Licensing: Mechanics, Rules &amp; Gotchas</h3>
+<h4 id="how-it-works-the-paid-pool-model">How it Works: The Paid Pool Model</h4>
+<ol>
+<li>The organization purchases a commercial subscription from Microsoft (e.g., 500 licenses of <em>Microsoft 365 E5</em> or 200 licenses of <em>Microsoft Entra ID P2</em>).</li>
+<li>Group-Based Licensing is purely an <strong>automated allocation and entitlement engine</strong>. It does not create free licenses; it manages consumption from the purchased pool.</li>
+<li>Instead of an administrator manually clicking on 500 individual users to assign licenses:
+   - The administrator links the license package to a Security Group (e.g., <code>SG-Finance-E5-Licensed</code>).
+   - Specific license components (e.g., disabling Yammer/Viva while keeping Exchange and Intune) can be toggled on or off at the group level.
+   - When Alice is added to <code>SG-Finance-E5-Licensed</code>, Entra ID automatically provisions the license to Alice within minutes.
+   - When Alice leaves the department and is removed from the group, the license is automatically reclaimed and returned to the tenant&rsquo;s unallocated pool.</li>
+</ol>
+<h4 id="critical-az-104-exam-rules-traps-for-group-licensing">Critical AZ-104 Exam Rules &amp; Traps for Group Licensing:</h4>
+<ul>
+<li><strong>NO NESTED INHERITANCE FOR LICENSES:</strong></li>
+<li>If <code>Group B</code> is a member of <code>Group A</code>, and a license is assigned to <code>Group A</code>:</li>
+<li>Members of <code>Group A</code> get the license.</li>
+<li><strong>Members of <code>Group B</code> do NOT get the license!</strong> Group-based licensing does not traverse nested group hierarchies.</li>
+<li><strong>License Exhaustion &amp; Error States:</strong></li>
+<li>If a group has 50 members and you assign a license that only has 30 seats remaining in the tenant pool:</li>
+<li>30 users will receive licenses; the remaining 20 users enter an <strong>&ldquo;Error state (Count violation)&rdquo;</strong>.</li>
+<li>Once new licenses are purchased or freed up, the administrator must click <strong>&ldquo;Reprocess&rdquo;</strong> on the group to resolve the error.</li>
+<li><strong>Direct vs. Inherited Precedence:</strong></li>
+<li>If a user has a directly assigned license and is also added to a group with the same license, the license is not duplicated. If the direct license is deleted, the user retains access via group inheritance seamlessly.</li>
+</ul>
+<hr />
+<h2 id="3-microsoft-first-party-applications-saas-integration">3. Microsoft First-Party Applications &amp; SaaS Integration</h2>
+<h3 id="31-where-microsoft-apps-fit-in-the-entra-id-architecture">3.1 Where Microsoft Apps Fit in the Entra ID Architecture</h3>
+<p>A common point of confusion is whether Microsoft&rsquo;s own applications (Exchange Online, SharePoint, Teams, Azure Portal, Microsoft Graph) are external SaaS apps or part of Entra ID itself.</p>
+<p><strong>The Architectural Reality:</strong><br />
+- <strong>Microsoft Entra ID is the central Identity Provider (IdP) for everything.</strong>
+- Microsoft&rsquo;s applications (Exchange, SharePoint, Teams, Office 365, Azure Management Portal) are <strong>First-Party SaaS Applications</strong> that consume Entra ID as their identity authority, exactly like third-party apps (Salesforce, ServiceNow, Workday).
+- In every Entra ID tenant, Microsoft automatically provisions hidden and visible <strong>First-Party Service Principals</strong> (Enterprise Applications) representing these services (e.g., <em>Office 365 Exchange Online</em>, <em>Microsoft Graph</em>, <em>Azure Resource Manager</em>).</p>
+<pre><code>                      ┌────────────────────────────────┐
+                      │    MICROSOFT ENTRA ID (IdP)    │
+                      │  (Users, Groups, MFA, Devices) │
+                      └───────────────┬────────────────┘
+                                      │ OAuth2 / OIDC / SAML
+         ┌────────────────────────────┼────────────────────────────┐
+         ▼                            ▼                            ▼
+┌─────────────────┐          ┌─────────────────┐          ┌─────────────────┐
+│  Exchange / M365│          │  Azure ARM Hub  │          │ Third-Party     │
+│  (First-Party)  │          │  (Control Plane)│          │ (Salesforce, etc│
+└─────────────────┘          └─────────────────┘          └─────────────────┘
+</code></pre>
+<h3 id="32-special-controls-for-first-party-microsoft-apps">3.2 Special Controls for First-Party Microsoft Apps</h3>
+<p>Because Microsoft controls both the IdP (Entra ID) and the resource applications (M365, Azure Portal), special capabilities exist:
+1. <strong>The &ldquo;Office 365&rdquo; App Suite in Conditional Access:</strong>
+   - In Conditional Access policies, Microsoft bundles dozens of interconnected services (Exchange Online, SharePoint Online, Teams, Planner) under a single umbrella app named <strong>Office 365</strong>.
+   - <strong>Exam Best Practice:</strong> Always target the umbrella &ldquo;Office 365&rdquo; app rather than individual sub-apps (like Exchange alone) to prevent unexpected token and service dependency failures when users navigate between Teams and SharePoint.
+2. <strong>Continuous Access Evaluation (CAE):</strong>
+   - Traditional OAuth tokens have a 1-hour lifetime. If an admin disables a user, the user could historically still read emails until the 60-minute token expired.
+   - For first-party apps (Exchange, Teams, SharePoint) and Azure Portal, <strong>CAE</strong> provides real-time event communication. If an admin disables Alice&rsquo;s account or changes her password, the resource service rejects the token within <strong>seconds</strong>.</p>
+<hr />
+<h2 id="4-the-two-distinct-rbac-planes-directory-vs-azure-arm">4. The Two Distinct RBAC Planes: Directory vs. Azure ARM</h2>
+<p>The most critical architectural boundary on the AZ-104 exam is the complete separation between <strong>Microsoft Entra ID Roles</strong> and <strong>Azure RBAC Roles</strong>.</p>
+<pre><code>====================================================================================
+DIRECTORY / IDENTITY PLANE (Entra ID)         RESOURCE MANAGEMENT PLANE (Azure ARM)
+====================================================================================
+Authority: Microsoft Entra ID                 Authority: Azure Resource Manager (ARM)
+Stored in: Entra ID Directory Database        Stored in: Azure Resource Hierarchy Engine
+Scope Structure:                              Scope Structure:
+  [ Tenant Root Scope ]                         [ Management Groups ]
+         │                                               │
+         ▼                                               ▼
+  [ Administrative Units (AUs) ]                 [ Subscriptions ]
+                                                         │
+                                                         ▼
+                                                 [ Resource Groups ]
+                                                         │
+                                                         ▼
+                                                 [ Azure Resources ]
+------------------------------------------------------------------------------------
+Primary Roles:                                Primary Roles:
+  * Global Administrator                        * Owner
+  * User Administrator                          * Contributor
+  * Helpdesk Administrator                      * Reader
+  * Security Administrator                      * User Access Administrator
+  * Billing Administrator                       * Role-Specific (Storage Blob Owner)
+====================================================================================
+</code></pre>
+<h3 id="41-the-complete-separation-principle">4.1 The Complete Separation Principle</h3>
+<ul>
+<li><strong>Default Isolation:</strong> A user who is assigned the highest Entra ID directory role—<strong>Global Administrator</strong>—has <strong>ZERO ACCESS</strong> to Azure subscriptions, resource groups, storage accounts, or virtual machines by default!</li>
+<li>If a Global Admin opens the Azure Portal and navigates to &ldquo;Subscriptions&rdquo;, they will see nothing unless someone grants them an Azure RBAC role (e.g., Contributor or Reader) on that specific subscription.</li>
+<li><strong>Why?</strong> Enterprise compliance. Identity admins (managing password resets and HR onboarding) should not have the ability to delete production SQL databases or spin up expensive GPU clusters.</li>
+</ul>
+<h3 id="42-the-emergency-elevation-mechanism-break-glass">4.2 The Emergency Elevation Mechanism (&ldquo;Break Glass&rdquo;)</h3>
+<p>What happens if the only Subscription Owner leaves the company, and the subscription is orphaned?</p>
+<p>Entra ID provides an emergency bridge located under:<br />
+<em>Microsoft Entra ID $\rightarrow$ Properties $\rightarrow$ </em><em>Access management for Azure resources</em><em> $\rightarrow$ Toggle: </em><em>Yes</em>**</p>
+<pre><code>[ Global Administrator ]
+          │
+          │ Toggles &quot;Access management for Azure resources&quot; = YES
+          ▼
+[ Granted: &quot;User Access Administrator&quot; at ARM Root Scope ( / ) ]
+          │
+          ▼
+[ Can now grant Azure RBAC &quot;Owner&quot; permissions on ANY subscription in tenant ]
+</code></pre>
+<ul>
+<li>When toggled to <strong>Yes</strong>, Entra ID temporarily assigns the caller the Azure RBAC role <strong>User Access Administrator</strong> at the absolute root scope (<code>/</code>) of the Azure Management Group hierarchy.</li>
+<li>This allows the administrator to see all subscriptions, assign new Owners to orphaned subscriptions, and then toggle the switch back to <strong>No</strong>.</li>
+</ul>
+<h3 id="43-administrative-units-aus-scoping-entra-id-roles">4.3 Administrative Units (AUs) — Scoping Entra ID Roles</h3>
+<p>Just as Azure ARM uses Resource Groups to restrict where a Contributor can build VMs, Entra ID uses <strong>Administrative Units (AUs)</strong> to restrict directory roles:
+- An AU is a container within Entra ID that holds selected users, groups, or devices.
+- <strong>Scenario:</strong> You want Bob to be a User Administrator, but <em>only</em> for employees in the Sydney, Australia office.
+- <strong>Solution:</strong> Create an AU named <code>AU-Sydney-Users</code>, add Sydney users into it, and assign Bob the <em>User Administrator</em> role <strong>scoped to <code>AU-Sydney-Users</code></strong>. Bob can reset passwords for Sydney staff, but cannot touch Paris or London accounts.</p>
+<hr />
+<h2 id="5-automated-hybrid-provisioning-authentication-architecture">5. Automated Hybrid Provisioning &amp; Authentication Architecture</h2>
+<p>When enterprises connect their on-premises Active Directory Domain Services (AD DS) to Microsoft Entra ID, two main architectural decisions must be made:
+1. <strong>Provisioning / Synchronization Engine:</strong> How do user and group objects get replicated to the cloud?
+2. <strong>Authentication Method:</strong> How does Entra ID verify the user&rsquo;s password during sign-in?</p>
+<pre><code>                     ┌────────────────────────────────────────┐
+                     │          ON-PREMISES AD DS             │
+                     │    (LDAP / Kerberos / Win32 DC)        │
+                     └───────────────────┬────────────────────┘
+                                         │
+                 ┌───────────────────────┴───────────────────────┐
+                 ▼                                               ▼
+   [ Entra Connect Sync Server ]                    [ Entra Cloud Sync Agent ]
+   * Thick Windows Server                           * Lightweight agent (No SQL)
+   * LocalDB / Full SQL                             * Cloud-orchestrated
+   * 1-to-1 Tenant Binding                          * Multi-agent high availability
+                 │                                               │
+                 └───────────────────────┬───────────────────────┘
+                                         │ Outbound TLS (Port 443)
+                                         ▼
+                     ┌────────────────────────────────────────┐
+                     │          MICROSOFT ENTRA ID            │
+                     │    (Cloud Directory &amp; Graph API)       │
+                     └────────────────────────────────────────┘
+</code></pre>
+<hr />
+<h3 id="51-entra-connect-sync-vs-entra-cloud-sync">5.1 Entra Connect Sync vs. Entra Cloud Sync</h3>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature / Architecture</th>
+<th style="text-align: left;">Microsoft Entra Connect Sync (Traditional)</th>
+<th style="text-align: left;">Microsoft Entra Cloud Sync (Modern Lightweight)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Architecture</strong></td>
+<td style="text-align: left;">Heavy monolithic server running on a dedicated Windows Server VM. Requires Microsoft SQL Server (or SQL Express LocalDB).</td>
+<td style="text-align: left;">Ultra-lightweight background agent installed on any domain-joined Windows Server. <strong>Zero local SQL database.</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Control Plane</strong></td>
+<td style="text-align: left;">Configuration rules, attribute mapping, and filtering rules live <strong>locally on the on-prem server</strong> (Sync Rules Editor).</td>
+<td style="text-align: left;">Configuration and attribute transformations live <strong>in the Azure Cloud Portal</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>High Availability</strong></td>
+<td style="text-align: left;"><strong>Active / Staging (Passive)</strong>. Only 1 server can actively write to Entra ID at a time. Switching requires manual failover.</td>
+<td style="text-align: left;"><strong>Multi-Agent Active/Active</strong>. Multiple agents run simultaneously; cloud automatically routes work to healthy agents.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Forest Topologies</strong></td>
+<td style="text-align: left;">Connects to multiple on-prem forests, but requires direct network line-of-sight to all domain controllers.</td>
+<td style="text-align: left;">Can connect to disconnected, isolated, or air-gapped forests without trust relationships between forests.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tenant Relationship</strong></td>
+<td style="text-align: left;"><strong>1-to-1 Rule:</strong> One Entra Connect installation can synchronize to <strong>EXACTLY ONE</strong> Entra ID tenant. (You cannot sync one server to multiple tenants).</td>
+<td style="text-align: left;">Can sync multiple disconnected AD forests to a single tenant easily using separate agents.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Object Limit</strong></td>
+<td style="text-align: left;">Up to 100,000 objects with SQL LocalDB; over 100,000 requires full SQL Server Standard/Enterprise.</td>
+<td style="text-align: left;">Scaled automatically by cloud infrastructure; no local database limit.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sync Interval</strong></td>
+<td style="text-align: left;">Object delta sync runs every <strong>30 minutes</strong> (customizable). Password hashes sync every <strong>2 minutes</strong>.</td>
+<td style="text-align: left;">Continuous cloud-driven micro-sync.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Special Capabilities</strong></td>
+<td style="text-align: left;">Supports Device writeback, Exchange hybrid writeback, LDAP directory connections.</td>
+<td style="text-align: left;">Optimized for users, groups, and contacts. (Rapidly closing feature parity).</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3 id="52-the-three-core-hybrid-authentication-protocols">5.2 The Three Core Hybrid Authentication Protocols</h3>
+<p>When a synchronized user (<code>user@contoso.com</code>) types their password into the cloud login prompt, how does Entra ID validate it?</p>
+<pre><code>====================================================================================================
+METHOD 1: PASSWORD HASH SYNCHRONIZATION (PHS) — [RECOMMENDED DEFAULT]
+====================================================================================================
+On-Prem DC  ──&gt; [Entra Connect extracts MD4] ──&gt; [Computes 1000-iter SHA-256 HMAC] ──&gt; [Entra ID Cloud]
+                                                                                             │
+User ──&gt; [Enters Password] ──&gt; [Validated 100% in Cloud against stored hash-of-a-hash] &lt;─────┘
+* High Availability: 100% resilient to on-prem internet or datacenter outages.
+* Cloud Security: Enables Entra ID Protection leaked-credential scanning on the dark web.
+* Sync Frequency: Password hash changes sync automatically every 2 minutes.
+====================================================================================================
+METHOD 2: PASS-THROUGH AUTHENTICATION (PTA) — [NO CLOUD HASHES]
+====================================================================================================
+User ──&gt; [Enters Password] ──&gt; [Entra ID queues encrypted auth request]
+                                           │
+                                           ▼ (Outbound HTTPS polling via Port 443)
+                             [On-Prem PTA Lightweight Agent]
+                                           │ (Win32 LogonUser)
+                                           ▼
+                             [On-Premises Domain Controller]
+* Security Footprint: ZERO password hashes stored in the cloud. Satisfies strict banking compliance.
+* Vulnerability: If on-prem internet or domain controllers go down, users CANNOT sign into the cloud!
+====================================================================================================
+METHOD 3: FEDERATION (AD FS / PING / OKTA) — [ENTERPRISE REDIRECT]
+====================================================================================================
+User ──&gt; [Entra ID detects federated domain] ──&gt; [Redirects browser to on-prem STS: adfs.contoso.com]
+                                                                  │
+User authenticates on-premises ──&gt; [AD FS signs SAML Token] ──&gt; [Redirects back to Entra ID]
+* Architecture: Heavyweight infrastructure (AD FS farm, Web Application Proxies, public SSL certs).
+====================================================================================================
+</code></pre>
+<h4 id="detailed-breakdown-of-phs-mechanics-addressing-common-misconceptions">Detailed Breakdown of PHS Mechanics (Addressing Common Misconceptions):</h4>
+<ul>
+<li><strong>Is the on-prem NTLM or plain text password sent to the cloud?</strong><br />
+<strong>NO!</strong> Active Directory stores passwords as MD4 hashes. Entra Connect takes that MD4 hash, adds a cryptographic salt, and runs it through <strong>1,000 iterations of SHA-256 HMAC</strong>.</li>
+<li><strong>Is the hash stored in Entra ID?</strong><br />
+<strong>YES.</strong> The resulting <strong>hash-of-a-hash</strong> is transmitted over TLS 443 and stored directly in the Microsoft Entra ID database.</li>
+<li><strong>Is authentication cloud-based or on-prem?</strong><br />
+<strong>100% Cloud-Based.</strong> When the user logs in, Entra ID hashes the user&rsquo;s submitted password using the same salt and 1,000 SHA-256 iterations and compares it locally in Azure. The on-prem domain controllers are <strong>NOT contacted</strong> at the time of user login!</li>
+<li><strong>Does it require constant synchronization?</strong><br />
+<strong>YES.</strong> Entra Connect runs a dedicated password hash sync thread that polls on-prem domain controllers for password changes every <strong>2 minutes</strong>.</li>
+</ul>
+<hr />
+<h3 id="53-seamless-single-sign-on-seamless-sso">5.3 Seamless Single Sign-On (Seamless SSO)</h3>
+<h4 id="what-problem-does-seamless-sso-solve">What Problem Does Seamless SSO Solve?</h4>
+<p>If an organization uses PHS or PTA, an employee sitting at their office desk on a domain-joined PC would still see a web prompt asking for their username and password when visiting <code>portal.azure.com</code>. Seamless SSO removes this friction.</p>
+<h4 id="the-underlying-mechanics">The Underlying Mechanics:</h4>
+<ol>
+<li>When Seamless SSO is enabled in Entra Connect, a computer account named <strong><code>AZUREADSSOACC</code></strong> is automatically generated in the on-premises Active Directory domain.</li>
+<li>Kerberos Service Principal Names (SPNs) are registered for <code>https://autologon.microsoftazuread-sso.com</code>.</li>
+<li>The shared Kerberos decryption key of <code>AZUREADSSOACC</code> is securely shared with Microsoft Entra ID in the cloud.</li>
+</ol>
+<pre><code>[ Domain-Joined Desktop ]                     [ On-Premises KDC / DC ]                 [ Microsoft Entra ID ]
+          │                                              │                                       │
+          │ 1. Navigates to portal.azure.com             │                                       │
+          ├─────────────────────────────────────────────────────────────────────────────────────&gt;│
+          │ 2. Returns 401 Unauthorized + challenges browser for Kerberos ticket                │
+          │&lt;─────────────────────────────────────────────────────────────────────────────────────┤
+          │                                              │                                       │
+          │ 3. Requests Kerberos Ticket for AZUREADSSOACC│                                       │
+          ├─────────────────────────────────────────────&gt;│                                       │
+          │ 4. Issues Kerberos Ticket (encrypted)        │                                       │
+          │&lt;─────────────────────────────────────────────┤                                       │
+          │                                                                                      │
+          │ 5. Sends Kerberos Ticket to Entra ID over HTTPS                                      │
+          ├─────────────────────────────────────────────────────────────────────────────────────&gt;│
+          │                                              │ 6. Entra ID decrypts ticket using     │
+          │                                              │    stored AZUREADSSOACC shared key.   │
+          │ 7. Authenticated! Returns Access Token       │    Signs user in silently!            │
+          │&lt;─────────────────────────────────────────────────────────────────────────────────────┤
+</code></pre>
+<hr />
+<h2 id="6-real-world-az-104-exam-traps-gotchas-summary">6. Real-World AZ-104 Exam Traps &amp; Gotchas Summary</h2>
+<ol>
+<li>
+<p><strong>Global Admin vs. Azure Subscriptions:</strong><br />
+<em>Trap:</em> &ldquo;A Global Admin cannot see or delete a Virtual Machine in an Azure subscription. What is missing?&rdquo;<br />
+<em>Answer:</em> The Global Admin must elevate their access via Entra ID Properties (<em>Access management for Azure resources</em> toggle), or be explicitly assigned an Azure RBAC role (e.g., Contributor or Owner) on the subscription/resource group.</p>
+</li>
+<li>
+<p><strong>Group-Based Licensing and Nested Groups:</strong><br />
+<em>Trap:</em> &ldquo;You assign a Microsoft 365 E5 license to Group A. Group B is a member of Group A. Why do users in Group B not have licenses?&rdquo;<br />
+<em>Answer:</em> Group-based licensing <strong>does not support nested groups</strong>. Licenses are only granted to direct first-level members.</p>
+</li>
+<li>
+<p><strong>Role-Assignable Groups Mutation:</strong><br />
+<em>Trap:</em> &ldquo;Can you convert an existing dynamic security group into a role-assignable group to manage User Administrator roles?&rdquo;<br />
+<em>Answer:</em> <strong>NO.</strong> Role-assignable groups can only be enabled during initial creation (<code>isRoleAssignable=true</code>), cannot use dynamic membership rules, and cannot be converted later.</p>
+</li>
+<li>
+<p><strong>Entra Connect Topology Rule:</strong><br />
+<em>Trap:</em> &ldquo;Can one Microsoft Entra Connect server sync simultaneously to two different Microsoft Entra ID tenants?&rdquo;<br />
+<em>Answer:</em> <strong>NO.</strong> Exactly one Entra Connect server maps to exactly one Entra ID tenant. To sync to another tenant, you must deploy a separate sync infrastructure or use Cloud Sync.</p>
+</li>
+<li>
+<p><strong>Entra Joined vs. On-Premises Active Directory:</strong><br />
+<em>Trap:</em> &ldquo;Do Microsoft Entra Joined devices require network line-of-sight to on-premises Domain Controllers to log into Windows?&rdquo;<br />
+<em>Answer:</em> <strong>NO.</strong> Entra Joined machines authenticate against Microsoft Entra ID in the cloud via the internet. They have no Active Directory domain join.</p>
+</li>
+<li>
+<p><strong>Password Hash Sync Outage Resilience:</strong><br />
+<em>Trap:</em> &ldquo;The corporate WAN connection goes down and on-premises domain controllers are unreachable. Can remote employees still sign into Microsoft 365 if the organization uses PHS?&rdquo;<br />
+<em>Answer:</em> <strong>YES.</strong> In PHS, the 1,000-iteration SHA-256 hash-of-a-hash is stored in the Entra ID cloud database. Authentication occurs entirely in Azure without contacting on-premises DCs. (If they were using PTA or Federation, sign-ins would fail).</p>
+</li>
+</ol>
+<hr />
+<h2 id="7-architectural-cheat-sheet-quick-revision">7. Architectural Cheat Sheet (Quick Revision)</h2>
+<pre><code>+-----------------------------------+-------------------------------------------------------------------------+
+| Architecture Question             | Core Architectural Fact                                                 |
++-----------------------------------+-------------------------------------------------------------------------+
+| BYOD Personal Machine             | Microsoft Entra Registered (MAM app protection, local account login)     |
+| Cloud-First Corporate Laptop      | Microsoft Entra Joined (Full Intune MDM, UPN login at Windows screen)   |
+| Legacy On-Prem Corporate Asset    | Microsoft Entra Hybrid Joined (Domain-joined to AD DS + synced to cloud)|
+| PRT Storage Location              | Cryptographically bound to TPM 2.0 hardware chip                        |
+| Team Mailbox + SharePoint Library | Microsoft 365 Group (Collaboration suite, no group nesting)             |
+| Access Control &amp; Licensing        | Security Group (Supports nesting, static/dynamic, role-assignable opt)  |
+| Directory RBAC vs Azure RBAC      | Entra ID Roles (Directory Plane) != Azure RBAC Roles (ARM Plane)        |
+| Global Admin Azure Elevation      | &quot;Access management for Azure resources&quot; -&gt; User Access Admin at root /  |
+| Scoped Directory Roles            | Administrative Units (AUs)                                              |
+| Resilient Hybrid Auth             | Password Hash Sync (PHS) - Cloud-based auth, 2-minute sync interval     |
+| Zero Hashes in Cloud              | Pass-through Authentication (PTA) - Outbound port 443 agent to on-prem  |
+| Silent On-Prem Domain SSO         | Seamless SSO - Kerberos ticket via AZUREADSSOACC computer account       |
++-----------------------------------+-------------------------------------------------------------------------+
+</code></pre>
+
+      <div class="page-footer">
+        <div>AZ-104 Exam Hard-Mode Gauntlet & Architecture Series • 2026 Standards</div>
+        <div><a href="index.html" style="color:var(--accent);">← Return to Master Command Hub</a></div>
+      </div>
+    </main>
+
+  </div>
+
+</body>
+</html>

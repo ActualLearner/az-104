@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AZ-104 Error Logging SOP</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1rem 0.75rem 4rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.6rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      font-size: 0.85rem;
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    @media (min-width: 768px) {
+      body { padding: 1.5rem 1rem 4rem; }
+      .content { padding: 2.25rem; }
+    }
+    h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-top: 1.8rem; margin-bottom: 0.6rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.35rem; }
+    h3 { font-size: 1.05rem; font-weight: 700; color: var(--accent-indigo); margin-top: 1.5rem; margin-bottom: 0.4rem; }
+    p { margin-bottom: 0.85rem; font-size: 0.925rem; color: #334155; }
+    ul, ol { margin-left: 1.25rem; margin-bottom: 1rem; font-size: 0.925rem; color: #334155; }
+    li { margin-bottom: 0.35rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.825rem; margin: 1rem 0; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    th, td { padding: 0.6rem 0.75rem; text-align: left; border: 1px solid var(--border); }
+    th { background: #f8fafc; font-weight: 700; color: #1e293b; }
+    tr:nth-child(even) { background: #fbfcfe; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; color: #0f172a; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85rem; word-break: break-word; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
+    pre code { background: transparent; color: inherit; padding: 0; font-size: 0.85rem; }
+    blockquote { border-left: 4px solid var(--accent-blue); background: #f0f9ff; padding: 0.75rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; color: #0369a1; }
+    hr { border: 0; height: 1px; background: var(--border); margin: 1.75rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Master Command Hub</a>
+      <span style="font-size:0.775rem; color:var(--text-muted); font-weight:600;">AZ-104 Mobile Ready</span>
+      <a href="#top">Top ↑</a>
+    </div>
+    <div class="content">
+      <h1 id="az-104-active-error-logging-diagnostic-protocol">AZ-104 Active Error Logging &amp; Diagnostic Protocol</h1>
+<p><strong>Standard Operating Procedure (SOP) for Antigravity AI Partner</strong></p>
+<hr />
+<h2 id="1-executive-purpose-verification">1. Executive Purpose &amp; Verification</h2>
+<p>This protocol governs how Antigravity handles any practice test question that the user fails, guesses, or feels uncertain about during AZ-104 preparation (Tutorials Dojo, Shireen Khan, MS Learn, or ITExams).</p>
+<h3 id="empirical-basis-why-top-scorers-use-this">Empirical Basis (Why Top Scorers Use This)</h3>
+<p>Empirical data from successful first-attempt candidates on <code>r/AzureCertification</code> and Tutorials Dojo (Jon Bonso) demonstrates:
+1. <strong>The "Memorization Trap":</strong> Repeatedly taking practice tests creates false confidence (scoring 90% by recognizing question phrasing rather than understanding Azure architecture).
+2. <strong>Review Mode Dissection:</strong> Passing candidates slow down and dissect <em>why</em> wrong answers fail, not just <em>why</em> the right answer works.
+3. <strong>Structured Tracking:</strong> Successful candidates track mistakes in spreadsheets, Notion, or Markdown using a consistent root-cause framework (Category, Flawed Assumption, Core Azure Rule, Distractor Killers, Exam Heuristic).</p>
+<hr />
+<h2 id="2-the-3-root-causes-of-every-az-104-mistake">2. The 3 Root Causes of Every AZ-104 Mistake</h2>
+<p>Whenever the user misses a question, Antigravity must diagnose which of the three failure modes occurred:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Root Cause</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Type 1: Knowledge / SKU Gap</strong></td>
+<td style="text-align: left;">Unaware of a technical limitation, specific cmdlet, or feature tier.</td>
+<td style="text-align: left;"><em>Not knowing that standard GRS secondary cannot be read without failover.</em></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Type 2: Constraint Blindness</strong></td>
+<td style="text-align: left;">Missed a subtle enterprise constraint embedded in the prompt.</td>
+<td style="text-align: left;"><em>Overlooking "least administrative effort", "minimize cost", or "no downtime".</em></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Type 3: Plausibility Trap</strong></td>
+<td style="text-align: left;">Picked an option that works technically, but is suboptimal or violates Microsoft best practice.</td>
+<td style="text-align: left;"><em>Deploying a custom NAT VM instead of Azure NAT Gateway.</em></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-mandatory-ai-response-structure">3. Mandatory AI Response Structure</h2>
+<p>Whenever the user shares a question, Antigravity <strong>MUST</strong> format the response using this exact 6-part structure:</p>
+<h3 id="domain-x-name-short-concept-title"><code>[Domain X: Name] Short Concept Title</code></h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ✅ Correct / ❌ Incorrect / ⚠️ Lucky Guess</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li>Identify the exact business requirement and highlight the constraint words (e.g., <em>"least administrative effort"</em>, <em>"read-only secondary"</em>, <em>"across subscriptions in same tenant"</em>).</li>
+<li><strong>3. Flawed Mental Model (Root Cause):</strong></li>
+<li>State explicitly why the user picked what they picked and the exact false assumption that led to it.</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+<li>Explain the authoritative technical rule, architecture model, or CLI behavior that makes the correct answer right.</li>
+<li><strong>5. Distractor Killers (Why the Others Fail):</strong></li>
+<li>Break down <em>every other option</em> and explain in 1 sentence why it is disqualified.</li>
+<li><strong>6. Exam Heuristic (1-Liner Rule of Thumb):</strong></li>
+<li>Provide a crisp, memorable rule to recall instantly on exam day.</li>
+</ul>
+<hr />
+<h2 id="4-automatic-error-journal-appending-protocol">4. Automatic Error Journal Appending Protocol</h2>
+<p>After delivering the chat diagnosis:
+1. <strong>Format as Markdown Entry:</strong> Convert the lesson into the standardized journal format.
+2. <strong>Persistence:</strong> Offer to append the entry directly to <code>error_journal.md</code> and/or update Section 6 of <code>index.html</code> (<code>#error-journal</code>).
+3. <strong>Domain Tagging:</strong> Every logged item must include its exam domain:
+   - <code>[Domain 1: Identity &amp; Governance]</code> (Entra ID, RBAC, Subscriptions, Policies)
+   - <code>[Domain 2: Storage]</code> (Storage Accounts, Redundancy, Blob Tiers, AzCopy, File Shares)
+   - <code>[Domain 3: Compute]</code> (VMs, Availability Sets/Zones, Scale Sets, ACI, ACA, App Services)
+   - <code>[Domain 4: Virtual Networking]</code> (VNets, Subnets, NSGs, Peering, DNS, Bastion, VPN/ER, NAT)
+   - <code>[Domain 5: Monitoring &amp; Backup]</code> (Azure Monitor, Log Analytics, Alerts, Recovery Services Vault)</p>
+<hr />
+<h2 id="5-reference-gold-standard-example">5. Reference Gold-Standard Example</h2>
+<pre><code class="language-markdown">### [Domain 4: Virtual Networking] Point-to-Site VPN &amp; VNet Peering Route Propagation
+* **1. Diagnostic Verdict:** ❌ Incorrect (User picked B; Correct is C)
+* **2. The Scenario Trigger &amp; Hidden Constraints:**
+  * Requirement: Connect P2S VPN clients connected to VNet1 to resources in VNet2 (peered with VNet1).
+  * Constraint: Peering exists and &quot;Allow Gateway Transit&quot; is enabled, but clients cannot reach VNet2 IPs.
+* **3. Flawed Mental Model:**
+  * User assumed VNet Peering dynamically pushes routes to already-installed VPN client adapters automatically.
+* **4. The Core Azure Mechanic (2026 Standard):**
+  * Point-to-Site Windows/macOS VPN clients receive their static route table upon downloading the client configuration package. When peering or routes change on the VNet gateway, existing client software **does NOT** update dynamically. The VPN client package **must be re-downloaded and re-installed** on client machines.
+* **5. Distractor Killers:**
+  * Option A (Restart Gateway): Drops all active tunnels; does not push routes to endpoints.
+  * Option B (Add UDR to client subnet): P2S clients are off-network; they do not evaluate Azure VNet UDR tables.
+  * Option D (Recreate Peering): Peering is already active; problem is on the client routing table.
+* **6. Exam Heuristic:**
+  * **&quot;P2S VPN clients + new peered VNet routes = Always re-download &amp; re-install the VPN client configuration package.&quot;**
+</code></pre>
+<hr />
+<h2 id="6-pre-exam-high-yield-review-trigger">6. Pre-Exam High-Yield Review Trigger</h2>
+<p>48 hours prior to the real exam (Phase 5), Antigravity will compile all logged errors into a concentrated <strong>"Exam Day Trap Sheet"</strong> grouped by domain, filtering out noise and focusing strictly on the user's demonstrated historical weak spots.</p>
+    </div>
+  </div>
+</body>
+</html>
