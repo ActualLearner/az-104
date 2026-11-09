@@ -79,7 +79,7 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 </head>
-<body>
+<body id="top">
   <div class="container">
     <div class="nav-bar">
       <a href="index.html">← Master Command Hub</a>
@@ -406,155 +406,229 @@
 <h3 id="domain-2-storage-customer-managed-keys-cmk-key-types-azure-key-vault-ar-pt01-q6">[Domain 2: Storage] Customer-Managed Keys (CMK) Key Types &amp; Azure Key Vault (AR PT01 Q6)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Configure Storage Service Encryption (SSE) using Customer-Managed Keys (CMK) stored in Azure Key Vault or Managed HSM.</li>
 <li>Constraint: Supported cryptographic key algorithms, types, and bit lengths for the Key Encryption Key (KEK).</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed Azure Storage CMK supports symmetric keys (such as AES-256) since data at rest is encrypted with AES-256, or assumed Elliptic Curve (EC) keys can be used for key wrapping.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>Azure Storage implements two-tier envelope encryption: data is encrypted via a symmetric AES-256 Data Encryption Key (DEK), and the DEK is encrypted (wrapped) by the customer's Key Encryption Key (KEK) in Key Vault.</li>
 <li>The KEK in Azure Key Vault <strong>MUST be an asymmetric RSA key</strong> of bit length <strong>2048, 3072, or 4096</strong>. Both software-protected RSA keys (standard Key Vault) and HSM-protected RSA keys (Premium Key Vault or Managed HSM) are supported.</li>
 <li>Azure Storage CMK <strong>does NOT support symmetric keys (AES-256)</strong> or <strong>Elliptic Curve (EC) keys</strong>.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>AES-256 symmetric keys:</em> Key Vault/Managed HSM can store symmetric keys, but Azure Storage cannot use symmetric keys as KEKs for CMK.</li>
 <li><em>Elliptic Curve (EC) keys:</em> EC keys (e.g., P-256, P-384) are used for digital signatures and key agreement, not key wrapping in Azure Storage encryption.</li>
 <li><em>RSA 1024:</em> Insecure and rejected by Azure Key Vault and Storage CMK validation.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Azure Storage CMK in Key Vault = RSA 2048, 3072, or 4096 only. Never symmetric (AES) and never EC."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-2-storage-blob-lifecycle-management-json-path-filtering-ar-pt01-q8">[Domain 2: Storage] Blob Lifecycle Management JSON Path Filtering (AR PT01 Q8)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Author an Azure Blob lifecycle management rule (in JSON) to automatically transition or delete blobs located in a specific folder path (e.g., the <code>code/</code> virtual folder inside container <code>data</code>).</li>
 <li>Constraint: Correct JSON filter property for container prefix and directory path matching.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Looking for <code>blobIndex</code> or <code>blobIndexMatch</code> to filter virtual directory paths, or assuming folder path matching uses regex or <code>pathMatch</code>.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>In Azure Blob Storage lifecycle management policy definitions, path-based filtering is configured exclusively through the <strong><code>prefixMatch</code></strong> string array inside <code>definition.filters</code>.</li>
 <li>Prefixes must specify the full path starting from the container name: e.g., <code>"prefixMatch": ["data/code"]</code> or <code>["data/code/"]</code>.</li>
 <li>In contrast, <strong><code>blobIndexMatch</code></strong> is reserved exclusively for matching key-value <strong>Blob Index Tags</strong> (e.g., matching blobs tagged with <code>Department == 'Finance'</code>), not directory paths.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em><code>blobIndexMatch</code>:</em> Filters blobs by key-value index tags, not virtual directory prefixes.</li>
 <li><em><code>blobIndex</code>:</em> Invalid JSON schema property for lifecycle management filters.</li>
 <li><em><code>prefix</code>:</em> The schema field is strictly <code>prefixMatch</code> (an array of prefix strings).</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Lifecycle rule folder/path filter = <code>prefixMatch: [\"data/code\"]</code>. Blob Index Tags = <code>blobIndexMatch</code>."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-4-virtual-networking-minimum-nsgs-for-multi-region-vnets-ar-pt01-q20">[Domain 4: Virtual Networking] Minimum NSGs for Multi-Region VNets (AR PT01 Q20)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Apply Network Security Group (NSG) rules to filter traffic across subnets or NICs distributed across two different Azure regions (e.g., East US and West Europe).</li>
 <li>Constraint: Determine the <em>minimum number of NSGs</em> required to enforce security policies in both regions.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed an NSG is a global subscription-level resource that can be associated with subnets in any region, thinking 1 single NSG could cover both regions.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>A Network Security Group (NSG) is strictly a <strong>regional resource</strong>.</li>
 <li>An NSG can <strong>only</strong> be associated with subnets or NICs located in the <strong>exact same Azure region</strong> as the NSG itself. It is architecturally impossible to associate an NSG in East US with a subnet or NIC in West Europe.</li>
 <li>Therefore, when VNets or subnets span two regions, you must deploy a <strong>minimum of 2 NSGs</strong> (at least one NSG per region).</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>1 NSG:</em> Cross-region NSG association fails ARM validation; NSG and subnet/NIC must share the same region.</li>
 <li><em>Global NSG:</em> Azure does not provide a global NSG resource (Azure Virtual Network Manager Security Admin rules operate globally, but standalone NSGs are strictly regional).</li>
-<li><strong>6. Exam Heuristic:</strong></li>
-<li><strong>"NSGs are regional resources: Subnet and NSG MUST reside in the same region $\rightarrow$ 2 regions = minimum 2 NSGs."</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"NSGs are regional resources: Subnet and NSG MUST reside in the same region → 2 regions = minimum 2 NSGs."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-4-virtual-networking-nsg-evaluation-flow-for-inbound-internet-rdp-ar-pt01-q21">[Domain 4: Virtual Networking] NSG Evaluation Flow for Inbound Internet RDP (AR PT01 Q21)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Connect from the public Internet to an Azure Windows VM via Remote Desktop Protocol (RDP).</li>
 <li>Architecture: VM subnet has an attached Subnet NSG, and the VM NIC has an attached NIC NSG.</li>
 <li>Constraint: Identifying the packet processing order, protocol, and rule requirements across both NSGs.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed allowing RDP on the NIC NSG alone is sufficient (or vice versa), or selected UDP for RDP traffic, or thought NIC NSG is evaluated first for inbound traffic.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li><strong>Inbound Traffic Evaluation Order:</strong> Azure SDN evaluates the <strong>Subnet NSG first</strong>, and if allowed, evaluates the <strong>NIC NSG second</strong>.</li>
 <li><strong>Dual-Allow Requirement:</strong> For inbound packets to reach the VM, the traffic <strong>MUST be explicitly allowed by BOTH the Subnet NSG AND the NIC NSG</strong>. If either layer denies or hits default <code>DenyAllInbound</code> (priority 65500), traffic is dropped.</li>
 <li><strong>Protocol &amp; Port:</strong> Standard Remote Desktop Protocol operates on <strong>TCP port 3389</strong>. (While RDP Shortpath uses UDP for session transport after connection establishment, initial RDP connectivity requires TCP).</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Allow on Subnet NSG only:</em> Traffic reaches the NIC where default <code>DenyAllInbound</code> drops it.</li>
 <li><em>Allow on NIC NSG only:</em> Traffic is blocked at the subnet boundary before ever reaching the NIC.</li>
 <li><em>Inbound UDP 3389:</em> Standard RDP listener runs on TCP 3389; UDP alone cannot establish a standard RDP session.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
-<li><strong>"Inbound: Subnet NSG $\rightarrow$ NIC NSG (BOTH must allow). Standard RDP = TCP 3389."</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Inbound: Subnet NSG → NIC NSG (BOTH must allow). Standard RDP = TCP 3389."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-4-virtual-networking-azure-provided-dns-reverse-lookup-ptr-fqdn-ar-pt01-q23">[Domain 4: Virtual Networking] Azure-Provided DNS Reverse Lookup (PTR) FQDN (AR PT01 Q23)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Determine the Fully Qualified Domain Name (FQDN) returned when executing a reverse DNS lookup (PTR query) against the private IP address of an Azure VM.</li>
 <li>Constraint: Virtual Network is using default <strong>Azure-provided DNS</strong> (168.63.129.16), with no custom Azure Private DNS Zone configured.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed the PTR lookup returns <code>&lt;vmname&gt;.cloudapp.azure.com</code>, <code>&lt;vmname&gt;.azure.com</code>, or <code>&lt;vmname&gt;.&lt;region&gt;.cloudapp.azure.com</code>.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>Azure-provided DNS automatically assigns and registers the internal suffix <strong><code>internal.cloudapp.net</code></strong> for all VMs deployed within a VNet.</li>
 <li>When a reverse DNS lookup (PTR query) is performed on a private IP address within the VNet, Azure-provided DNS resolves the query to:
-    <strong><code>&lt;vmname&gt;.internal.cloudapp.net</code></strong></li>
+  <strong><code>&lt;vmname&gt;.internal.cloudapp.net</code></strong></li>
 <li>The <code>*.cloudapp.azure.com</code> suffix is used exclusively for Public IP DNS name labels, never for internal private IP reverse lookups.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em><code>&lt;vmname&gt;.cloudapp.azure.com</code>:</em> Public IP DNS name label format, not private internal DNS.</li>
 <li><em><code>&lt;vmname&gt;.azure.com</code>:</em> Invalid internal domain name; not registered by Azure-provided DNS.</li>
 <li><em><code>&lt;vmname&gt;.&lt;vnetname&gt;.local</code>:</em> Not generated by Azure SDN resolver.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Azure-provided DNS private IP reverse lookup (PTR) = <code>&lt;vmname&gt;.internal.cloudapp.net</code>."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-4-virtual-networking-dual-nsg-evaluation-default-subnet-nsg-explicit-nic-nsg-ar-pt01-q24">[Domain 4: Virtual Networking] Dual NSG Evaluation: Default Subnet NSG &amp; Explicit NIC NSG (AR PT01 Q24)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Architecture: VM has a Subnet-level NSG (<code>app-nsg1</code>) with only default security rules, and a NIC-level NSG (<code>app-nsg2</code>) that contains an explicit inbound rule allowing TCP port 3389.</li>
 <li>Requirement: Determine whether an RDP connection succeeds when initiated from another host in the same Virtual Network (or management subnet).</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed the connection fails because <code>app-nsg1</code> lacks an explicit custom allow rule for port 3389, overlooking the default <code>AllowVNetInBound</code> rule.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>Every NSG includes default rules that cannot be deleted. Default inbound rule <strong><code>AllowVNetInBound</code> (Priority 65000)</strong> allows all traffic where the source and destination are within the <code>VirtualNetwork</code> service tag (which includes the entire VNet address space, peered VNets, and connected on-premises networks).</li>
 <li>Traffic evaluation sequence for inbound intra-VNet RDP:<ol>
-<li><strong>Subnet NSG (<code>app-nsg1</code>):</strong> No custom rules. Evaluates default rules $\rightarrow$ matches <code>AllowVNetInBound</code> (priority 65000) $\rightarrow$ <strong>ALLOWED</strong>.</li>
-<li><strong>NIC NSG (<code>app-nsg2</code>):</strong> Matches explicit rule allowing TCP 3389 (at higher priority, e.g. 100) $\rightarrow$ <strong>ALLOWED</strong>.</li>
+<li><strong>Subnet NSG (<code>app-nsg1</code>):</strong> No custom rules. Evaluates default rules → matches <code>AllowVNetInBound</code> (priority 65000) → <strong>ALLOWED</strong>.</li>
+<li><strong>NIC NSG (<code>app-nsg2</code>):</strong> Matches explicit rule allowing TCP 3389 (at higher priority, e.g. 100) → <strong>ALLOWED</strong>.</li>
 </ol>
 </li>
 <li>Since both NSGs permit the traffic, the RDP connection <strong>succeeds</strong>.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Connection fails at Subnet NSG:</em> Incorrect; intra-VNet traffic is permitted by default rule <code>AllowVNetInBound</code> (65000) unless an explicit Deny rule is added.</li>
 <li><em>NIC NSG is evaluated first:</em> Inbound processing always evaluates Subnet NSG first, then NIC NSG.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Default NSG rules permit all intra-VNet traffic (<code>AllowVNetInBound</code>). If Subnet NSG is default and NIC NSG allows port 3389, intra-VNet RDP connects successfully."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-3-compute-app-service-outbound-connectivity-to-private-vnet-resources-ar-pt01-q28">[Domain 3: Compute] App Service Outbound Connectivity to Private VNet Resources (AR PT01 Q28)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Configure an Azure App Service web app to establish <strong>outbound</strong> connections to a private backend virtual machine (private IP <code>10.0.0.4</code>) running inside an Azure Virtual Network.</li>
 <li>Constraint: Minimize complexity and use native Azure networking integration for outbound communication.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Selected <strong>Private Endpoint (Azure Private Link)</strong>, confusing inbound access to the web app with outbound access from the web app.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li><strong>Regional VNet Integration (Delegated Subnet):</strong> Grants the web app access to private resources inside your VNet by delegating an empty subnet (<code>Microsoft.Web/serverFarms</code>) to the App Service. All <strong>outbound</strong> calls from the app to private IPs (<code>10.0.0.4</code>), service endpoints, and peered networks route directly through that subnet.</li>
 <li><strong>Private Endpoint:</strong> Provides a private IP address <em>inside</em> your VNet for clients in the VNet to reach the web app (<strong>Inbound only</strong>). A Private Endpoint does not allow the web app to initiate outbound calls into the VNet.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Private Endpoint:</em> Secures inbound access into the App Service; does not provide outbound routing into the VNet.</li>
 <li><em>Service Endpoint:</em> Secures multi-tenant Azure PaaS services (e.g. Storage, SQL), not private VMs with RFC 1918 addresses.</li>
 <li><em>Hybrid Connections:</em> Used for outbound TCP communication to on-premise networks via Azure Relay agent, unnecessary and suboptimal for intra-VNet communication.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"App Service OUTBOUND to private VNet IP = Regional VNet Integration (delegated subnet). INBOUND to App Service via private IP = Private Endpoint."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-1-identity-governance-arm-template-deployment-mode-parameter-ar-pt01-q36">[Domain 1: Identity &amp; Governance] ARM Template Deployment Mode Parameter (AR PT01 Q36)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Execute an ARM / Bicep template deployment via Azure CLI (<code>az deployment group create</code>) or Azure PowerShell (<code>New-AzResourceGroupDeployment</code>) specifying whether resources in the target Resource Group not included in the template should be left untouched or deleted.</li>
 <li>Constraint: Exact command-line parameter name used to declare <code>Incremental</code> vs <code>Complete</code>.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Selected <code>--deployment-mode</code>, <code>-DeploymentMode</code>, <code>--type</code>, or <code>--strategy</code>.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>The parameter governing deployment state handling is strictly <strong><code>Mode</code></strong>:<ul>
 <li><strong>Azure CLI:</strong> <code>--mode Incremental</code> or <code>--mode Complete</code> (under <code>az deployment group create</code>).</li>
 <li><strong>Azure PowerShell:</strong> <code>-Mode Incremental</code> or <code>-Mode Complete</code> (under <code>New-AzResourceGroupDeployment</code>).</li>
@@ -562,23 +636,33 @@
 </li>
 <li><strong><code>Incremental</code> (Default):</strong> ARM adds or modifies resources declared in the template; existing resources in the Resource Group that are not in the template remain untouched.</li>
 <li><strong><code>Complete</code>:</strong> ARM deletes resources present in the Resource Group that are not defined in the template (with exclusions for resource locks and specific non-deletable resource types).</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em><code>--deployment-mode</code>:</em> Invalid CLI parameter syntax (causes command syntax error).</li>
 <li><em><code>--type</code>:</em> Specifies resource types, not template lifecycle mode.</li>
 <li><em><code>--action</code>:</em> Invalid parameter for ARM template execution commands.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"ARM deployment mode parameter = <code>--mode</code> (CLI) or <code>-Mode</code> (PowerShell). Values: Incremental (default) or Complete."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-1-identity-governance-azure-abac-supported-blob-storage-data-plane-roles-ar-pt01-q47">[Domain 1: Identity &amp; Governance] Azure ABAC Supported Blob Storage Data-Plane Roles (AR PT01 Q47)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Author Azure Attribute-Based Access Control (ABAC) role assignment conditions to restrict access to blob data based on blob index tags and request attributes.</li>
 <li>Constraint: Determine which built-in Azure RBAC roles support authoring ABAC conditions.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed all storage roles containing "Blob" support ABAC, including <code>Storage Blob Delegator</code>, or assumed control-plane roles (<code>Owner</code>/<code>Contributor</code>) support blob ABAC conditions.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>Azure ABAC conditions for Azure Storage are supported strictly on specific <strong>data actions</strong> (<code>Microsoft.Storage/storageAccounts/blobServices/containers/blobs/*</code>).</li>
 <li>Supported built-in data-plane roles:<ol>
 <li><strong><code>Storage Blob Data Reader</code></strong></li>
@@ -587,23 +671,33 @@
 </ol>
 </li>
 <li><strong><code>Storage Blob Delegator</code></strong> grants only permission to generate a user delegation key (<code>Microsoft.Storage/storageAccounts/blobServices/generateUserDelegationKey/action</code>) to sign SAS tokens. It does <strong>NOT</strong> grant blob read/write/delete data actions and <strong>does NOT support ABAC conditions</strong>.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em><code>Storage Blob Delegator</code>:</em> Manages user delegation SAS keys only; ABAC conditions cannot be authored on this role.</li>
 <li><em><code>Storage Account Contributor</code>:</em> Control-plane role for managing the storage account resource, cannot have blob-level ABAC conditions.</li>
 <li><em><code>Reader</code>:</em> Subscription/RG management plane role with zero data actions.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Azure Blob ABAC conditions = Supported ONLY on <code>Storage Blob Data Reader</code>, <code>Contributor</code>, and <code>Owner</code>. NEVER <code>Storage Blob Delegator</code>."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-1-identity-governance-deleting-entra-id-user-with-group-assigned-licenses-ar-pt01-q50">[Domain 1: Identity &amp; Governance] Deleting Entra ID User with Group-Assigned Licenses (AR PT01 Q50)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: An administrator needs to delete a user account in Microsoft Entra ID.</li>
 <li>Constraint: The user has Microsoft 365 / Entra ID licenses inherited via membership in a licensed security group.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed an active group-assigned license locks the user account against deletion, believing the administrator must first remove the user from the group or unassign the license.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>In Microsoft Entra ID, <strong>a user can be deleted directly at any time</strong>, even if licenses are assigned directly or inherited via security groups.</li>
 <li>When the user is deleted:<ul>
 <li>The user object is moved to the <strong>"Deleted users"</strong> recycle bin (soft-deleted for 30 days).</li>
@@ -611,72 +705,106 @@
 </ul>
 </li>
 <li>There is no requirement to modify the security group or remove the user from the group prior to deletion.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Must remove user from security group first:</em> Unnecessary administrative overhead; user deletion automatically detaches group memberships.</li>
 <li><em>Must revoke group license first:</em> Licenses assigned at the group level apply to all members; you do not modify group licenses to offboard an individual user.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Entra ID User with group-assigned licenses = Can be deleted directly. Group licenses do NOT prevent user deletion."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-1-identity-governance-deleting-entra-id-security-group-with-directly-assigned-licenses-ar-pt01-q51">[Domain 1: Identity &amp; Governance] Deleting Entra ID Security Group with Directly Assigned Licenses (AR PT01 Q51)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Delete an existing Security Group in Microsoft Entra ID.</li>
 <li>Constraint: The security group currently has license subscriptions (e.g. Microsoft 365 E5 / Entra ID P2) directly assigned to the group object.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed security groups can be deleted freely like users, expecting Azure to automatically unbind and release licenses upon group deletion.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>In Microsoft Entra ID, <strong>you CANNOT delete a security group if licenses are directly assigned to it</strong>.</li>
 <li>Attempting to delete the security group triggers an immediate validation failure: <em>"The group cannot be deleted because it has licenses assigned to it"</em>.</li>
 <li>An administrator <strong>must explicitly remove/unassign all licenses</strong> from the security group's "Licenses" blade before the group deletion operation is permitted.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Delete group directly:</em> Blocked by Entra ID platform guardrails until licenses are unassigned.</li>
 <li><em>Soft-delete releases licenses:</em> Group deletion does not soft-delete licenses; group deletion is prevented entirely.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"User with group license = Can delete immediately. Group with assigned license = CANNOT delete until licenses are unassigned first."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-5-monitoring-backup-workload-segregation-backup-vault-vs-recovery-services-vault-ar-pt01-q52">[Domain 5: Monitoring &amp; Backup] Workload Segregation: Backup Vault vs. Recovery Services Vault (AR PT01 Q52)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Select the correct Azure backup container type to protect specific workloads (Azure Managed Disks, Azure Blobs, Azure VMs, Azure Files).</li>
 <li>Constraint: Architecturally mapping target resources to Backup Vault vs Recovery Services Vault.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assuming Recovery Services Vault protects all Azure resources, or that Backup Vault and Recovery Services Vault are interchangeable aliases.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>Azure Backup segregates workloads across two distinct vault architectures:<ol>
-<li><strong>Backup Vault (<code>Microsoft.DataProtection/backupVaults</code>):</strong></li>
+<li><strong>Backup Vault (<code>Microsoft.DataProtection/backupVaults</code>):</strong><ul>
 <li><strong>Azure Managed Disks</strong> (Azure Disk Backup)</li>
 <li><strong>Azure Blob Storage</strong> (vaulted blob backup and operational blob backup)</li>
 <li><strong>Azure Database for PostgreSQL Flexible Server</strong></li>
 <li><strong>Kubernetes (AKS) clusters</strong></li>
-<li><strong>Recovery Services Vault (<code>Microsoft.RecoveryServices/vaults</code>):</strong></li>
+</ul>
+</li>
+<li><strong>Recovery Services Vault (<code>Microsoft.RecoveryServices/vaults</code>):</strong><ul>
 <li><strong>Azure Virtual Machines</strong> (full VM level backup)</li>
 <li><strong>Azure Files</strong> (Azure File share snapshots)</li>
 <li><strong>SQL Server in Azure VMs</strong></li>
 <li><strong>SAP HANA in Azure VMs</strong></li>
 <li><strong>On-premises servers</strong> (via MARS agent, MABS, or Azure Site Recovery)</li>
+</ul>
+</li>
 </ol>
 </li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Recovery Services Vault for Managed Disks:</em> Standalone Azure Disk Backup is not supported in Recovery Services Vault; it requires a Backup Vault.</li>
 <li><em>Backup Vault for Azure Virtual Machines:</em> Full VM backup is not supported in Backup Vault; it requires a Recovery Services Vault.</li>
 <li><em>Backup Vault for Azure Files:</em> File share backup requires a Recovery Services Vault.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Backup Vault = Disks, Blobs, AKS, PostgreSQL. Recovery Services Vault = VMs, Azure Files, SQL/HANA in VMs, On-Premises/ASR."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-5-monitoring-backup-recovery-services-vault-standard-vs-enhanced-backup-policies-ar-pt01-q53">[Domain 5: Monitoring &amp; Backup] Recovery Services Vault: Standard vs. Enhanced Backup Policies (AR PT01 Q53)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Back up an Azure Virtual Machine utilizing advanced architecture (Trusted Launch VM, Premium SSD v2, or Ultra Disks) using Recovery Services Vault policies.</li>
 <li>Constraint: Understand the capabilities and limitations of the <strong>Standard Policy</strong> vs <strong>Enhanced Policy</strong>.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed the Standard Backup Policy supports all VM configurations through the Azure Portal, or assumed Standard Policy supports Ultra Disks and Premium SSD v2.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li><strong>Standard Policy limitations:</strong><ul>
 <li>Supports only 1 scheduled backup per day (daily schedule).</li>
 <li><strong>Trusted Launch VMs:</strong> Supported <strong>ONLY via Azure CLI, PowerShell, or REST API</strong>. The Azure Portal UI blocks configuring Standard Policy for Trusted Launch VMs and forces Enhanced Policy.</li>
@@ -690,22 +818,32 @@
 <li>Supports Zone-Redundant Storage (ZRS) backup vault restore.</li>
 </ul>
 </li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Standard policy in Azure Portal for Trusted Launch:</em> The Portal UI will reject the configuration; only Enhanced policy is exposed in the portal for Trusted Launch VMs.</li>
 <li><em>Standard policy for Premium SSD v2 / Ultra Disks:</em> Incompatible across all interfaces (Portal, CLI, and API); requires Enhanced Policy.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Standard Policy = 1/day, no Ultra/Prem SSD v2; Trusted Launch via CLI/PowerShell only. Enhanced Policy = Multiple/day, Ultra/Prem SSD v2, full Trusted Launch portal support."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-1-identity-governance-cross-subscription-vm-move-dependent-resource-bundling-ar-pt01-q56">[Domain 1: Identity &amp; Governance] Cross-Subscription VM Move: Dependent Resource Bundling (AR PT01 Q56)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Move an existing Azure Virtual Machine to a different Azure subscription within the same Microsoft Entra ID tenant.</li>
 <li>Constraint: Determine which associated and attached resources must be moved simultaneously.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed you can move the VM compute resource independently and leave attached disks, NICs, public IPs, or NSGs behind in the source subscription.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>Azure Resource Manager (ARM) enforces strict dependency validation when moving virtual machines across subscriptions or resource groups.</li>
 <li>A VM cannot be disassociated from its infrastructure dependencies during a move. You <strong>MUST move all attached resources together in a single operation</strong>:<ol>
 <li>The <strong>Virtual Machine</strong> (compute resource)</li>
@@ -716,22 +854,32 @@
 </ol>
 </li>
 <li>Leaving any attached disk or NIC in the source subscription causes ARM validation failure (<code>ResourceMoveValidationFailed</code>).</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Move VM compute only:</em> Fails validation; disks and NICs cannot span across subscriptions.</li>
 <li><em>Detaching disks before move:</em> High downtime and unnecessary operational complexity; ARM natively moves the VM and disks together.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Move VM across subscriptions = VM + Disks + NICs + Public IPs + NSGs MUST all move together in a single batch."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-1-identity-governance-azure-resource-locks-resource-move-operations-ar-pt01-q57">[Domain 1: Identity &amp; Governance] Azure Resource Locks &amp; Resource Move Operations (AR PT01 Q57)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Move an Azure resource (e.g. Storage Account, VM) to a different Resource Group or Subscription.</li>
 <li>Constraint: The target resource has an active Management Lock (<code>CanNotDelete</code> or <code>ReadOnly</code>) placed directly on it.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed that a <code>ReadOnly</code> or <code>CanNotDelete</code> lock completely locks the resource in place and blocks moving it to another Resource Group.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li><strong>Resource-Level Locks vs Move Operations:</strong><ul>
 <li>A <strong><code>CanNotDelete</code></strong> lock on an individual resource prevents accidental deletion, but <strong>does NOT prevent moving</strong> the resource to another Resource Group or Subscription.</li>
 <li>A <strong><code>ReadOnly</code></strong> lock placed <em>directly on the individual resource</em> prevents modification of its settings, but <strong>does NOT prevent moving</strong> the resource to another Resource Group.</li>
@@ -742,42 +890,62 @@
 <li>However, a <code>CanNotDelete</code> lock on the source or destination Resource Group does <strong>NOT</strong> block moving resources in or out.</li>
 </ul>
 </li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Locks always block resource moves:</em> False; resource-level locks do not block moving the resource.</li>
 <li><em>CanNotDelete blocks moving:</em> Moving is an ARM metadata re-parenting operation, not a resource deletion.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Resource-level locks (CanNotDelete / ReadOnly) do NOT block moving the resource. Only a ReadOnly lock on the Resource Group itself blocks moving."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-2-storage-stored-access-policies-maximum-limit-per-container-ar-pt01-q63">[Domain 2: Storage] Stored Access Policies Maximum Limit per Container (AR PT01 Q63)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Manage Shared Access Signatures (SAS) centrally using Stored Access Policies on an Azure Storage Blob container (or file share, queue, table).</li>
 <li>Constraint: The exact maximum number of stored access policies that can be created on a single storage resource at any one time.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Guessing 10, 20, 50, or assuming there is no limit on the number of stored access policies.</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li>Azure Storage enforces a hard architectural limit: <strong>A maximum of 5 Stored Access Policies</strong> can be created on any single container, file share, table, or queue.</li>
 <li>Stored Access Policies are stored directly in the container's ACL metadata. Attempting to add a 6th policy results in an error (<code>HTTP 400 Bad Request</code> / policy limit exceeded).</li>
 <li>If more than 5 distinct access profiles or SAS revocations are needed, you must use Entra ID-based User Delegation SAS or multiple containers.</li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>10 policies:</em> Exceeds hard quota.</li>
 <li><em>Unlimited:</em> Stored access policies are strictly capped at 5 due to container metadata limits.</li>
 <li><em>1 policy:</em> A container can hold up to 5 policies simultaneously (e.g. separating read, write, and partner policies).</li>
-<li><strong>6. Exam Heuristic:</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"Maximum Stored Access Policies on a blob container / file share / queue / table = Exactly 5."</strong></li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="domain-5-monitoring-backup-iis-guest-log-collection-via-ama-rbac-boundaries-ar-pt01-q65">[Domain 5: Monitoring &amp; Backup] IIS Guest Log Collection via AMA &amp; RBAC Boundaries (AR PT01 Q65)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
-<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
 <li>Requirement: Collect Internet Information Services (IIS) web server logs from an Azure VM into a Log Analytics workspace and trigger alerts on HTTP 500 server errors.</li>
 <li>Constraint: Determine the required architecture components and identify permissions that are NOT required on the workspace.</li>
-<li><strong>3. Flawed Mental Model:</strong></li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Assumed the VM (or its managed identity) requires the "Virtual Machine Contributor" or "Contributor" role on the Log Analytics workspace to send log data, or attempted to use legacy diagnostics extensions (WAD/MMA).</li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
 <li><strong>Modern Collection Architecture:</strong><ol>
 <li><strong>Azure Monitor Agent (AMA):</strong> Installed as an extension on the VM (replaces deprecated MMA/OMS and Azure Diagnostics WAD).</li>
 <li><strong>Data Collection Rule (DCR):</strong> Configured with an IIS log data source (<code>Microsoft-W3CIISLog</code>) targeting the destination Log Analytics workspace, and associated with the VM.</li>
@@ -789,12 +957,18 @@
 <li>"Virtual Machine Contributor" manages compute resources (start/stop/resize), not monitoring ingestion.</li>
 </ul>
 </li>
-<li><strong>5. Distractor Killers:</strong></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Assign VM Contributor on Log Analytics workspace:</em> VM Contributor does not manage workspaces, and VMs require zero workspace management roles to send telemetry via AMA.</li>
 <li><em>Azure Diagnostics Extension (WAD):</em> Legacy agent that dumps logs to Azure Storage tables/blobs; superseded by AMA + DCR.</li>
 <li><em>Metric Alert rule:</em> Cannot inspect HTTP status codes inside unstructured or tabular IIS event logs; requires a Log search alert rule with KQL.</li>
-<li><strong>6. Exam Heuristic:</strong></li>
-<li><strong>"VM Guest IIS logs = Azure Monitor Agent (AMA) + Data Collection Rule (DCR) $\rightarrow$ Log Analytics $\rightarrow$ KQL Log Search Alert. VM NEVER needs VM Contributor on the workspace."</strong></li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"VM Guest IIS logs = Azure Monitor Agent (AMA) + Data Collection Rule (DCR) → Log Analytics → KQL Log Search Alert. VM NEVER needs VM Contributor on the workspace."</strong></li>
+</ul>
+</li>
 </ul>
     </div>
   </div>
