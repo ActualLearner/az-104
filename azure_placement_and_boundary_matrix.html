@@ -343,12 +343,12 @@
 4. Any <strong>Public IP Address</strong> resource directly associated with the VM's NIC.
 5. Any <strong>Network Security Group (NSG)</strong> directly associated with the VM's NIC.
 6. The <strong>Virtual Network</strong> containing the VM's subnet (when moving across subscriptions, because a NIC cannot reference a subnet in a different subscription).</p>
-<h3 id="resource-locks-vs-move-operations-q57-trap">Resource Locks vs. Move Operations (Q57 Trap)</h3>
+<h3 id="resource-locks-vs-move-operations-official-microsoft-standard-vs-q57-bug">Resource Locks vs. Move Operations (Official Microsoft Standard vs. Q57 Bug)</h3>
 <ul>
+<li><strong>CanNotDelete Lock (<code>CanNotDelete</code>):</strong> Prevents accidental deletion of the resource. A <code>CanNotDelete</code> lock <strong>DOES NOT block moving resources</strong> (because moving a resource is not a deletion operation).</li>
 <li><strong>ReadOnly Lock (<code>ReadOnly</code>):</strong> Prevents modification of resource settings and prevents deletion.</li>
-<li><strong>CanNotDelete Lock (<code>CanNotDelete</code>):</strong> Prevents accidental deletion of the resource.</li>
-<li><strong>The Exam Trap:</strong> Candidates assume a <code>ReadOnly</code> lock blocks moving a resource to another Resource Group.</li>
-<li><strong>The Reality:</strong> <strong>Locks do NOT block cross-resource group move operations.</strong> You can move a resource bearing a <code>ReadOnly</code> or <code>CanNotDelete</code> lock to a new Resource Group or Subscription without removing the lock first.</li>
+<li><strong>Official Microsoft Rule:</strong> <strong>A <code>ReadOnly</code> lock STRICTLY BLOCKS moving resources!</strong> According to official Microsoft documentation: <em>"Azure resources cannot be moved if a Read-only management lock exists on the source resource group, destination resource group, subscription, or the resources themselves. You must remove the read-only lock before initiating the move."</em></li>
+<li><strong>Note on Practice Test 01 Q57:</strong> Alan Rodrigues incorrectly marked "Yes" claiming ReadOnly locks allow moves. Official Microsoft documentation confirms the candidate's answer (<strong>"No"</strong>) is the true platform behavior.</li>
 </ul>
 <h3 id="does-moving-a-resource-change-its-region-q58-trap">Does Moving a Resource Change its Region? (Q58 Trap)</h3>
 <ul>

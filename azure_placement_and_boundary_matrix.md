@@ -54,11 +54,11 @@ An Azure VM cannot exist in a vacuum. If you move a VM across resource groups or
 5. Any **Network Security Group (NSG)** directly associated with the VM's NIC.
 6. The **Virtual Network** containing the VM's subnet (when moving across subscriptions, because a NIC cannot reference a subnet in a different subscription).
 
-### Resource Locks vs. Move Operations (Q57 Trap)
+### Resource Locks vs. Move Operations (Official Microsoft Standard vs. Q57 Bug)
+* **CanNotDelete Lock (`CanNotDelete`):** Prevents accidental deletion of the resource. A `CanNotDelete` lock **DOES NOT block moving resources** (because moving a resource is not a deletion operation).
 * **ReadOnly Lock (`ReadOnly`):** Prevents modification of resource settings and prevents deletion.
-* **CanNotDelete Lock (`CanNotDelete`):** Prevents accidental deletion of the resource.
-* **The Exam Trap:** Candidates assume a `ReadOnly` lock blocks moving a resource to another Resource Group.
-* **The Reality:** **Locks do NOT block cross-resource group move operations.** You can move a resource bearing a `ReadOnly` or `CanNotDelete` lock to a new Resource Group or Subscription without removing the lock first.
+* **Official Microsoft Rule:** **A `ReadOnly` lock STRICTLY BLOCKS moving resources!** According to official Microsoft documentation: *"Azure resources cannot be moved if a Read-only management lock exists on the source resource group, destination resource group, subscription, or the resources themselves. You must remove the read-only lock before initiating the move."*
+* **Note on Practice Test 01 Q57:** Alan Rodrigues incorrectly marked "Yes" claiming ReadOnly locks allow moves. Official Microsoft documentation confirms the candidate's answer (**"No"**) is the true platform behavior.
 
 ### Does Moving a Resource Change its Region? (Q58 Trap)
 * **NEVER.** Moving a resource to a new Resource Group in another region does **NOT** migrate or move the underlying physical hardware.

@@ -889,38 +889,38 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-azure-resource-locks-resource-move-operations-ar-pt01-q57">[Domain 1: Identity &amp; Governance] Azure Resource Locks &amp; Resource Move Operations (AR PT01 Q57)</h3>
+<h3 id="domain-1-identity-governance-resource-locks-vs-moving-resources-ar-pt01-q57-official-spec-vs-author-defect">[Domain 1: Identity &amp; Governance] Resource Locks vs. Moving Resources (AR PT01 Q57 — Official Spec vs. Author Defect)</h3>
 <ul>
-<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
+<li><strong>1. Diagnostic Verdict:</strong> ⚠️ Candidate Answer Validated (Official Microsoft Behavior: "No")</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
-<li>Requirement: Move an Azure resource (e.g. Storage Account, VM) to a different Resource Group or Subscription.</li>
-<li>Constraint: The target resource has an active Management Lock (<code>CanNotDelete</code> or <code>ReadOnly</code>) placed directly on it.</li>
+<li>Scenario: A resource group (<code>rg-az104-dev-eus</code>) contains a Public IP resource <code>webvm01-ip</code>. A <code>ReadOnly</code> lock is placed on the Resource Group.</li>
+<li>Requirement: Determine whether an administrator can move <code>webvm01-ip</code> to target resource group <code>rg-az104-tst-eus</code>.</li>
+<li>Candidate Answer: <strong>No</strong> (Marked incorrect by Udemy test key; officially verified correct by Microsoft Learn).</li>
 </ul>
 </li>
-<li><strong>3. Flawed Mental Model:</strong><ul>
-<li>Assumed that a <code>ReadOnly</code> or <code>CanNotDelete</code> lock completely locks the resource in place and blocks moving it to another Resource Group.</li>
+<li><strong>3. Flawed Mental Model in Test Key:</strong><ul>
+<li>The practice test author conflated <code>CanNotDelete</code> with <code>ReadOnly</code>, claiming ReadOnly locks allow resource moves.</li>
 </ul>
 </li>
-<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
-<li><strong>Resource-Level Locks vs Move Operations:</strong><ul>
-<li>A <strong><code>CanNotDelete</code></strong> lock on an individual resource prevents accidental deletion, but <strong>does NOT prevent moving</strong> the resource to another Resource Group or Subscription.</li>
-<li>A <strong><code>ReadOnly</code></strong> lock placed <em>directly on the individual resource</em> prevents modification of its settings, but <strong>does NOT prevent moving</strong> the resource to another Resource Group.</li>
+<li><strong>4. The Core Azure Mechanic (Official Microsoft Standard):</strong><ul>
+<li><strong>Official Microsoft Rule (Learn Documentation):</strong><blockquote>
+<p><em>"Azure resources cannot be moved if a Read-only management lock exists on the source resource group, destination resource group, subscription, or the resources themselves. You must remove the read-only lock before initiating the move."</em></p>
+</blockquote>
+</li>
+<li><strong>The Lock vs. Move Matrix:</strong><ul>
+<li><strong><code>CanNotDelete</code> on Resource or RG:</strong> Does <strong>NOT</strong> block moving (moving is a re-parenting operation, not a deletion).</li>
+<li><strong><code>ReadOnly</code> on Resource Group:</strong> <strong>STRICTLY BLOCKS</strong> moving resources into or out of the resource group!</li>
 </ul>
 </li>
-<li><strong>Resource Group-Level Lock Nuance (Critical Distinction):</strong><ul>
-<li>If a <code>ReadOnly</code> lock is placed on the <strong>Source Resource Group</strong> or <strong>Destination Resource Group</strong>, the move operation is <strong>BLOCKED</strong> because the resource group container itself cannot be modified.</li>
-<li>However, a <code>CanNotDelete</code> lock on the source or destination Resource Group does <strong>NOT</strong> block moving resources in or out.</li>
-</ul>
-</li>
+<li>Therefore, the candidate's answer (<strong>"No"</strong>) is the true Microsoft platform behavior.</li>
 </ul>
 </li>
 <li><strong>5. Distractor Killers:</strong><ul>
-<li><em>Locks always block resource moves:</em> False; resource-level locks do not block moving the resource.</li>
-<li><em>CanNotDelete blocks moving:</em> Moving is an ARM metadata re-parenting operation, not a resource deletion.</li>
+<li><em>ReadOnly lock allows moves:</em> False; official Microsoft documentation explicitly states ReadOnly locks must be deleted before moving resources.</li>
 </ul>
 </li>
 <li><strong>6. Exam Heuristic:</strong><ul>
-<li><strong>"Resource-level locks (CanNotDelete / ReadOnly) do NOT block moving the resource. Only a ReadOnly lock on the Resource Group itself blocks moving."</strong></li>
+<li><strong>"<code>CanNotDelete</code> lock = Allows moving. <code>ReadOnly</code> lock on Resource or RG = BLOCKS moving (must remove lock first)."</strong></li>
 </ul>
 </li>
 </ul>
@@ -1030,7 +1030,7 @@
 </li>
 <li><strong>Cross-Subscription / Cross-RG Move Axioms:</strong><ul>
 <li>Moving a resource to a new Resource Group <strong>NEVER</strong> changes its underlying physical Azure region.</li>
-<li>Management locks (<code>ReadOnly</code> / <code>CanNotDelete</code>) <strong>do NOT prevent moving</strong> resources between Resource Groups or Subscriptions.</li>
+<li><code>CanNotDelete</code> locks allow moving resources. However, <strong><code>ReadOnly</code> locks strictly block moving resources</strong> until the lock is removed.</li>
 <li>Moving a VM cross-subscription requires moving the VM + all attached NICs + OS disk + Data disks + attached Public IP + attached NSG as a complete batch.</li>
 </ul>
 </li>
@@ -1044,7 +1044,7 @@
 </ul>
 </li>
 <li><strong>6. Exam Heuristic:</strong><ul>
-<li><strong>"RG location never limits resource region. VM + NIC + Disks = Same Region. VMSS Flexible Attach = Same Region + Same Resource Group. NSG = Same Region. ASG = Same VNet. Backup Vault = Same Region. Log Analytics = Any Region. Moving an RG never changes a resource's region."</strong></li>
+<li><strong>"RG location never limits resource region. VM + NIC + Disks = Same Region. VMSS Flexible Attach = Same Region + Same RG. ReadOnly Lock = BLOCKS move. CanNotDelete Lock = Allows move. Backup Vault = Same Region. Log Analytics = Any Region."</strong></li>
 </ul>
 </li>
 </ul>
