@@ -726,7 +726,7 @@ window.AZ104_EXAM_2 = [
     "domain": "Domain 2: Implement and manage storage",
     "domainCode": 2,
     "topic": "Azure Blob Storage Object Replication Prerequisites",
-    "scenario": "You want to configure asynchronous **Object Replication** between a source General Purpose v2 storage account (`stsourceeus` in East US) and a destination storage account (`stdestweu` in West Europe) to replicate block blobs in a specific container automatically.\n\nWhich TWO features MUST be enabled on BOTH the source and destination storage accounts before Object Replication can function? (Select TWO)",
+    "scenario": "You want to configure asynchronous **Object Replication** between a source General Purpose v2 storage account (`stsourceeus` in East US) and a destination storage account (`stdestweu` in West Europe) to replicate block blobs in a specific container automatically.\n\nWhich TWO features are mandatory prerequisites to enable Object Replication between the accounts? (Select TWO)",
     "questionType": "multiple",
     "options": [
       {
@@ -755,7 +755,7 @@ window.AZ104_EXAM_2 = [
       "D"
     ],
     "explanation": {
-      "verdict": "Options A (Blob Versioning) and B (Blob Change Feed) are correct.",
+      "verdict": "Options B (Blob Versioning) and D (Blob Change Feed) are correct.",
       "triggerConstraints": "Requirement: Configure Blob Object Replication between two storage accounts.",
       "flawedMentalModel": "Assuming Object Replication works on standard accounts without prerequisites, or confusing it with Data Lake Gen2.",
       "coreMechanic": "Azure Blob Object Replication asynchronously copies block blobs according to rules configured between accounts. Mandatory prerequisites:\n1. Blob Versioning: MUST be enabled on BOTH source and destination accounts.\n2. Blob Change Feed: MUST be enabled on the SOURCE storage account (so the replication engine can track blob creations and modifications).\n3. Account Type: Both accounts must be GPv2 or Premium BlockBlobStorage.",
@@ -2118,6 +2118,636 @@ window.AZ104_EXAM_2 = [
       "heuristic": "Group multiple Azure policies into one assignment & compliance view = Azure Policy Initiative (Policy Set).",
       "msLearnUrl": "https://learn.microsoft.com/azure/governance/policy/concepts/initiative-definition-structure",
       "errorJournalRef": "entra-id-master-architecture-and-governance.md"
+    }
+  },
+  {
+    "id": "e2-q51",
+    "examNumber": 2,
+    "domain": "Domain 1: Manage Azure identities and governance",
+    "domainCode": 1,
+    "topic": "Cross-Subscription Resource Relocation with CanNotDelete Lock",
+    "scenario": "You have an enterprise Azure environment with 'Subscription-A' (production) and 'Subscription-B' (shared services). You plan to move a standalone virtual machine named 'vm-tools01', along with its attached OS disk, data disk, and NIC, from resource group 'rg-prod-tools' in Subscription-A to 'rg-shared-tools' in Subscription-B.\n\nYou notice that 'rg-prod-tools' has a resource lock configured with the lock type 'CanNotDelete'. Neither 'rg-shared-tools' nor Subscription-B has any resource locks. You execute the resource move command.\n\nWhat is the outcome of the resource move operation?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "The move operation succeeds because a 'CanNotDelete' lock prevents deletion operations, but does NOT block moving resources across resource groups or subscriptions."
+      },
+      {
+        "id": "B",
+        "text": "The move operation fails because any lock type, including CanNotDelete, completely blocks moving resources out of a source resource group."
+      },
+      {
+        "id": "C",
+        "text": "The move operation succeeds, but the attached data disk is automatically detached and left behind in Subscription-A."
+      },
+      {
+        "id": "D",
+        "text": "The move operation fails because Azure virtual machines can only be moved across subscriptions if they are deallocated for more than 48 hours."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Move an Azure VM and its disks/NIC across subscriptions when source resource group has a CanNotDelete lock.",
+      "flawedMentalModel": "Assuming CanNotDelete blocks moves (conflating CanNotDelete with ReadOnly, or believing a move constitutes a delete).",
+      "coreMechanic": "Microsoft Official Resource Lock Specification:\n1. CanNotDelete (Delete lock): Prevents users from deleting a resource. Moving a resource changes its parent resource group / subscription metadata pointer in Azure Resource Manager; it does NOT delete the resource. Therefore, CanNotDelete locks do NOT block move operations!\n2. ReadOnly Lock: Prevents modifying or deleting resources. A ReadOnly lock on the source or target resource group STRICTLY BLOCKS move operations.\nBecause 'rg-prod-tools' only has a CanNotDelete lock, the move operation proceeds and succeeds.",
+      "distractors": {
+        "B": "Only ReadOnly locks block move operations; CanNotDelete does not block moves.",
+        "C": "Moving a VM across subscriptions requires all attached disks and NICs to move together in the same batch.",
+        "D": "VMs do not need 48 hours of deallocation; deallocation is required during the move, but no waiting period exists."
+      },
+      "heuristic": "CanNotDelete lock DOES NOT block resource moves! Only ReadOnly locks block moves.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/azure-resource-manager/management/lock-resources#considerations-before-applying-locks",
+      "errorJournalRef": "AR PT01 Q57"
+    }
+  },
+  {
+    "id": "e2-q52",
+    "examNumber": 2,
+    "domain": "Domain 2: Implement and manage storage",
+    "domainCode": 2,
+    "topic": "Blob Lifecycle Management on Versioned Storage with Immutability",
+    "scenario": "You are managing an Azure Blob Storage container that stores regulatory compliance documents with both Version-Level Immutability (WORM) and Blob Versioning enabled. You want to implement an automated Lifecycle Management policy that permanently deletes noncurrent blob versions once they reach 180 days past creation.\n\nYou need to ensure the lifecycle rule does not fail and complies with Azure Storage lifecycle engine requirements.\n\nHow should you define the rule filter and action?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Define a rule targeting 'baseBlobs' with action 'delete' and condition 'daysAfterLastTierChangeGreaterThan: 180'."
+      },
+      {
+        "id": "B",
+        "text": "Define a rule targeting 'version' with action 'delete' and condition 'daysAfterCreationGreaterThan: 180'."
+      },
+      {
+        "id": "C",
+        "text": "Define a rule targeting 'snapshots' with action 'tierToArchive' and condition 'daysAfterLastModifiedGreaterThan: 180'."
+      },
+      {
+        "id": "D",
+        "text": "Define a rule targeting 'version' with action 'tierToCool' and condition 'daysAfterLastAccessTimeGreaterThan: 180'."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Define a lifecycle management rule to delete noncurrent blob versions after 180 days on a container with versioning.",
+      "flawedMentalModel": "Targeting baseBlobs instead of version, or attempting to use 'daysAfterLastAccessTimeGreaterThan' on versions.",
+      "coreMechanic": "Azure Blob Lifecycle Management Rule Specification:\n1. Rule Target: When managing noncurrent versions generated by blob updates or deletions, the rule target MUST specify 'version' (not 'baseBlobs' or 'snapshots').\n2. Allowed Conditions for Versions: The ONLY condition supported for deleting blob versions is 'daysAfterCreationGreaterThan'. Azure does not maintain last-modified or last-access-time metadata independently for noncurrent versions.\n3. Once the 180-day threshold and any legal hold/retention period expires, the lifecycle engine automatically purges the noncurrent version.",
+      "distractors": {
+        "A": "Targeting baseBlobs deletes active current blobs rather than noncurrent versions.",
+        "C": "Snapshots are point-in-time read-only copies created manually, not automated version history.",
+        "D": "daysAfterLastAccessTimeGreaterThan is not supported for blob versions."
+      },
+      "heuristic": "Lifecycle management rules on blob versions ONLY support 'daysAfterCreationGreaterThan'!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview#rule-actions",
+      "errorJournalRef": "AR PT02 Q5"
+    }
+  },
+  {
+    "id": "e2-q53",
+    "examNumber": 2,
+    "domain": "Domain 3: Deploy and manage Azure compute resources",
+    "domainCode": 3,
+    "topic": "Azure Disk Encryption (ADE) Prerequisites vs. Key Vault Permission Models",
+    "scenario": "You need to enable Azure Disk Encryption (ADE) on several Linux virtual machines using dm-crypt. You create a new Azure Key Vault named 'kv-ade-westus2'. During configuration of the Key Vault, you must select the Permission Model and access policies.\n\nHow must the Key Vault be configured to successfully support Azure Disk Encryption?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure Azure RBAC permission model, and assign the VMs' managed identities the Key Vault Secrets Officer role."
+      },
+      {
+        "id": "B",
+        "text": "Configure Vault Access Policy permission model, but leave all resource access flags disabled for security."
+      },
+      {
+        "id": "C",
+        "text": "Configure Vault Access Policy permission model, enable the 'Azure Disk Encryption for volume encryption' flag, and ensure soft-delete and purge protection are enabled."
+      },
+      {
+        "id": "D",
+        "text": "Configure Azure RBAC permission model, and create a Disk Encryption Set linked to the Key Vault."
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "verdict": "Option C is correct.",
+      "triggerConstraints": "Requirement: Configure Key Vault prerequisites specifically for Azure Disk Encryption (ADE).",
+      "flawedMentalModel": "Confusing Azure Disk Encryption (ADE) with Server-Side Encryption with Customer-Managed Keys (SSE-CMK).",
+      "coreMechanic": "Azure Disk Encryption (ADE) Key Vault Prerequisites:\n1. Permission Model: ADE requires the Vault Access Policy permission model (or explicit access policies). The 'Azure Disk Encryption for volume encryption' flag (PowerShell: -EnabledForDiskEncryption) MUST be enabled to allow Microsoft.Compute to fetch secrets at VM boot.\n2. Security Flags: Soft-delete and purge protection MUST be enabled.\n3. Location: Key Vault must be in the exact same region and subscription as the VMs.\nNote: Disk Encryption Sets (DES) and RBAC are used for SSE-CMK, NOT for ADE.",
+      "distractors": {
+        "A": "ADE relies on Key Vault access policy volume encryption flags rather than VM managed identities.",
+        "B": "Leaving resource access flags disabled will prevent Microsoft.Compute from retrieving BitLocker/DM-Crypt keys at boot.",
+        "D": "Disk Encryption Sets are for SSE-CMK, not Azure Disk Encryption (ADE)."
+      },
+      "heuristic": "ADE requires: Vault Access Policy + 'Azure Disk Encryption for volume encryption' flag enabled!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/virtual-machines/linux/disk-encryption-key-vault",
+      "errorJournalRef": "AR PT02 Q4"
+    }
+  },
+  {
+    "id": "e2-q54",
+    "examNumber": 2,
+    "domain": "Domain 4: Implement and manage virtual networking",
+    "domainCode": 4,
+    "topic": "Application Security Groups (ASGs) Across Peered VNets Boundary",
+    "scenario": "You have a hub-and-spoke network architecture with two peered virtual networks in the same Azure region: 'vnet-hub' and 'vnet-spoke1'.\n\nYou create an Application Security Group named 'asg-db' in 'rg-spoke1'. You attach the NICs of two backend database VMs in 'vnet-spoke1' to 'asg-db'. You then attempt to attach the NIC of a proxy VM located in 'vnet-hub' to the same 'asg-db' group.\n\nThe Azure Portal and CLI reject the operation.\n\nWhat is the fundamental constraint governing Application Security Groups in Azure?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "An ASG can only contain up to two network interfaces across the entire subscription."
+      },
+      {
+        "id": "B",
+        "text": "Application Security Groups can only be applied to Windows virtual machines, not Linux VMs."
+      },
+      {
+        "id": "C",
+        "text": "ASGs require Azure Firewall Premium to be deployed in the hub virtual network."
+      },
+      {
+        "id": "D",
+        "text": "All network interfaces assigned to an Application Security Group MUST exist within the exact same Virtual Network; ASGs cannot span across peered VNets."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": {
+      "verdict": "Option D is correct.",
+      "triggerConstraints": "Requirement: Understand ASG boundary constraints across peered Virtual Networks.",
+      "flawedMentalModel": "Assuming that because VNets are peered and in the same region, ASGs can group NICs across both VNets.",
+      "coreMechanic": "Application Security Group (ASG) Boundaries:\n1. An ASG is an Azure resource that allows grouping network interfaces under a common application tag for NSG rule definitions.\n2. Strict VNet Boundary: All network interfaces (NICs) assigned to an ASG MUST reside within the exact same Virtual Network.\n3. ASGs CANNOT span across Virtual Networks, even if the VNets are in the same region, same resource group, and interconnected via VNet Peering.\nTo control traffic between peered VNets, you must reference IP prefixes or deploy separate ASGs inside each VNet.",
+      "distractors": {
+        "A": "ASGs can contain thousands of NICs within the same VNet.",
+        "B": "ASGs are OS-agnostic and apply to both Windows and Linux NICs.",
+        "C": "ASGs are an SDN feature of Network Security Groups and do not require Azure Firewall."
+      },
+      "heuristic": "All NICs in an Application Security Group (ASG) MUST reside in the same Virtual Network! ASGs cannot cross VNet boundaries.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/virtual-network/application-security-groups#allow-database-access",
+      "errorJournalRef": "azure_placement_and_boundary_matrix.md"
+    }
+  },
+  {
+    "id": "e2-q55",
+    "examNumber": 2,
+    "domain": "Domain 1: Manage Azure identities and governance",
+    "domainCode": 1,
+    "topic": "Bicep Multi-Scope Resource Group and Resource Deployment",
+    "scenario": "You are creating an enterprise landing zone deployment in Bicep. You need a single Bicep template execution to create a new Resource Group named 'rg-network-prod' in the 'East US' region, and subsequently deploy a Virtual Network into that newly created Resource Group.\n\nHow should you structure your Bicep files to achieve this multi-scope deployment?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set 'targetScope = \\'subscription\\'' in the main Bicep file, create the resource group resource, and declare a module targeting that resource group using 'scope: resourceGroup(\\'rg-network-prod\\')' to deploy the VNet."
+      },
+      {
+        "id": "B",
+        "text": "Set 'targetScope = \\'resourceGroup\\'' in the main Bicep file, and use the 'new' keyword to instantiate the resource group before declaring the VNet."
+      },
+      {
+        "id": "C",
+        "text": "Create an ARM JSON template with 'mode: Complete' and nest the resource group creation inside a tenant-level deployment."
+      },
+      {
+        "id": "D",
+        "text": "Set 'targetScope = \\'managementGroup\\'' and deploy both the resource group and VNet directly without using modules."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Deploy both a new Resource Group and child resources (VNet) in a single Bicep execution.",
+      "flawedMentalModel": "Attempting to create a Resource Group within a resourceGroup-scoped template.",
+      "coreMechanic": "Multi-Scope Deployments in Bicep:\n1. A Resource Group cannot be created at the 'resourceGroup' scope; it must be created at the 'subscription' scope.\n2. In 'main.bicep', declare 'targetScope = \\'subscription\\' and define the resource group: 'resource newRG \\'Microsoft.Resources/resourceGroups@2021-04-01\\' = { ... }'.\n3. To deploy resources (like a Virtual Network) into the newly created resource group, declare a module referencing your network Bicep file and supply the cross-scope property: 'scope: resourceGroup(newRG.name)'.",
+      "distractors": {
+        "B": "resourceGroup scope cannot create resource groups, and Bicep does not have a 'new' keyword.",
+        "C": "ARM JSON templates do not simplify multi-scope orchestration compared to native Bicep.",
+        "D": "Management group scope cannot deploy VNets directly without subscription and resource group delegation modules."
+      },
+      "heuristic": "Deploy Resource Group + Resources in Bicep: targetScope = 'subscription' in main + module with scope: resourceGroup(...).",
+      "msLearnUrl": "https://learn.microsoft.com/azure/azure-resource-manager/bicep/deploy-to-resource-group?tabs=azure-cli#cross-resource-group-deployment",
+      "errorJournalRef": "council-report-2026-11-07-bicep-endpoints.html"
+    }
+  },
+  {
+    "id": "e2-q56",
+    "examNumber": 2,
+    "domain": "Domain 2: Implement and manage storage",
+    "domainCode": 2,
+    "topic": "Azure Files Share Snapshot Retention & 4-Hour Frequency Mechanics",
+    "scenario": "You configure Azure Backup for an Azure Files share in a Recovery Services Vault. The backup policy is configured with an Hourly frequency of every 4 hours starting at 00:00 UTC, with daily retention set to 30 days.\n\nWhich statement accurately describes how Azure Backup executes and stores these backups?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Azure Backup transfers the full file contents over the internet to the Recovery Services Vault storage every 4 hours."
+      },
+      {
+        "id": "B",
+        "text": "Azure Backup creates native Azure Files share snapshots in the same storage account every 4 hours, and retains up to the configured snapshot retention limit without transferring data across regions."
+      },
+      {
+        "id": "C",
+        "text": "Azure Backup shuts down the SMB service temporarily during each 4-hour window to ensure crash-consistent data transfer."
+      },
+      {
+        "id": "D",
+        "text": "Azure Backup converts the file share into an append blob container before creating daily differential backups."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Understand how Azure Backup executes scheduled hourly Azure Files backups.",
+      "flawedMentalModel": "Assuming Azure Backup copies file share data into the Recovery Services Vault storage pool like it does for VM disks.",
+      "coreMechanic": "Azure Files Backup Architecture in Recovery Services Vault:\n1. Snapshot-Based: Azure Backup orchestrates and schedules native Azure Files share snapshots. The snapshots are stored directly within the source storage account.\n2. No Cross-Region Data Transfer: Scheduled backups do not transfer file payload into the vault's storage tiers; they trigger instantaneous differential snapshots in-place.\n3. Management & Retention: The Recovery Services Vault manages pruning and lifecycle retention according to the backup policy rules.",
+      "distractors": {
+        "A": "File share data is not copied over the internet or transferred to vault storage during snapshot creation.",
+        "C": "Azure Files snapshots are instantaneous and non-disruptive; SMB access remains continuous.",
+        "D": "Azure Files shares are never converted into blob containers."
+      },
+      "heuristic": "Azure Files backup takes native share snapshots locally in the storage account—data does not leave the storage account!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/backup/azure-file-share-backup-overview",
+      "errorJournalRef": "AR PT02 Q62"
+    }
+  },
+  {
+    "id": "e2-q57",
+    "examNumber": 2,
+    "domain": "Domain 3: Deploy and manage Azure compute resources",
+    "domainCode": 3,
+    "topic": "Azure Container Apps: Linux Container Constraint & Ingress Architecture",
+    "scenario": "A development team has two microservices:\n1. 'svc-orders': Built on .NET 8 running in a Linux Alpine container image.\n2. 'svc-reports': Built on legacy .NET Framework 4.7.2 running in a Windows Server container image.\n\nThe team requests deploying both microservices to an existing Azure Container Apps (ACA) environment ('cae-prod') with HTTP ingress and automated horizontal scaling.\n\nWhat must you advise the team regarding Azure Container Apps support?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Both microservices can be deployed directly to Azure Container Apps by configuring a multi-container app revision."
+      },
+      {
+        "id": "B",
+        "text": "Neither microservice can run in Azure Container Apps unless migrated to an Azure Red Hat OpenShift cluster."
+      },
+      {
+        "id": "C",
+        "text": "Azure Container Apps only supports Linux-based container images; 'svc-orders' can be deployed to ACA, but 'svc-reports' must be hosted on an alternative service like Azure Container Instances (ACI) or App Service for Windows Containers."
+      },
+      {
+        "id": "D",
+        "text": "Azure Container Apps supports Windows containers only if the container environment is deployed with Internal Ingress enabled."
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "verdict": "Option C is correct.",
+      "triggerConstraints": "Requirement: Identify platform OS support for Azure Container Apps (ACA) with Linux and Windows containers.",
+      "flawedMentalModel": "Assuming Azure Container Apps supports both Windows and Linux container runtimes like ACI does.",
+      "coreMechanic": "Azure Container Apps (ACA) Platform Constraints:\n1. Underlying Node Pool: Azure Container Apps worker nodes run strictly on Linux.\n2. Operating System Support: ACA supports Linux-based container images exclusively. It has NO support for Windows Server container images.\n3. Alternative Hosting: To host Windows containers in a containerized environment without managing full VM infrastructure, you must use Azure Container Instances (ACI) or Azure App Service for Containers (Windows plan).",
+      "distractors": {
+        "A": "ACA cannot run Windows containers even in multi-container revisions.",
+        "B": "Linux microservices run natively on ACA without OpenShift.",
+        "D": "Internal Ingress has no bearing on underlying container OS support."
+      },
+      "heuristic": "Azure Container Apps (ACA) supports LINUX containers ONLY! Windows containers must use ACI or App Service Windows.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/container-apps/containers",
+      "errorJournalRef": "AR PT02 Q15"
+    }
+  },
+  {
+    "id": "e2-q58",
+    "examNumber": 2,
+    "domain": "Domain 4: Implement and manage virtual networking",
+    "domainCode": 4,
+    "topic": "AzureBastionSubnet Inbound & Outbound Mandatory NSG Rules",
+    "scenario": "You are applying a Network Security Group named 'nsg-bastion' to the dedicated 'AzureBastionSubnet' subnet. The security compliance team wants to restrict all traffic to the minimum mandatory rules required for Azure Bastion to function.\n\nWhich inbound security rule MUST be present on the NSG associated with 'AzureBastionSubnet' to allow administrative users to connect to the Bastion host from the public internet?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Inbound from Internet on TCP port 3389 and 22."
+      },
+      {
+        "id": "B",
+        "text": "Inbound from VirtualNetwork on TCP port 80."
+      },
+      {
+        "id": "C",
+        "text": "Inbound from Any on UDP port 500 and 4500."
+      },
+      {
+        "id": "D",
+        "text": "Inbound from Internet (or client public IPs) on TCP port 443."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": {
+      "verdict": "Option D is correct.",
+      "triggerConstraints": "Requirement: Identify mandatory inbound NSG security rules for AzureBastionSubnet.",
+      "flawedMentalModel": "Thinking administrative users connect to Azure Bastion via RDP/SSH ports (3389/22) over the public internet.",
+      "coreMechanic": "Azure Bastion Inbound NSG Requirements:\n1. User Traffic: Administrative users connect to Azure Bastion via their web browser or native client over HTTPS on TCP port 443. Therefore, an Inbound rule allowing TCP 443 from Internet (or admin public IPs) is MANDATORY.\n2. Control Plane Traffic: Inbound TCP 443 from 'GatewayManager' service tag is also required for health monitoring.\n3. Azure Load Balancer: Inbound TCP 443 from 'AzureLoadBalancer' service tag.\nNote: Outbound from AzureBastionSubnet to the target VM subnet uses TCP 3389 (RDP) and TCP 22 (SSH).",
+      "distractors": {
+        "A": "RDP (3389) and SSH (22) inbound from Internet are blocked; users connect to Bastion over HTTPS (443).",
+        "B": "Port 80 is unencrypted HTTP and not used by Azure Bastion.",
+        "C": "UDP 500 and 4500 are for IPsec VPN tunnels, not Azure Bastion."
+      },
+      "heuristic": "AzureBastionSubnet Inbound from user/Internet = TCP 443! Outbound to target VMs = TCP 3389/22.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/bastion/bastion-nsg",
+      "errorJournalRef": "AR PT02 Q25"
+    }
+  },
+  {
+    "id": "e2-q59",
+    "examNumber": 2,
+    "domain": "Domain 1: Manage Azure identities and governance",
+    "domainCode": 1,
+    "topic": "Microsoft Entra ID Role-Assignable Groups Security Architecture",
+    "scenario": "You are designing privileged role delegation in Microsoft Entra ID. You need to assign the 'User Administrator' Entra ID role to a group so that helpdesk team leads can manage user accounts. To prevent unauthorized privilege escalation, you want to ensure that only authorized administrators can modify the membership of this group.\n\nWhat setting must be configured when creating the security group in Entra ID?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set 'Microsoft Entra roles can be assigned to the group' to 'Yes' during group creation (this setting cannot be changed after creation)."
+      },
+      {
+        "id": "B",
+        "text": "Create a standard dynamic user group with a query filter matching JobTitle eq 'Team Lead'."
+      },
+      {
+        "id": "C",
+        "text": "Create a Microsoft 365 group and assign the Key Vault Crypto Officer role to the group owner."
+      },
+      {
+        "id": "D",
+        "text": "Configure an Administrative Unit and assign the User Administrator role to all members of a standard security group."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Assign an Entra ID privileged role to a security group with protection against unauthorized privilege escalation.",
+      "flawedMentalModel": "Attempting to assign Entra directory roles to dynamic membership groups, or assuming any standard group can hold directory roles.",
+      "coreMechanic": "Role-Assignable Groups in Microsoft Entra ID:\n1. Immutable Setting: When creating the group, you MUST set 'Microsoft Entra roles can be assigned to the group' to 'Yes' (isAssignableToRole: true). This property CANNOT be modified after group creation.\n2. Security Protection: Only Global Administrators and Privileged Role Administrators can create these groups and modify their membership or ownership.\n3. Membership Constraint: Role-assignable groups CANNOT use dynamic membership rules (membership must be Assigned).",
+      "distractors": {
+        "B": "Dynamic membership groups CANNOT be assigned Microsoft Entra directory roles.",
+        "C": "Microsoft 365 groups are for collaboration, and Key Vault roles do not govern Entra directory roles.",
+        "D": "Assigning roles to individual members directly does not fulfill the requirement of group-based role management."
+      },
+      "heuristic": "Role-assignable groups in Entra ID: Must set 'Microsoft Entra roles can be assigned to the group' = Yes AT CREATION (immutable); Assigned membership only!",
+      "msLearnUrl": "https://learn.microsoft.com/entra/identity/role-based-access-control/groups-concept",
+      "errorJournalRef": "entra-id-part2-advanced-identity.md"
+    }
+  },
+  {
+    "id": "e2-q60",
+    "examNumber": 2,
+    "domain": "Domain 2: Implement and manage storage",
+    "domainCode": 2,
+    "topic": "Azure Private Endpoints & Private DNS Zone Resolution",
+    "scenario": "You manage an enterprise environment where an Azure Storage account named `stfinancedata` in `East US` hosts sensitive financial audit files. To satisfy compliance requirements, you disable public network access to `stfinancedata` and create a Private Endpoint in subnet `snet-backend` of virtual network `vnet-finance-eus` (private IP: `10.10.2.5`).\n\nYou deploy a virtual machine named `vm-analytics01` in a peered virtual network named `vnet-analytics-eus`. When scripts on `vm-analytics01` attempt to connect to `https://stfinancedata.blob.core.windows.net/audits`, connection attempts fail with an HTTP 403 Forbidden error because the FQDN resolves to a public IP address instead of `10.10.2.5`.\n\nA private DNS zone named `privatelink.blob.core.windows.net` exists in the subscription and contains an 'A' record pointing `stfinancedata` to `10.10.2.5`.\n\nWhat should you do to allow `vm-analytics01` to resolve the private IP address of the storage account?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Add a Service Endpoint for Microsoft.Storage to the subnet containing vm-analytics01 in vnet-analytics-eus."
+      },
+      {
+        "id": "B",
+        "text": "Configure a Virtual Network Link from vnet-analytics-eus to the Private DNS Zone privatelink.blob.core.windows.net."
+      },
+      {
+        "id": "C",
+        "text": "Enable DNS auto-registration on the existing Virtual Network Link between vnet-finance-eus and privatelink.blob.core.windows.net."
+      },
+      {
+        "id": "D",
+        "text": "Configure a User Defined Route (UDR) on vm-analytics01's subnet routing all traffic destined for 0.0.0.0/0 to 10.10.2.5."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Resolve storage account private endpoint IP across peered virtual networks. Constraint: Public network access is disabled on the storage account; VM resolves public IP instead of private IP.",
+      "flawedMentalModel": "Believing that VNet peering automatically propagates Private DNS Zone resolution without explicitly linking each VNet, or confusing Service Endpoints with Private Endpoints.",
+      "coreMechanic": "Azure Private Endpoint DNS Architecture:\n1. When a Private Endpoint is created for a storage account, Azure configures a CNAME record mapping `<account>.blob.core.windows.net` to `<account>.privatelink.blob.core.windows.net`.\n2. The Private DNS Zone `privatelink.blob.core.windows.net` contains the 'A' record mapping `<account>` to the private IP (e.g. 10.10.2.5).\n3. Any virtual network containing client VMs (including peered VNets like `vnet-analytics-eus`) MUST have a Virtual Network Link to `privatelink.blob.core.windows.net`. Without this link, VMs in that VNet query Azure public recursive resolvers, which resolve the public IP address where access is denied by the storage firewall.",
+      "distractors": {
+        "A": "Service Endpoints keep traffic on the Azure backbone but route to the public IP of the storage account; they do not resolve or connect to Private Endpoints.",
+        "C": "Auto-registration automatically registers DNS host records for VMs created in that VNet; it does not resolve PaaS private endpoints and should NOT be enabled on private endpoint DNS zones.",
+        "D": "UDRs manage packet routing, not DNS name resolution. A 0.0.0.0/0 route to the private endpoint would break internet egress and fails to resolve the private FQDN."
+      },
+      "heuristic": "Private Endpoints require EVERY client VNet to have a Virtual Network Link to privatelink.<service>.core.windows.net for DNS resolution to succeed!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/private-link/private-endpoint-dns",
+      "errorJournalRef": "error_journal.md"
+    }
+  },
+  {
+    "id": "e2-q61",
+    "examNumber": 2,
+    "domain": "Domain 5: Monitor and maintain Azure resources",
+    "domainCode": 5,
+    "topic": "Azure Backup Vault Workload Boundaries: PostgreSQL Flexible Server & Managed Disks",
+    "scenario": "You are planning backup policies for modern cloud workloads across your enterprise subscriptions:\n- Workload 1: Azure Database for PostgreSQL Flexible Server.\n- Workload 2: Azure Kubernetes Service (AKS) cluster persistent volumes and cluster state.\n\nYou open the Azure Portal to configure automated backups. Which backup vault architecture supports protecting these workloads?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Recovery Services Vault supports both PostgreSQL Flexible Server and AKS backups natively."
+      },
+      {
+        "id": "B",
+        "text": "Azure Backup Vault supports Azure VMs, while Recovery Services Vault supports PostgreSQL Flexible Server."
+      },
+      {
+        "id": "C",
+        "text": "Azure Backup Vault supports both Azure Database for PostgreSQL Flexible Server and AKS backups."
+      },
+      {
+        "id": "D",
+        "text": "Azure Monitor Log Analytics Workspace directly manages native PostgreSQL Flexible Server backups."
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "verdict": "Option C is correct.",
+      "triggerConstraints": "Requirement: Identify vault support for modern cloud workloads (PostgreSQL Flexible Server and AKS).",
+      "flawedMentalModel": "Assuming Recovery Services Vault handles all Azure backup workloads.",
+      "coreMechanic": "Workload Architecture: Backup Vault vs. Recovery Services Vault:\n1. Azure Backup Vault: Created specifically for newer cloud-native workloads: Azure Database for PostgreSQL Flexible Server, Azure Managed Disks, Azure Blob Storage (operational backup), and Azure Kubernetes Service (AKS Backup).\n2. Recovery Services Vault: Reserved for traditional compute and storage workloads: Azure VMs, Azure Files shares, SQL Server / SAP HANA running in Azure VMs, and on-premises MARS/MABS backups.",
+      "distractors": {
+        "A": "Recovery Services Vault does not support PostgreSQL Flexible Server or AKS backups.",
+        "B": "Inverts the vault roles; Backup Vault does not back up Azure VMs.",
+        "D": "Log Analytics is a monitoring workspace, not a backup vault service."
+      },
+      "heuristic": "PostgreSQL Flexible Server, Managed Disks, and AKS Backup = Azure Backup Vault!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/backup/backup-vault-overview",
+      "errorJournalRef": "AR PT01 Q52"
+    }
+  },
+  {
+    "id": "e2-q62",
+    "examNumber": 2,
+    "domain": "Domain 4: Implement and manage virtual networking",
+    "domainCode": 4,
+    "topic": "Dedicated Subnet Sizing: AzureBastionSubnet /26 Constraint",
+    "scenario": "You are preparing a Virtual Network ('vnet-corp') for an Azure Bastion deployment with the Standard SKU to support host scaling up to 50 concurrent scale units. You allocate a subnet for Azure Bastion.\n\nWhat is the minimum CIDR subnet prefix required for 'AzureBastionSubnet', and how many usable IP addresses will it provide after Azure SDN reservations?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Subnet prefix /29, providing 3 usable IP addresses."
+      },
+      {
+        "id": "B",
+        "text": "Subnet prefix /28, providing 11 usable IP addresses."
+      },
+      {
+        "id": "C",
+        "text": "Subnet prefix /27, providing 27 usable IP addresses."
+      },
+      {
+        "id": "D",
+        "text": "Subnet prefix /26, providing 59 usable IP addresses."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": {
+      "verdict": "Option D (/26, providing 59 usable IPs) is correct.",
+      "triggerConstraints": "Requirement: Minimum subnet prefix and usable IP count for AzureBastionSubnet.",
+      "flawedMentalModel": "Confusing GatewaySubnet (/27 minimum) or AzureFirewallManagementSubnet (/26) with Bastion requirements, or assuming /27 is sufficient for Bastion.",
+      "coreMechanic": "Azure Dedicated Subnet Sizing Rules:\n1. 'AzureBastionSubnet' MUST be /26 or larger (e.g. /26, /25, /24). Microsoft documentation explicitly states: 'The subnet size must be /26 or larger to support Bastion host scaling features.'\n2. Sizing calculation for /26: Total raw IPs = 2^(32 - 26) = 64. Azure reserves 5 IPs (.0, .1, .2, .3, .63). Usable IPs = 64 - 5 = 59.",
+      "distractors": {
+        "A": "/29 is too small and will cause Bastion deployment failure.",
+        "B": "/28 is too small (historically allowed for basic preview, but /26 is the required minimum).",
+        "C": "/27 is the minimum size for GatewaySubnet and RouteServerSubnet, but AzureBastionSubnet requires /26."
+      },
+      "heuristic": "AzureBastionSubnet REQUIRES /26 or larger (64 total - 5 reserved = 59 usable IPs)!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/bastion/bastion-faq#subnet",
+      "errorJournalRef": "AR PT02 Q21"
+    }
+  },
+  {
+    "id": "e2-q63",
+    "examNumber": 2,
+    "domain": "Domain 1: Manage Azure identities and governance",
+    "domainCode": 1,
+    "topic": "Azure Policy 'Modify' Effect & Managed Identity Remediation Tasks",
+    "scenario": "You assign an Azure Policy definition that enforces tagging compliance on all newly created and existing resource groups. The policy rule uses the 'modify' effect to evaluate and add a tag named 'CostCenter: 90210' if the tag is absent.\n\nYou also need to apply this tag to 200 pre-existing resource groups that were deployed prior to policy assignment.\n\nWhat must you create to remediate the existing non-compliant resource groups, and what identity does Azure Policy use to execute the change?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a Remediation Task under the policy assignment; Azure Policy uses the policy assignment's Managed Identity (which must have Contributor permissions on the subscription) to apply the tag."
+      },
+      {
+        "id": "B",
+        "text": "Run an Azure Automation Runbook with an Entra ID user credential that has Owner permissions."
+      },
+      {
+        "id": "C",
+        "text": "Delete and recreate all 200 resource groups using an ARM template with Complete deployment mode."
+      },
+      {
+        "id": "D",
+        "text": "Create an Alert Processing Rule targeting the resource groups with a webhook action."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Remediate pre-existing non-compliant resources using Azure Policy 'modify' effect.",
+      "flawedMentalModel": "Assuming Azure Policy automatically mutates existing resources upon assignment, or using manual automation scripts.",
+      "coreMechanic": "Azure Policy Remediation Architecture:\n1. 'modify' and 'deployIfNotExists' effects automatically modify or deploy resources during CREATE or UPDATE operations.\n2. For pre-existing non-compliant resources, Azure Policy does NOT modify them automatically upon assignment. You MUST create a Remediation Task.\n3. Security Execution: The remediation task runs under the context of the Policy Assignment's Managed Identity (System-Assigned or User-Assigned), which must have appropriate RBAC permissions (e.g. Contributor or Tag Contributor) at the assignment scope.",
+      "distractors": {
+        "B": "Automation runbooks are unnecessary and introduce maintenance overhead; Azure Policy has built-in Remediation Tasks.",
+        "C": "Deleting resource groups destroys all enclosed resources and data.",
+        "D": "Alert processing rules handle notifications, not resource remediation."
+      },
+      "heuristic": "Remediate pre-existing resources with Azure Policy = Remediation Task using Policy Assignment Managed Identity!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/governance/policy/how-to/remediate-resources",
+      "errorJournalRef": "entra-id-master-architecture-and-governance.md"
+    }
+  },
+  {
+    "id": "e2-q64",
+    "examNumber": 2,
+    "domain": "Domain 3: Deploy and manage Azure compute resources",
+    "domainCode": 3,
+    "topic": "Azure Virtual Machine Spot Instances & Eviction Policies",
+    "scenario": "You are configuring an asynchronous batch processing cluster using Azure Spot Virtual Machines to take advantage of deep cost savings. Your workload can tolerate interruptions, but you want to ensure that if Azure needs capacity back, running VMs are deallocated (preserving their OS and data disks) rather than permanently deleted, allowing them to restart automatically when capacity becomes available.\n\nWhich Spot instance eviction policy should you configure?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set Eviction Policy to 'Delete' and Max Price to -1."
+      },
+      {
+        "id": "B",
+        "text": "Set Eviction Policy to 'Stop / Deallocate' and Eviction Type to 'Capacity Only' (or Capacity and Price)."
+      },
+      {
+        "id": "C",
+        "text": "Set Eviction Policy to 'Migrate to Reserved Instance' with automated billing fallback."
+      },
+      {
+        "id": "D",
+        "text": "Configure an Availability Set with 3 Fault Domains and set Priority to 'Spot-Exclusive'."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Configure Spot VM eviction to preserve disks and restart when capacity returns, rather than deleting resources.",
+      "flawedMentalModel": "Assuming Spot VMs are always permanently deleted upon eviction.",
+      "coreMechanic": "Azure Spot Virtual Machine Eviction Policies:\n1. 'Stop / Deallocate': When Azure evicts the Spot VM due to capacity or price, the VM is placed into the Stopped (Deallocated) state. The compute cores are released, but the OS disk, data disks, and network interfaces are preserved. You only pay for underlying disk storage while deallocated.\n2. 'Delete': The VM and all attached ephemeral/managed disks are permanently deleted upon eviction.\nConfiguring 'Stop / Deallocate' satisfies the requirement to preserve data and allow restarting when capacity permits.",
+      "distractors": {
+        "A": "'Delete' policy deletes the VM and disks, losing all local state.",
+        "C": "'Migrate to Reserved Instance' is not a valid Azure eviction policy.",
+        "D": "Availability Sets cannot mix Spot and regular VMs or change eviction semantics."
+      },
+      "heuristic": "Spot VM Eviction: 'Stop / Deallocate' preserves disks for later restart; 'Delete' permanently destroys the VM and disks.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/virtual-machines/spot-vms#eviction-policy",
+      "errorJournalRef": "AR PT02 Q14"
+    }
+  },
+  {
+    "id": "e2-q65",
+    "examNumber": 2,
+    "domain": "Domain 5: Monitor and maintain Azure resources",
+    "domainCode": 5,
+    "topic": "Azure Monitor Metric Alerts with Dynamic Thresholds & Multi-Resource Scopes",
+    "scenario": "You are configuring performance monitoring across 25 production web servers (virtual machines) situated in the 'rg-ecommerce-prod' resource group in 'East US'.\n\nThe traffic pattern experiences significant cyclical variations between day and night. You need to configure an alert rule that notifies the on-call team if the '% Processor Time' spikes abnormally compared to historical baseline patterns, without triggering false alarms during expected daily traffic surges. You also want to manage this via a single alert rule rather than 25 separate rules.\n\nHow should you configure the Azure Monitor alert?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create 25 separate static metric alerts with a hardcoded threshold of 85% CPU utilization."
+      },
+      {
+        "id": "B",
+        "text": "Create an Azure Log Search alert using Kusto Query Language (KQL) scheduled to run every 24 hours."
+      },
+      {
+        "id": "C",
+        "text": "Create an Alert Processing Rule with notification suppression applied to all VMs during daytime hours."
+      },
+      {
+        "id": "D",
+        "text": "Create a single Metric Alert targeting all Virtual Machines in 'rg-ecommerce-prod' (in East US) using Dynamic Thresholds with machine learning anomaly detection."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": {
+      "verdict": "Option D is correct.",
+      "triggerConstraints": "Requirement: Monitor 25 VMs with cyclical workloads using a single alert rule without false alarms from daily traffic patterns.",
+      "flawedMentalModel": "Creating 25 static alerts or attempting to use log search alerts with 24-hour delays for immediate performance spikes.",
+      "coreMechanic": "Azure Monitor Dynamic Thresholds & Multi-Resource Scoping:\n1. Dynamic Thresholds: Uses advanced machine learning to learn metric historical behavior, accounting for seasonality, hourly cycles, and business day patterns. It calculates expected upper and lower bounds automatically.\n2. Multi-Resource Scope: A single metric alert rule can target all Virtual Machines within a specific Resource Group and Region, monitoring each VM instance independently.\nThis provides granular anomaly detection for all 25 VMs with zero false positives during peak business hours and minimal administrative overhead.",
+      "distractors": {
+        "A": "Static alerts cause false alarms during legitimate peak hours and require 25 rules to maintain.",
+        "B": "Log search alerts running every 24 hours cannot provide near-real-time operational alerting.",
+        "C": "Suppressing daytime notifications leaves outages unnoticed during business hours."
+      },
+      "heuristic": "Cyclical metric baselines across multiple VMs in one RG/Region = Metric Alert with Dynamic Thresholds & Multi-Resource Scope!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-dynamic-thresholds",
+      "errorJournalRef": "error_logging_guide.md"
     }
   }
 ];

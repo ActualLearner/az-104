@@ -2112,5 +2112,635 @@ window.AZ104_EXAM_1 = [
       "msLearnUrl": "https://learn.microsoft.com/azure/governance/policy/concepts/effects#order-of-evaluation",
       "errorJournalRef": "entra-id-master-architecture-and-governance.md"
     }
+  },
+  {
+    "id": "e1-q51",
+    "examNumber": 1,
+    "domain": "Domain 1: Manage Azure identities and governance",
+    "domainCode": 1,
+    "topic": "Bicep targetScope & Subscription-Level Policy Deployment",
+    "scenario": "Your organization enforces cloud governance using infrastructure-as-code. You author a Bicep file named 'customPolicy.bicep' that defines a custom Azure Policy definition and creates a policy assignment at the subscription root.\n\nWhen you attempt to deploy the template using 'az deployment group create --resource-group rg-governance --template-file customPolicy.bicep', the deployment fails with the error: 'The resource namespace Microsoft.Authorization is invalid for target scope resourceGroup.'\n\nYou need to modify the Bicep template and deployment command so the policy definition and assignment deploy successfully at the subscription level. What should you do?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Add 'targetScope = \\'subscription\\'' at the top of the Bicep file, and deploy using 'az deployment sub create --location eastus --template-file customPolicy.bicep'."
+      },
+      {
+        "id": "B",
+        "text": "Add '@targetScope(\\'tenant\\')' decorator above the resource declaration, and deploy using 'az deployment group create --resource-group rg-governance --template-file customPolicy.bicep'."
+      },
+      {
+        "id": "C",
+        "text": "Add 'scope: subscription()' inside the resource definition block, and execute 'az deployment mg create --management-group-id mg-root --template-file customPolicy.bicep'."
+      },
+      {
+        "id": "D",
+        "text": "Convert the Bicep file to an ARM JSON template and deploy using 'az deployment group create --mode Complete'."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Deploy subscription-level policy definitions and assignments using Bicep. Constraint: By default, Bicep targetScope is 'resourceGroup', which rejects subscription-scoped resources like Policy Definitions.",
+      "flawedMentalModel": "Attempting to use 'az deployment group create' for subscription-scoped resources or attempting to use decorators instead of top-level targetScope.",
+      "coreMechanic": "In Bicep, the default deployment target scope is 'resourceGroup'. When deploying resources that exist at the subscription scope (such as Policy Definitions, Role Definitions, and Policy Assignments at the subscription root):\n1. The Bicep file MUST declare 'targetScope = \\'subscription\\'' at the very top of the file.\n2. The Azure CLI command used to initiate the deployment must be 'az deployment sub create' (or PowerShell 'New-AzSubscriptionDeployment'), supplying a deployment location metadata parameter (--location).",
+      "distractors": {
+        "B": "targetScope is a statement, not a decorator, and resource group deployment commands cannot create subscription-scoped policy definitions.",
+        "C": "az deployment mg create targets management groups, which is mismatched with subscription scope.",
+        "D": "Converting to ARM template and running group deployment does not resolve the scope mismatch."
+      },
+      "heuristic": "Subscription-level resources in Bicep require 'targetScope = \\'subscription\\'' + 'az deployment sub create'.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/azure-resource-manager/bicep/deploy-to-subscription",
+      "errorJournalRef": "council-report-2026-11-07-bicep-endpoints.html"
+    }
+  },
+  {
+    "id": "e1-q52",
+    "examNumber": 1,
+    "domain": "Domain 2: Implement and manage storage",
+    "domainCode": 2,
+    "topic": "Blob Lifecycle Management Versioning Constraints",
+    "scenario": "You administer an Azure general-purpose v2 storage account named 'stblobprod01' storing financial audit reports with Blob Versioning enabled. You are authoring a Lifecycle Management JSON rule to transition old blob versions to Archive tier and delete noncurrent versions after retention periods expire.\n\nYou attempt to define a lifecycle action using 'daysAfterLastAccessTimeGreaterThan: 90' inside the 'version' filter block. Azure Resource Manager rejects the lifecycle policy JSON during validation.\n\nWhy did the lifecycle rule validation fail?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Blob versioning is not supported on General-purpose v2 storage accounts without hierarchical namespace enabled."
+      },
+      {
+        "id": "B",
+        "text": "Blob version actions in lifecycle management rules only support 'daysAfterCreationGreaterThan'; last access time tracking is not supported on blob versions."
+      },
+      {
+        "id": "C",
+        "text": "Archive tier transitions cannot be applied to blob versions; only base blobs can be transitioned to Archive tier."
+      },
+      {
+        "id": "D",
+        "text": "Lifecycle management rules for blob versions require the storage account to be upgraded to Premium Block Blob tier."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Define lifecycle management rules targeting blob versions. Constraint: Azure Storage lifecycle management rule syntax restricts which condition parameters apply to versions.",
+      "flawedMentalModel": "Assuming 'daysAfterLastAccessTimeGreaterThan' or 'daysAfterLastModifiedGreaterThan' can be applied uniformly across base blobs, snapshots, and versions.",
+      "coreMechanic": "In Azure Blob Lifecycle Management rules:\n1. Base blobs support 'daysAfterModificationGreaterThan', 'daysAfterCreationGreaterThan', and 'daysAfterLastAccessTimeGreaterThan'.\n2. Snapshots support 'daysAfterCreationGreaterThan' and 'daysAfterLastTierChangeGreaterThan'.\n3. Versions ONLY support 'daysAfterCreationGreaterThan' (and 'daysAfterLastTierChangeGreaterThan' when tiering). Last access time tracking is explicitly NOT supported for blob versions or snapshots because access time is only tracked for current base blobs.",
+      "distractors": {
+        "A": "General-purpose v2 fully supports blob versioning with flat namespace.",
+        "C": "Blob versions CAN be transitioned to Archive tier using daysAfterCreationGreaterThan.",
+        "D": "Premium Block Blob tier does not support Archive tier or tiering lifecycle actions."
+      },
+      "heuristic": "Lifecycle rules on blob versions and snapshots ONLY support 'daysAfterCreationGreaterThan'!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview#rule-actions",
+      "errorJournalRef": "AR PT02 Q5"
+    }
+  },
+  {
+    "id": "e1-q53",
+    "examNumber": 1,
+    "domain": "Domain 3: Deploy and manage Azure compute resources",
+    "domainCode": 3,
+    "topic": "Server-Side Encryption with Customer-Managed Keys (SSE-CMK) & Disk Encryption Sets",
+    "scenario": "You administer multiple Azure virtual machines hosting proprietary database workloads in 'Central US'. Security compliance mandates that all Managed OS and Data disks must be encrypted using Customer-Managed Keys (SSE-CMK) rather than Platform-Managed Keys (PMK).\n\nYou create an Azure Key Vault in 'Central US' and generate an RSA 2048-bit key named 'cmk-db-key'. You then provision a Disk Encryption Set (DES) named 'des-centralus'. When attempting to associate 'des-centralus' with a new managed disk, the operation fails.\n\nWhat configuration step is required before the Disk Encryption Set can be used to encrypt managed disks?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Enable the 'Azure Disk Encryption for volume encryption' access policy on the Azure Key Vault."
+      },
+      {
+        "id": "B",
+        "text": "Assign the Key Vault Crypto Officer role to the virtual machine's system-assigned managed identity."
+      },
+      {
+        "id": "C",
+        "text": "Grant the Disk Encryption Set's system-assigned managed identity the 'Key Vault Crypto Service Encryption User' role (or Key Get, Wrap, Unwrap permissions) on the Key Vault."
+      },
+      {
+        "id": "D",
+        "text": "Configure the Key Vault to disable Purge Protection and set soft-delete retention to 7 days."
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "verdict": "Option C is correct.",
+      "triggerConstraints": "Requirement: Enable SSE-CMK on Azure Managed Disks using a Disk Encryption Set. Constraint: The DES acts as an intermediary resource and must have identity permissions to access the key.",
+      "flawedMentalModel": "Conflating SSE-CMK with Azure Disk Encryption (ADE). ADE uses Key Vault access policy volume encryption flags; SSE-CMK uses Disk Encryption Sets with managed identities.",
+      "coreMechanic": "Server-Side Encryption with Customer-Managed Keys (SSE-CMK) uses a Disk Encryption Set (DES) resource:\n1. When a DES is created, Azure automatically generates a System-Assigned Managed Identity for the DES.\n2. Before the DES can be associated with any disk, you MUST grant this managed identity access to the Key Vault containing the CMK: either the RBAC role 'Key Vault Crypto Service Encryption User' or Key permissions: 'Get', 'Wrap Key', and 'Unwrap Key'.\n3. The Key Vault MUST have soft-delete and purge protection enabled.",
+      "distractors": {
+        "A": "'Azure Disk Encryption for volume encryption' is strictly for ADE (BitLocker/DM-Crypt), not SSE-CMK with DES.",
+        "B": "The identity requiring permission is the Disk Encryption Set's managed identity, not the individual VM's identity.",
+        "D": "Purge protection MUST be enabled, not disabled, for Key Vaults used with Disk Encryption Sets."
+      },
+      "heuristic": "SSE-CMK = Disk Encryption Set (DES) system-assigned identity granted Key Vault Crypto permissions!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/virtual-machines/disk-encryption#customer-managed-keys",
+      "errorJournalRef": "AR PT02 Q4"
+    }
+  },
+  {
+    "id": "e1-q54",
+    "examNumber": 1,
+    "domain": "Domain 4: Implement and manage virtual networking",
+    "domainCode": 4,
+    "topic": "Azure Bastion Deployment Prerequisites & Public IP Constraints",
+    "scenario": "You are deploying an Azure Bastion host named 'bas-prod-eastus' into an existing Virtual Network ('vnet-corp-eastus') to provide secure browser-based administrative access to private VMs without exposing public IPs.\n\nYou create a subnet named 'AzureBastionSubnet' with address prefix '10.20.10.0/26'. During the deployment wizard, you attempt to associate an existing Public IP address named 'pip-bastion-global' that was created with the Global tier and Standard SKU. The deployment validation fails.\n\nWhat change must you make to the Public IP address to successfully deploy Azure Bastion?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the Public IP address SKU from Standard to Basic with Dynamic allocation."
+      },
+      {
+        "id": "B",
+        "text": "Create a Public IP prefix of size /28 and assign the first available IP to Azure Bastion."
+      },
+      {
+        "id": "C",
+        "text": "Reconfigure the Public IP address allocation method from Static to Dynamic."
+      },
+      {
+        "id": "D",
+        "text": "Provision a new Public IP address with Standard SKU, Static allocation, and Regional tier in the same region as the VNet."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": {
+      "verdict": "Option D is correct.",
+      "triggerConstraints": "Requirement: Provision a Public IP address compatible with Azure Bastion. Constraints: SKU, Tier, and Allocation method constraints.",
+      "flawedMentalModel": "Assuming Azure Bastion can use Global tier Public IPs or Basic SKU IPs.",
+      "coreMechanic": "Azure Bastion Public IP requirements are strictly enforced by Azure ARM:\n1. SKU: MUST be Standard SKU (Basic SKU is unsupported).\n2. Allocation: MUST be Static (Dynamic allocation is not allowed on Standard Public IPs).\n3. Tier: MUST be Regional tier. Azure Bastion does NOT support Global tier Public IPs.\n4. Location: Must match the region of the target Virtual Network.",
+      "distractors": {
+        "A": "Basic SKU is unsupported for Azure Bastion.",
+        "B": "Bastion requires a dedicated single Standard IP, not a /28 prefix block assignment.",
+        "C": "Dynamic allocation is invalid; Standard SKU requires Static allocation."
+      },
+      "heuristic": "Azure Bastion requires: Standard SKU + Static Allocation + REGIONAL Tier Public IP!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/bastion/bastion-faq#public-ip",
+      "errorJournalRef": "AR PT02 Q24"
+    }
+  },
+  {
+    "id": "e1-q55",
+    "examNumber": 1,
+    "domain": "Domain 1: Manage Azure identities and governance",
+    "domainCode": 1,
+    "topic": "Management Locks: ReadOnly Lock Blocking Resource Move",
+    "scenario": "You have an Azure subscription containing two resource groups named 'rg-source' and 'rg-target'. You need to move a storage account named 'stdataarchive01' from 'rg-source' to 'rg-target'.\n\n'rg-source' has a 'CanNotDelete' lock applied. 'rg-target' has a 'ReadOnly' lock applied to prevent unauthorized modifications to production resources. When you initiate the resource move operation using the Azure Portal or Azure CLI ('az resource move'), the operation fails with a locked resource error.\n\nWhat is the root cause of the failure and how should you resolve it?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "A ReadOnly lock on the destination resource group blocks moving resources into it; you must temporarily remove the ReadOnly lock from 'rg-target' before initiating the move."
+      },
+      {
+        "id": "B",
+        "text": "The CanNotDelete lock on 'rg-source' prevents resource migration; you must delete the CanNotDelete lock from 'rg-source'."
+      },
+      {
+        "id": "C",
+        "text": "Storage accounts cannot be moved across resource groups once blob data has been written."
+      },
+      {
+        "id": "D",
+        "text": "Both CanNotDelete and ReadOnly locks block resource moves; both locks must be removed from both resource groups."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Move an Azure Storage Account across resource groups where locks exist on source and target. Constraint: Differentiate CanNotDelete vs ReadOnly lock behaviors during move operations.",
+      "flawedMentalModel": "Assuming CanNotDelete blocks moves, or failing to realize that ReadOnly on the destination resource group blocks resource creation/registration.",
+      "coreMechanic": "Microsoft Resource Lock Move Rules:\n1. CanNotDelete (ReadOnly = False): Does NOT block moving resources. A resource move transfers the resource identity without deleting it.\n2. ReadOnly (ReadOnly = True): STRICTLY BLOCKS resource moves. If a ReadOnly lock is applied to the source RG, destination RG, parent subscription, or the resource itself, the move fails.\nMoving 'stdataarchive01' into 'rg-target' requires writing new resource registrations into 'rg-target', which the ReadOnly lock on 'rg-target' completely blocks. Removing the ReadOnly lock on 'rg-target' allows the move to proceed successfully.",
+      "distractors": {
+        "B": "CanNotDelete locks do NOT block move operations; the lock on rg-source is not the cause.",
+        "C": "Storage accounts can be moved between resource groups regardless of blob data.",
+        "D": "CanNotDelete does not block moves, so it does not need to be removed."
+      },
+      "heuristic": "CanNotDelete ALLOWS resource moves! ReadOnly lock on source OR destination BLOCKS resource moves!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/azure-resource-manager/management/move-resources-overview#checklist-before-moving-resources",
+      "errorJournalRef": "AR PT01 Q57"
+    }
+  },
+  {
+    "id": "e1-q56",
+    "examNumber": 1,
+    "domain": "Domain 2: Implement and manage storage",
+    "domainCode": 2,
+    "topic": "Azure Files Share Backup Frequency & Hourly Snapshots",
+    "scenario": "Your enterprise uses Azure Files shares mounted via SMB across multiple branch offices. Departmental policy mandates that file share backups must be captured every 4 hours throughout the business day (08:00, 12:00, 16:00, and 20:00 UTC) to minimize potential data loss to under 4 hours.\n\nYou configure a Recovery Services Vault named 'rsv-prod-files' to protect the Azure Files share. How can you fulfill this backup frequency requirement within the backup policy?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Azure Files only supports a single daily backup snapshot; you must write an Azure Automation runbook using PowerShell to trigger manual snapshots every 4 hours."
+      },
+      {
+        "id": "B",
+        "text": "In the Recovery Services Vault backup policy for Azure Files, set the backup frequency to Hourly with a schedule interval of every 4 hours."
+      },
+      {
+        "id": "C",
+        "text": "Deploy an Azure Backup Vault instead of a Recovery Services Vault, as Recovery Services Vaults cannot back up Azure Files."
+      },
+      {
+        "id": "D",
+        "text": "Configure Azure File Sync with Cloud Tiering set to 240 minutes to automate cloud snapshots."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Configure backup policy for Azure Files with a 4-hour RPO. Constraint: Recovery Services Vault capabilities for Azure Files workloads.",
+      "flawedMentalModel": "Believing Azure Files backups in Recovery Services Vault only support once-daily schedules, like standard Azure VM backup policies.",
+      "coreMechanic": "Azure Files backup policies in a Recovery Services Vault natively support multiple snapshots per day:\n1. Frequency: Can be set to 'Daily' or 'Hourly'.\n2. Hourly Schedule: Allows setting snapshot intervals of every 4, 8, or 12 hours.\n3. Native Integration: Azure Backup takes native Azure Files share snapshots in the local storage account, which are instantaneous and do not transfer data across regions during backup creation.",
+      "distractors": {
+        "A": "Hourly backup frequency is natively supported in Recovery Services Vault for Azure Files.",
+        "C": "Azure Files is backed up using Recovery Services Vaults, not Backup Vaults.",
+        "D": "Azure File Sync Cloud Tiering manages cache space, not automated point-in-time backup snapshots."
+      },
+      "heuristic": "Azure Files backup in Recovery Services Vault natively supports HOURLY frequency (every 4, 8, or 12 hours)!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/backup/backup-azure-files-faq#can-i-schedule-multiple-backups-per-day-for-azure-files",
+      "errorJournalRef": "AR PT02 Q62"
+    }
+  },
+  {
+    "id": "e1-q57",
+    "examNumber": 1,
+    "domain": "Domain 3: Deploy and manage Azure compute resources",
+    "domainCode": 3,
+    "topic": "Azure Container Instances (ACI) Port Allocation on Localhost",
+    "scenario": "You are creating an Azure Container Instances (ACI) multi-container group named 'acigroup-web' using an ARM template. The container group contains two containers: 'frontend-nginx' (listening on TCP port 80) and 'backend-api' (also configured to listen on TCP port 80 on localhost).\n\nThe template deployment fails during container group initialization with an IP address / port allocation conflict.\n\nWhat is the fundamental networking principle of ACI container groups that caused this error?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "ACI container groups can only contain a single container unless deployed into a Virtual Network with an Application Gateway."
+      },
+      {
+        "id": "B",
+        "text": "Windows containers cannot run alongside Linux containers in the same subscription."
+      },
+      {
+        "id": "C",
+        "text": "All containers in an ACI container group share the same network namespace and localhost; therefore, containers within the same group cannot bind to identical port numbers."
+      },
+      {
+        "id": "D",
+        "text": "Port 80 is reserved exclusively for the Azure Container Instances management agent and cannot be bound by user applications."
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "verdict": "Option C is correct.",
+      "triggerConstraints": "Requirement: Identify why two containers in an ACI container group cannot both listen on TCP port 80.",
+      "flawedMentalModel": "Assuming each container inside an ACI group receives an independent private IP address or separate localhost loopback adapter.",
+      "coreMechanic": "In Azure Container Instances (ACI):\n1. A container group is the top-level scheduling unit (comparable to a Kubernetes pod).\n2. All containers in a container group share the exact same network namespace, including the single assigned IP address and the 'localhost' interface.\n3. Consequently, containers within the group can communicate with each other over localhost on distinct ports, but two containers within the group CANNOT bind to the same port.",
+      "distractors": {
+        "A": "ACI natively supports multi-container groups without requiring VNet or Application Gateway.",
+        "B": "The question specifies port conflict, not OS incompatibility.",
+        "D": "Port 80 is a standard HTTP port that user applications can freely bind."
+      },
+      "heuristic": "Containers in an ACI container group share the same network namespace and localhost: ports must not collide!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/container-instances/container-instances-container-groups#networking",
+      "errorJournalRef": "AR PT02 Q16"
+    }
+  },
+  {
+    "id": "e1-q58",
+    "examNumber": 1,
+    "domain": "Domain 4: Implement and manage virtual networking",
+    "domainCode": 4,
+    "topic": "Subnet Sizing Calculation & Azure SDN 5 Reserved Addresses",
+    "scenario": "You are provisioning a new subnet named 'snet-analytics' in an Azure Virtual Network. The analytics team will deploy exactly 28 virtual machines with one NIC each into this subnet immediately, and requires at least 15 additional IP addresses reserved for future VM scaling over the next 6 months (total minimum required usable host IPs = 43).\n\nWhat is the minimum CIDR subnet prefix size that satisfies this requirement without wasting excessive IP addresses?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "/27"
+      },
+      {
+        "id": "B",
+        "text": "/28"
+      },
+      {
+        "id": "C",
+        "text": "/25"
+      },
+      {
+        "id": "D",
+        "text": "/26"
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": {
+      "verdict": "Option D (/26) is correct.",
+      "triggerConstraints": "Requirement: Size an Azure subnet for at least 43 usable host IP addresses (28 + 15 = 43). Constraint: Account for Azure's 5 reserved IP addresses per subnet.",
+      "flawedMentalModel": "Calculating /27 as 32 - 2 = 30 usable IPs (on-prem formula) or forgetting that Azure reserves 5 IPs (32 - 5 = 27 < 43).",
+      "coreMechanic": "Azure Subnet IP Reservation Formula: Usable IPs = 2^(32 - prefix) - 5.\n- /28: 16 - 5 = 11 usable IPs (insufficient for 43).\n- /27: 32 - 5 = 27 usable IPs (insufficient for 43).\n- /26: 64 - 5 = 59 usable IPs (satisfies 43 with 16 spare).\n- /25: 128 - 5 = 123 usable IPs (unnecessarily large).\nTherefore, /26 is the minimum CIDR prefix that provides at least 43 usable host IP addresses.",
+      "distractors": {
+        "A": "/27 only provides 27 usable host addresses in Azure (32 - 5 = 27), which is less than the required 43.",
+        "B": "/28 only provides 11 usable host addresses.",
+        "C": "/25 satisfies 43 but is not the minimum prefix size (/26 is smaller and satisfies the requirement)."
+      },
+      "heuristic": "Azure Usable IPs = 2^(32 - prefix) - 5. For 43 hosts: /27 = 27 (too small); /26 = 59 (correct minimum).",
+      "msLearnUrl": "https://learn.microsoft.com/azure/virtual-network/virtual-networks-faq#are-there-any-restrictions-on-using-ip-addresses-within-these-subnets",
+      "errorJournalRef": "AR PT02 Q21"
+    }
+  },
+  {
+    "id": "e1-q59",
+    "examNumber": 1,
+    "domain": "Domain 5: Monitor and maintain Azure resources",
+    "domainCode": 5,
+    "topic": "Recovery Services Vault vs. Azure Backup Vault Workload Boundaries",
+    "scenario": "Your organization operates a mixed cloud environment consisting of Azure Virtual Machines, standalone Azure Managed Disks (used for raw data staging), Azure Files shares, and Azure Database for PostgreSQL Flexible Server instances.\n\nYou need to establish backup policies for:\n1. Independent Azure Managed Disks (snapshot-based disk backup without VM agent).\n2. Azure Virtual Machines.\n\nWhich vault types must you deploy to protect these two workloads?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy an Azure Backup Vault for Managed Disks, and a Recovery Services Vault for Azure Virtual Machines."
+      },
+      {
+        "id": "B",
+        "text": "Deploy a Recovery Services Vault for both Managed Disks and Azure Virtual Machines."
+      },
+      {
+        "id": "C",
+        "text": "Deploy an Azure Backup Vault for both Managed Disks and Azure Virtual Machines."
+      },
+      {
+        "id": "D",
+        "text": "Deploy a Recovery Services Vault for Managed Disks, and an Azure Backup Vault for Azure Virtual Machines."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Map Managed Disks and Azure VMs to their designated Azure backup vault types.",
+      "flawedMentalModel": "Assuming Recovery Services Vault protects all Azure resources or confusing Backup Vaults with Recovery Services Vaults.",
+      "coreMechanic": "Workload Segregation between Vault Types:\n1. Recovery Services Vault: Supports classic IaaS workloads including Azure Virtual Machines, Azure Files (SMB), SQL Server in Azure VMs, SAP HANA in Azure VMs, and MARS agent (on-premises).\n2. Azure Backup Vault: Supports modern cloud-native workloads including Azure Managed Disks, Azure Blob Storage (operational backup), Azure Database for PostgreSQL Flexible Server, and Azure Kubernetes Service (AKS Backup).\nManaged Disks cannot be backed up into a Recovery Services Vault; they require an Azure Backup Vault.",
+      "distractors": {
+        "B": "Recovery Services Vault does NOT support standalone Azure Managed Disk backup.",
+        "C": "Azure Backup Vault does NOT support native Azure Virtual Machine backups.",
+        "D": "Inverts the proper workload mapping."
+      },
+      "heuristic": "Azure VMs & Azure Files = Recovery Services Vault. Managed Disks & PostgreSQL Flexible Server = Backup Vault!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/backup/backup-vault-overview",
+      "errorJournalRef": "AR PT01 Q52"
+    }
+  },
+  {
+    "id": "e1-q60",
+    "examNumber": 1,
+    "domain": "Domain 2: Implement and manage storage",
+    "domainCode": 2,
+    "topic": "VNet Service Endpoints vs. Azure Private Endpoints with Private DNS Zones",
+    "scenario": "You need to configure secure access from an Azure Virtual Network ('vnet-app-eastus') to an Azure Storage Account ('stprodeastus01').\n\nThe security architecture mandates that traffic to the blob storage service NEVER traverses the public internet, must use a private IP address within 'vnet-app-eastus', and must resolve transparently when application VMs query 'stprodeastus01.blob.core.windows.net'.\n\nWhich solution fulfills these requirements?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure a Service Endpoint for Microsoft.Storage on the subnet and add an NSG rule allowing outbound traffic to the Storage service tag."
+      },
+      {
+        "id": "B",
+        "text": "Deploy an Azure Private Endpoint for the blob sub-resource in the subnet, and link a Private DNS Zone named 'privatelink.blob.core.windows.net' to the VNet."
+      },
+      {
+        "id": "C",
+        "text": "Deploy a NAT Gateway associated with the subnet and configure a custom hosts file on each VM mapping the public IP of the storage account."
+      },
+      {
+        "id": "D",
+        "text": "Enable Azure Bastion with IP-based connection and configure a public CNAME DNS record pointing to the storage account."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Private IP within VNet + No public IP traversal + Transparent DNS resolution.",
+      "flawedMentalModel": "Choosing Service Endpoints when private IP allocation in the VNet is explicitly required.",
+      "coreMechanic": "Service Endpoints vs Private Endpoints:\n1. Service Endpoints: Keep traffic on Azure backbone, but the PaaS resource still uses its public IP address. Does not consume a private IP in your VNet.\n2. Private Endpoints: Allocate a private NIC with a private IP address from your subnet. To enable transparent resolution so VMs querying 'stprodeastus01.blob.core.windows.net' get the private IP, you must link the Azure Private DNS Zone 'privatelink.blob.core.windows.net' to the Virtual Network. Azure automatically configures CNAME redirection.",
+      "distractors": {
+        "A": "Service Endpoints do not allocate a private IP inside the subnet; clients still connect to public IP ranges.",
+        "C": "NAT Gateway routes outbound internet traffic; it does not provide private endpoint IP allocation.",
+        "D": "Azure Bastion is an administrative RDP/SSH tool, not a storage connectivity solution."
+      },
+      "heuristic": "Private IP in VNet subnet + Private Link DNS = Private Endpoint + privatelink Private DNS Zone linked to VNet.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/private-link/private-endpoint-dns",
+      "errorJournalRef": "AR PT01 Q28"
+    }
+  },
+  {
+    "id": "e1-q61",
+    "examNumber": 1,
+    "domain": "Domain 3: Deploy and manage Azure compute resources",
+    "domainCode": 3,
+    "topic": "Serverless Windows Container Hosting: ACI vs. ACA Constraints",
+    "scenario": "You are architecting a containerized deployment for a legacy .NET Framework 4.8 enterprise service packaged as a Windows Server Core container image.\n\nYour team requires a serverless hosting model where you do not have to manage virtual machines, scale sets, or Kubernetes control planes (no AKS clusters).\n\nWhich Azure service should you select to host this Windows container?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Azure Container Apps (ACA)"
+      },
+      {
+        "id": "B",
+        "text": "Azure App Service on Linux with custom container plan"
+      },
+      {
+        "id": "C",
+        "text": "Azure Container Instances (ACI)"
+      },
+      {
+        "id": "D",
+        "text": "Azure Spring Apps Enterprise"
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "verdict": "Option C (ACI) is correct.",
+      "triggerConstraints": "Requirement: Run a Windows Server container image in a serverless model without managing Kubernetes/AKS.",
+      "flawedMentalModel": "Selecting Azure Container Apps (ACA), unaware that ACA strictly supports Linux containers only.",
+      "coreMechanic": "Container Workload Operating System Constraints:\n1. Azure Container Apps (ACA): Based on Kubernetes, Envoy, and KEDA. Strictly supports Linux-based containers ONLY. Windows containers are NOT supported.\n2. Azure Container Instances (ACI): Fully serverless compute that natively supports both Linux containers and Windows Server containers (Windows Server 2019/2022 Core).\nTherefore, to run a Windows Server container serverlessly without managing an AKS cluster, Azure Container Instances (ACI) is the only supported option.",
+      "distractors": {
+        "A": "Azure Container Apps does NOT support Windows containers (Linux only).",
+        "B": "App Service on Linux cannot run Windows containers.",
+        "D": "Azure Spring Apps is specialized for Java Spring Boot applications."
+      },
+      "heuristic": "Serverless Windows container without managing Kubernetes = Azure Container Instances (ACI)! ACA is Linux-only.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/container-instances/container-instances-overview",
+      "errorJournalRef": "AR PT02 Q15"
+    }
+  },
+  {
+    "id": "e1-q62",
+    "examNumber": 1,
+    "domain": "Domain 4: Implement and manage virtual networking",
+    "domainCode": 4,
+    "topic": "Effective NSG Evaluation Flow: Subnet NSG vs. NIC NSG Dual-Evaluation",
+    "scenario": "An Azure VM named 'vm-web01' is connected to subnet 'snet-web' in 'vnet-prod'. Both 'snet-web' and the NIC of 'vm-web01' ('nic-web01') have Network Security Groups associated:\n\nSubnet NSG ('nsg-subnet'):\n- Priority 200: Inbound | Source: Internet | Port: 443 | Action: Allow\n- Priority 65500: DenyAllInBound\n\nNIC NSG ('nsg-nic'):\n- Priority 300: Inbound | Source: Internet | Port: 443 | Action: Deny\n- Priority 400: Inbound | Source: 10.0.0.0/8 | Port: 443 | Action: Allow\n- Priority 65500: DenyAllInBound\n\nAn external client on the public internet attempts to establish an HTTPS connection (TCP 443) to the public IP of 'vm-web01'. What happens to the inbound HTTPS traffic and why?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "The traffic is allowed because Subnet NSG has lower priority number (200 vs 300) and takes absolute precedence over NIC NSG."
+      },
+      {
+        "id": "B",
+        "text": "The traffic is allowed because Subnet NSG evaluates first and once an Allow rule is matched, evaluation immediately terminates."
+      },
+      {
+        "id": "C",
+        "text": "The traffic is denied because NIC NSG evaluates first for inbound traffic, overriding Subnet NSG."
+      },
+      {
+        "id": "D",
+        "text": "The traffic is denied because for inbound traffic, the packet must pass BOTH Subnet NSG and NIC NSG; while Subnet NSG allows it, NIC NSG Priority 300 explicitly denies it."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": {
+      "verdict": "Option D is correct.",
+      "triggerConstraints": "Requirement: Determine effective NSG behavior for inbound internet traffic across Subnet NSG and NIC NSG.",
+      "flawedMentalModel": "Assuming priority numbers compete across different NSGs, or that a match on the Subnet NSG skips the NIC NSG evaluation.",
+      "coreMechanic": "Azure NSG Inbound Traffic Evaluation Flow:\n1. When inbound traffic arrives from outside the VM, Azure SDN evaluates the Subnet NSG FIRST.\n2. In 'nsg-subnet', Priority 200 matches and ALLOWS the packet through the subnet boundary.\n3. The packet is then evaluated by the NIC NSG SECOND.\n4. In 'nsg-nic', Priority 300 matches 'Source: Internet, Port: 443' with action DENY.\n5. The packet is dropped at the NIC boundary.\nFor inbound traffic to reach the VM, it MUST be allowed by BOTH the Subnet NSG AND the NIC NSG.",
+      "distractors": {
+        "A": "Priority numbers are local to each individual NSG and are not compared against each other across different NSGs.",
+        "B": "Matching an Allow rule in the Subnet NSG only permits traffic through the subnet; it must still pass NIC NSG evaluation.",
+        "C": "Subnet NSG evaluates first for inbound traffic, not NIC NSG (NIC NSG evaluates first for outbound traffic)."
+      },
+      "heuristic": "Inbound NSG Flow: Subnet NSG first -> NIC NSG second. BOTH must allow the packet!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/virtual-network/network-security-group-how-it-works",
+      "errorJournalRef": "AR PT01 Q21"
+    }
+  },
+  {
+    "id": "e1-q63",
+    "examNumber": 1,
+    "domain": "Domain 1: Manage Azure identities and governance",
+    "domainCode": 1,
+    "topic": "Bicep Parameter Files (.bicepparam) & Decorators",
+    "scenario": "You are modularizing your enterprise Bicep code. In your 'main.bicep' file, you declare an administrative password parameter for Azure VM provisioning.\n\nYou want to ensure that:\n1. The password value is never logged or exposed in plain text in deployment history.\n2. Values provided for the deployment environment parameter are restricted strictly to 'dev', 'test', or 'prod'.\n3. Default parameters are populated using a dedicated parameter file using modern Bicep syntax.\n\nWhich Bicep decorators and parameter file configuration should you use?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use '@secure()' decorator on the password parameter, '@allowed([\\'dev\\', \\'test\\', \\'prod\\'])' on the environment parameter, and a '.bicepparam' file containing 'using \\'./main.bicep\\''."
+      },
+      {
+        "id": "B",
+        "text": "Use '@protected()' decorator on the password parameter, '@validate([\\'dev\\', \\'test\\', \\'prod\\'])' on the environment parameter, and a 'parameters.json' file."
+      },
+      {
+        "id": "C",
+        "text": "Use '@secret()' decorator on the password parameter, '@restrict([\\'dev\\', \\'test\\', \\'prod\\'])' on the environment parameter, and an ARM template parameters file."
+      },
+      {
+        "id": "D",
+        "text": "Use '@keyvault()' decorator on the password parameter, '@choice([\\'dev\\', \\'test\\', \\'prod\\'])' on the environment parameter, and a '.bicep' parameter file."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": {
+      "verdict": "Option A is correct.",
+      "triggerConstraints": "Requirement: Secure password parameter, restrict allowed environment string values, and use native Bicep parameter file format.",
+      "flawedMentalModel": "Confusing ARM template parameter decorators with Bicep syntax (@secure and @allowed).",
+      "coreMechanic": "Bicep Parameter Decorators & Parameter Files:\n1. '@secure()': Decorator applied to string or object parameters that prevents values from being logged in deployment outputs or saved in deployment history.\n2. '@allowed([\\'dev\\', \\'test\\', \\'prod\\'])': Decorator restricting acceptable values to a predefined list.\n3. Modern Bicep Parameters (.bicepparam): Dedicated Bicep parameter files start with the statement 'using \\'./main.bicep\\'' and assign parameter values directly without verbose JSON wrapping.",
+      "distractors": {
+        "B": "@protected and @validate are not valid Bicep parameter decorators.",
+        "C": "@secret and @restrict do not exist in Bicep syntax.",
+        "D": "@keyvault and @choice do not exist in Bicep syntax."
+      },
+      "heuristic": "Bicep parameter safety: @secure() hides secrets, @allowed([]) restricts values, .bicepparam starts with using './main.bicep'.",
+      "msLearnUrl": "https://learn.microsoft.com/azure/azure-resource-manager/bicep/parameters",
+      "errorJournalRef": "council-report-2026-11-07-bicep-endpoints.html"
+    }
+  },
+  {
+    "id": "e1-q64",
+    "examNumber": 1,
+    "domain": "Domain 3: Deploy and manage Azure compute resources",
+    "domainCode": 3,
+    "topic": "Virtual Machine Scale Sets (VMSS) Automatic OS Image Upgrades",
+    "scenario": "You manage a production Virtual Machine Scale Set (VMSS) deployed across three Availability Zones. You want to enable Automatic OS Image Upgrades so that new platform image patches are rolled out to instances safely with zero downtime.\n\nWhich prerequisites must be met before Azure will allow you to enable Automatic OS Image Upgrades on the scale set?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "The scale set must use Custom VM Images, have over-provisioning enabled, and use manual upgrade policy."
+      },
+      {
+        "id": "B",
+        "text": "The scale set must use a supported platform OS image, have the upgradePolicy mode set to 'Automatic' or 'Rolling', and have an Application Health Extension or Load Balancer health probe configured."
+      },
+      {
+        "id": "C",
+        "text": "The scale set instances must have public IP addresses on each NIC, use unmanaged disks, and run on Basic Load Balancers."
+      },
+      {
+        "id": "D",
+        "text": "The scale set must be deployed in Flexible orchestration mode with spot instances only."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": {
+      "verdict": "Option B is correct.",
+      "triggerConstraints": "Requirement: Enable Automatic OS Image Upgrades on a Virtual Machine Scale Set.",
+      "flawedMentalModel": "Assuming custom generalized images support automated platform upgrades without Azure Compute Gallery shared image definitions.",
+      "coreMechanic": "Virtual Machine Scale Set Automatic OS Image Upgrade Prerequisites:\n1. Image: Must use a supported platform image (or Azure Compute Gallery specialized/generalized image with version tracking).\n2. Upgrade Policy: The scale set's 'upgradePolicy.mode' must be set to 'Automatic' or 'Rolling'.\n3. Health Monitoring: An application health probe (either Application Health Extension or Load Balancer health probe) is strictly required so Azure can determine whether newly upgraded instances are healthy before proceeding to the next batch.",
+      "distractors": {
+        "A": "Manual upgrade policy explicitly disables automatic upgrades.",
+        "C": "Public IPs and unmanaged disks are not required; unmanaged disks are deprecated.",
+        "D": "Automatic OS upgrade is not restricted to spot instances."
+      },
+      "heuristic": "VMSS Automatic OS Upgrades require: Supported image + Rolling/Automatic policy + Health Probe / Extension!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-automatic-upgrade",
+      "errorJournalRef": "scenario_01_deep_dive.md"
+    }
+  },
+  {
+    "id": "e1-q65",
+    "examNumber": 1,
+    "domain": "Domain 5: Monitor and maintain Azure resources",
+    "domainCode": 5,
+    "topic": "Azure Monitor Agent (AMA) & Data Collection Rules (DCR) Scoping",
+    "scenario": "Your organization is migrating from the legacy Log Analytics agent (MMA) to the Azure Monitor Agent (AMA). You need to collect specific Windows Event Logs (System and Application error events) and performance counters (Processor % Processor Time and Memory Available MBytes) from 45 Azure VMs situated across multiple resource groups and two Azure regions ('East US' and 'West US').\n\nHow should you configure and apply the collection settings with the least administrative effort?",
+    "questionType": "single",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an individual Data Collection Rule in every resource group and configure custom PowerShell scripts to push metrics via the Azure Monitor REST API."
+      },
+      {
+        "id": "B",
+        "text": "Configure diagnostic settings on each VM to stream metrics directly to an Event Hub in West US."
+      },
+      {
+        "id": "C",
+        "text": "Create a Data Collection Rule (DCR) specifying the required performance counters and Windows event logs, and associate the DCR to the target virtual machines using Data Collection Rule Associations (DCRA)."
+      },
+      {
+        "id": "D",
+        "text": "Install the Network Watcher Agent on all VMs and configure packet capture rules linked to a central storage account."
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": {
+      "verdict": "Option C is correct.",
+      "triggerConstraints": "Requirement: Collect Windows events and performance counters from multiple VMs across regions using AMA with minimal management overhead.",
+      "flawedMentalModel": "Creating per-VM or per-RG collection configurations, or relying on diagnostic settings which do not manage guest OS event collection.",
+      "coreMechanic": "Azure Monitor Agent (AMA) Architecture:\n1. Data Collection Rules (DCR): Define what data to collect (event logs, syslog, performance counters, IIS logs) and where to send it (Log Analytics workspace).\n2. Data Collection Rule Associations (DCRA): Decouple the collection configuration from the VMs. A single DCR can be associated with hundreds of VMs across different resource groups and subscriptions.\n3. The Azure Monitor Agent running inside the VM receives the DCR configuration and streams telemetry directly to the designated Log Analytics workspace.",
+      "distractors": {
+        "A": "DCRs do not need to be duplicated per resource group; a single DCR can be associated across multiple groups.",
+        "B": "VM Diagnostic settings are for host metrics and boot diagnostics, not granular guest OS event log filtering via AMA.",
+        "D": "Network Watcher Agent is for network packet captures and topology, not OS performance counters."
+      },
+      "heuristic": "Azure Monitor Agent (AMA) centralizes guest telemetry via Data Collection Rules (DCR) + Associations (DCRA)!",
+      "msLearnUrl": "https://learn.microsoft.com/azure/azure-monitor/agents/data-collection-rule-overview",
+      "errorJournalRef": "AR PT01 Q65"
+    }
   }
 ];

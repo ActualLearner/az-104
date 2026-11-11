@@ -9,7 +9,8 @@
   'use strict';
 
   // Storage Keys
-  const STORAGE_KEY_SESSION = 'az104_simulator_session_v1';
+  const STORAGE_KEY_SESSION = 'az104_simulator_session_v2';
+  const STORAGE_KEY_SESSION_V1 = 'az104_simulator_session_v1';
   const STORAGE_KEY_HISTORY = 'az104_simulator_history_v1';
 
   // Application State
@@ -386,7 +387,7 @@
   }
 
   function getDefaultExamTimeSeconds(examKey) {
-    // 50 questions -> 100 minutes. 100 questions -> 200 minutes.
+    // 65 questions -> 100 minutes. 130 questions (combined pool) -> 200 minutes.
     if (examKey === 'combined') return 200 * 60;
     return 100 * 60;
   }
@@ -396,7 +397,19 @@
     const paramExam = urlParams.get('exam');
     const paramMode = urlParams.get('mode');
 
-    const saved = localStorage.getItem(STORAGE_KEY_SESSION);
+    let saved = localStorage.getItem(STORAGE_KEY_SESSION);
+    if (!saved) {
+      const legacySaved = localStorage.getItem(STORAGE_KEY_SESSION_V1);
+      if (legacySaved) {
+        try {
+          const parsedLegacy = JSON.parse(legacySaved);
+          if (parsedLegacy && parsedLegacy.userAnswers && Object.keys(parsedLegacy.userAnswers).length > 0) {
+            saved = legacySaved;
+          }
+        } catch (_) {}
+      }
+    }
+
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -405,7 +418,13 @@
         currentIndex = parsed.currentIndex || 0;
         userAnswers = parsed.userAnswers || {};
         flaggedQuestions = new Set(parsed.flaggedQuestions || []);
-        timeRemainingSeconds = parsed.timeRemainingSeconds !== undefined ? parsed.timeRemainingSeconds : getDefaultExamTimeSeconds(currentExamKey);
+        
+        const defaultTime = getDefaultExamTimeSeconds(currentExamKey);
+        // Ensure timeRemainingSeconds does not exceed current default exam time (100m for 65Q / 200m for combined)
+        timeRemainingSeconds = (parsed.timeRemainingSeconds !== undefined && parsed.timeRemainingSeconds > 0)
+          ? Math.min(parsed.timeRemainingSeconds, defaultTime)
+          : defaultTime;
+
         isExamSubmitted = parsed.isExamSubmitted || false;
         examStartTime = parsed.examStartTime || Date.now();
 
@@ -419,6 +438,7 @@
         if (dom.modeSelect) dom.modeSelect.value = currentMode;
 
         activeQuestions = getQuestionPool(currentExamKey);
+        currentIndex = Math.max(0, Math.min(currentIndex, activeQuestions.length - 1));
 
         if (isExamSubmitted) {
           showResultsScreen();
