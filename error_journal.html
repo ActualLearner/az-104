@@ -328,7 +328,7 @@
 <li><em>One plan:</em> Cannot mix Windows and Linux web apps inside the same App Service Plan.</li>
 <li><em>Five plans:</em> Redundant; apps sharing the same OS can share the same underlying plan.</li>
 <li><strong>6. Exam Heuristic:</strong></li>
-<li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux $\rightarrow$ Minimum 2 plans."</strong></li>
+<li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux → Minimum 2 plans."</strong></li>
 </ul>
 <hr />
 <h3 id="domain-3-compute-regional-vcpu-quotas-stopped-deallocated-vms-trap-td-timed-q3">[Domain 3: Compute] Regional vCPU Quotas: Stopped (Deallocated) VMs Trap (TD Timed Q3)</h3>
@@ -342,17 +342,17 @@
 <li>VM3: F2s_v2 (2 vCPUs) - Running in South Central US (different region, ignored).</li>
 </ul>
 </li>
-<li>Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) $\rightarrow$ VM5 (D2s_v3, 2 vCPUs) $\rightarrow$ VM6 (A8_v2, 8 vCPUs).</li>
+<li>Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) → VM5 (D2s_v3, 2 vCPUs) → VM6 (A8_v2, 8 vCPUs).</li>
 <li><strong>3. Flawed Mental Model:</strong></li>
 <li>Assuming <code>Stopped (Deallocated)</code> releases the VM's vCPU quota allocation.</li>
 <li><strong>4. The Core Azure Mechanic (2026 Standard):</strong></li>
 <li><strong>Billing vs. Quota:</strong> Deallocating a VM stops hourly compute charges, <strong>BUT DOES NOT RELEASE THE vCPU QUOTA</strong>. Azure reserves the quota so the VM can be restarted.</li>
 <li>Quota consumed = VM1 (4) + VM2 (8) = <strong>12 of 15 vCPUs used</strong>.</li>
-<li>Remaining regional quota = $15 - 12 = \mathbf{3\text{ vCPUs}}$.</li>
+<li>Remaining regional quota = 15 - 12 = <strong>3 vCPUs</strong>.</li>
 <li><strong>Sequential execution:</strong><ol>
-<li>VM4 (needs 2 vCPUs): $3 \ge 2 \rightarrow$ <strong>Created (YES)</strong>. Remaining quota = $3 - 2 = \mathbf{1\text{ vCPU}}$.</li>
-<li>VM5 (needs 2 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
-<li>VM6 (needs 8 vCPUs): Only 1 vCPU available $\rightarrow$ <strong>Blocked (NO)</strong>.</li>
+<li>VM4 (needs 2 vCPUs): 3 ≥ 2 → <strong>Created (YES)</strong>. Remaining quota = 3 - 2 = <strong>1 vCPU</strong>.</li>
+<li>VM5 (needs 2 vCPUs): Only 1 vCPU available → <strong>Blocked (NO)</strong>.</li>
+<li>VM6 (needs 8 vCPUs): Only 1 vCPU available → <strong>Blocked (NO)</strong>.</li>
 </ol>
 </li>
 <li><strong>5. Exam Heuristic:</strong></li>
@@ -1004,7 +1004,7 @@
 <li><strong>3. Flawed Mental Model:</strong><ul>
 <li>Conflating <strong>administrative boundaries</strong> (Management Groups, Subscriptions, Resource Groups) with <strong>physical/routing boundaries</strong> (Regions, Availability Zones, Virtual Networks).</li>
 <li>Assuming that a Resource Group's location restricts where resources inside it can be deployed.</li>
-<li>Assuming that a ReadOnly lock prevents moving a resource to another Resource Group.</li>
+<li>Assuming that a ReadOnly lock allows moving a resource to another Resource Group (or assuming a CanNotDelete lock blocks moving).</li>
 <li>Assuming that NSGs, ASGs, or Recovery Services Vaults can operate across regions or cross-VNet without restriction.</li>
 </ul>
 </li>
@@ -1038,7 +1038,7 @@
 </li>
 <li><strong>5. Distractor Killers:</strong><ul>
 <li><em>Moving an App Service to an East US RG changes its region:</em> False; region is immutable upon resource creation.</li>
-<li><em>Cannot move a resource because a ReadOnly lock is active:</em> False; locks block modifications/deletions, not ARM move operations.</li>
+<li><em>Cannot move a resource because a CanNotDelete lock is active:</em> False; CanNotDelete prevents deletion, not ARM move operations (unlike ReadOnly, which strictly blocks moves).</li>
 <li><em>Use 1 Recovery Services Vault to back up VMs in East US and West Europe:</em> False; Recovery Services Vaults are strictly regional.</li>
 <li><em>Put NICs from two peered VNets in the same Application Security Group (ASG):</em> False; ASGs are bound to a single VNet.</li>
 </ul>
@@ -1264,7 +1264,7 @@
 </ul>
 </li>
 <li><strong>3. Flawed Mental Model:</strong><ul>
-<li>User calculated $128 - 2 = 126$ usable IPs, applying traditional on-premises networking rules (subtracting only network .0 and broadcast .255).</li>
+<li>User calculated 128 - 2 = 126 usable IPs, applying traditional on-premises networking rules (subtracting only network .0 and broadcast .255).</li>
 </ul>
 </li>
 <li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
@@ -1278,20 +1278,20 @@
 </ol>
 </li>
 <li><strong>Calculation for <code>/25</code>:</strong><ul>
-<li>Total raw IPs: $2^{(32 - 25)} = 2^7 = 128$.</li>
-<li>Minus 5 Azure reserved IPs: $128 - 5 = \mathbf{123}$ usable host IP addresses.</li>
+<li>Total raw IPs: 2^(32 - 25) = 2^7 = 128.</li>
+<li>Minus 5 Azure reserved IPs: 128 - 5 = <strong>123</strong> usable host IP addresses.</li>
 </ul>
 </li>
 </ul>
 </li>
 <li><strong>5. Distractor Killers:</strong><ul>
-<li><em>126 usable addresses:</em> Traditional on-premises calculation ($128 - 2$); invalid in Azure due to the 3 internal infrastructure reservations (.1, .2, .3).</li>
+<li><em>126 usable addresses:</em> Traditional on-premises calculation (128 - 2); invalid in Azure due to the 3 internal infrastructure reservations (.1, .2, .3).</li>
 <li><em>128 usable addresses:</em> Total raw IP block without subtracting required network/gateway reservations.</li>
 <li><em>120 usable addresses:</em> Subtracting 8 addresses; arbitrary incorrect math.</li>
 </ul>
 </li>
 <li><strong>6. Exam Heuristic:</strong><ul>
-<li><strong>"Azure Subnet Usable IPs = $2^{(32 - \text{prefix})} - 5$. Azure ALWAYS reserves 5 addresses per subnet (.0, .1, .2, .3, .255)!"</strong></li>
+<li><strong>"Azure Subnet Usable IPs = 2^(32 - prefix) - 5. Azure ALWAYS reserves 5 addresses per subnet (.0, .1, .2, .3, .255)!"</strong></li>
 </ul>
 </li>
 </ul>

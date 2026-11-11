@@ -469,7 +469,7 @@
 <li><strong>"Can we add an existing production VM to a newly created Availability Set?"</strong><br />
    $\rightarrow$ <strong>NO.</strong> Availability Sets are an immutable property set only at VM creation time.</li>
 <li><strong>"Can we move a VM with a ReadOnly lock to another Resource Group?"</strong><br />
-   $\rightarrow$ <strong>YES.</strong> Management locks do not prevent cross-RG moves.</li>
+   $\rightarrow$ <strong>NO.</strong> A <code>ReadOnly</code> lock strictly blocks moving resources until the lock is deleted. (A <code>CanNotDelete</code> lock, however, allows moving).</li>
 <li><strong>"If we move an App Service from a West US RG to an East US RG, does its region change?"</strong><br />
    $\rightarrow$ <strong>NO.</strong> Resource location is permanent and independent of Resource Group location.</li>
 <li><strong>"Can VMs in 5 different regions stream syslog to 1 Log Analytics workspace?"</strong><br />

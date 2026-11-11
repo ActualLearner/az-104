@@ -239,7 +239,7 @@
   * *One plan:* Cannot mix Windows and Linux web apps inside the same App Service Plan.
   * *Five plans:* Redundant; apps sharing the same OS can share the same underlying plan.
 * **6. Exam Heuristic:**
-  * **"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux $\rightarrow$ Minimum 2 plans."**
+  * **"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux → Minimum 2 plans."**
 
 ---
 
@@ -251,17 +251,17 @@
     - VM1: A4_v2 (4 vCPUs) - Running in North Central US.
     - VM2: D8s_v3 (8 vCPUs) - **Stopped (Deallocated)** in North Central US.
     - VM3: F2s_v2 (2 vCPUs) - Running in South Central US (different region, ignored).
-  * Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) $\rightarrow$ VM5 (D2s_v3, 2 vCPUs) $\rightarrow$ VM6 (A8_v2, 8 vCPUs).
+  * Plan to deploy sequentially: VM4 (A2m_v2, 2 vCPUs) → VM5 (D2s_v3, 2 vCPUs) → VM6 (A8_v2, 8 vCPUs).
 * **3. Flawed Mental Model:**
   * Assuming `Stopped (Deallocated)` releases the VM's vCPU quota allocation.
 * **4. The Core Azure Mechanic (2026 Standard):**
   * **Billing vs. Quota:** Deallocating a VM stops hourly compute charges, **BUT DOES NOT RELEASE THE vCPU QUOTA**. Azure reserves the quota so the VM can be restarted.
   * Quota consumed = VM1 (4) + VM2 (8) = **12 of 15 vCPUs used**.
-  * Remaining regional quota = $15 - 12 = \mathbf{3\text{ vCPUs}}$.
+  * Remaining regional quota = 15 - 12 = **3 vCPUs**.
   * **Sequential execution:**
-    1. VM4 (needs 2 vCPUs): $3 \ge 2 \rightarrow$ **Created (YES)**. Remaining quota = $3 - 2 = \mathbf{1\text{ vCPU}}$.
-    2. VM5 (needs 2 vCPUs): Only 1 vCPU available $\rightarrow$ **Blocked (NO)**.
-    3. VM6 (needs 8 vCPUs): Only 1 vCPU available $\rightarrow$ **Blocked (NO)**.
+    1. VM4 (needs 2 vCPUs): 3 ≥ 2 → **Created (YES)**. Remaining quota = 3 - 2 = **1 vCPU**.
+    2. VM5 (needs 2 vCPUs): Only 1 vCPU available → **Blocked (NO)**.
+    3. VM6 (needs 8 vCPUs): Only 1 vCPU available → **Blocked (NO)**.
 * **5. Exam Heuristic:**
   * **"Stopped (Deallocated) VMs stop billing, but STILL CONSUME vCPU quota. Only deleting the VM frees quota."**
 
@@ -703,7 +703,7 @@
 * **3. Flawed Mental Model:**
     * Conflating **administrative boundaries** (Management Groups, Subscriptions, Resource Groups) with **physical/routing boundaries** (Regions, Availability Zones, Virtual Networks).
     * Assuming that a Resource Group's location restricts where resources inside it can be deployed.
-    * Assuming that a ReadOnly lock prevents moving a resource to another Resource Group.
+    * Assuming that a ReadOnly lock allows moving a resource to another Resource Group (or assuming a CanNotDelete lock blocks moving).
     * Assuming that NSGs, ASGs, or Recovery Services Vaults can operate across regions or cross-VNet without restriction.
 * **4. The Core Azure Mechanic (2026 Standard):**
     * **The 4 Cardinal Placement Axioms:**
@@ -723,7 +723,7 @@
         - Moving a VM cross-subscription requires moving the VM + all attached NICs + OS disk + Data disks + attached Public IP + attached NSG as a complete batch.
 * **5. Distractor Killers:**
     * *Moving an App Service to an East US RG changes its region:* False; region is immutable upon resource creation.
-    * *Cannot move a resource because a ReadOnly lock is active:* False; locks block modifications/deletions, not ARM move operations.
+    * *Cannot move a resource because a CanNotDelete lock is active:* False; CanNotDelete prevents deletion, not ARM move operations (unlike ReadOnly, which strictly blocks moves).
     * *Use 1 Recovery Services Vault to back up VMs in East US and West Europe:* False; Recovery Services Vaults are strictly regional.
     * *Put NICs from two peered VNets in the same Application Security Group (ASG):* False; ASGs are bound to a single VNet.
 * **6. Exam Heuristic:**
@@ -872,7 +872,7 @@
     * Requirement: Calculate the exact number of usable IP addresses available for Azure Virtual Machines in a subnet with address space prefix `/25`.
     * Constraint: Calculate host capacity accounting for Azure Software Defined Networking (SDN) reservations vs. on-premises RFC 1918 rules.
 * **3. Flawed Mental Model:**
-    * User calculated $128 - 2 = 126$ usable IPs, applying traditional on-premises networking rules (subtracting only network .0 and broadcast .255).
+    * User calculated 128 - 2 = 126 usable IPs, applying traditional on-premises networking rules (subtracting only network .0 and broadcast .255).
 * **4. The Core Azure Mechanic (2026 Standard):**
     * In traditional on-premises networking, 2 addresses are reserved per subnet (network and broadcast).
     * In **Azure Virtual Networks**, Azure **ALWAYS reserves exactly 5 IP addresses** in every subnet:
@@ -882,14 +882,14 @@
         4. **`.3` (Azure DNS Fallback):** Reserved for future Azure DNS coordination.
         5. **`.255` (Broadcast):** Subnet broadcast address (broadcast is not routed in Azure SDN, but address is reserved).
     * **Calculation for `/25`:**
-        - Total raw IPs: $2^{(32 - 25)} = 2^7 = 128$.
-        - Minus 5 Azure reserved IPs: $128 - 5 = \mathbf{123}$ usable host IP addresses.
+        - Total raw IPs: 2^(32 - 25) = 2^7 = 128.
+        - Minus 5 Azure reserved IPs: 128 - 5 = **123** usable host IP addresses.
 * **5. Distractor Killers:**
-    * *126 usable addresses:* Traditional on-premises calculation ($128 - 2$); invalid in Azure due to the 3 internal infrastructure reservations (.1, .2, .3).
+    * *126 usable addresses:* Traditional on-premises calculation (128 - 2); invalid in Azure due to the 3 internal infrastructure reservations (.1, .2, .3).
     * *128 usable addresses:* Total raw IP block without subtracting required network/gateway reservations.
     * *120 usable addresses:* Subtracting 8 addresses; arbitrary incorrect math.
 * **6. Exam Heuristic:**
-    * **"Azure Subnet Usable IPs = $2^{(32 - \text{prefix})} - 5$. Azure ALWAYS reserves 5 addresses per subnet (.0, .1, .2, .3, .255)!"**
+    * **"Azure Subnet Usable IPs = 2^(32 - prefix) - 5. Azure ALWAYS reserves 5 addresses per subnet (.0, .1, .2, .3, .255)!"**
 
 ---
 

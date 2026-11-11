@@ -141,7 +141,7 @@ To allow RDP (TCP port 3389) or SSH (TCP port 22) from the internet:
 4. **"Can we add an existing production VM to a newly created Availability Set?"**  
    $\rightarrow$ **NO.** Availability Sets are an immutable property set only at VM creation time.
 5. **"Can we move a VM with a ReadOnly lock to another Resource Group?"**  
-   $\rightarrow$ **YES.** Management locks do not prevent cross-RG moves.
+   $\rightarrow$ **NO.** A `ReadOnly` lock strictly blocks moving resources until the lock is deleted. (A `CanNotDelete` lock, however, allows moving).
 6. **"If we move an App Service from a West US RG to an East US RG, does its region change?"**  
    $\rightarrow$ **NO.** Resource location is permanent and independent of Resource Group location.
 7. **"Can VMs in 5 different regions stream syslog to 1 Log Analytics workspace?"**  
