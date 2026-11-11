@@ -1,8 +1,13 @@
-const CACHE_NAME = 'az104-hub-v1';
+const CACHE_NAME = 'az104-hub-v2';
 const ASSETS = [
   './',
   './index.html',
+  './exam_simulator.html',
+  './exam_questions_exam1.js',
+  './exam_questions_exam2.js',
+  './exam_engine.js',
   './error_journal.html',
+  './azure_placement_and_boundary_matrix.html',
   './azcopy_master_guide.html',
   './entra-id-master-architecture-and-governance.html',
   './council-report-2026-11-07-exams-vs-labs.html',
