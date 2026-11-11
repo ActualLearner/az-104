@@ -2141,8 +2141,8 @@ window.AZ104_EXAM_3 = [
   {
     "id": "e3-q53",
     "examNumber": 3,
-    "domain": "Domain 4: Implement and manage virtual networking",
-    "domainCode": 4,
+    "domain": "Domain 5: Monitor and maintain Azure resources",
+    "domainCode": 5,
     "topic": "Azure Network Watcher IP Flow Verify for Dropped Packets",
     "scenario": "A database administrator reports that application server `vm-app-01` (IP: `10.10.1.4`) cannot establish a database connection to `vm-sql-01` (IP: `10.10.2.10`) on TCP port 1433. You suspect an NSG rule is dropping the traffic, but multiple NSGs are attached at both the subnet and NIC levels.\n\nWhich Azure Network Watcher tool should you use to immediately test packet authorization and identify the EXACT NSG rule responsible for allowing or denying the traffic?",
     "questionType": "single",

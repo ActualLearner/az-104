@@ -753,6 +753,9 @@
       justify-content: center;
       padding: 1rem;
     }
+    #export-modal {
+      z-index: 700;
+    }
     .modal-card {
       background: #ffffff;
       border-radius: 12px;
@@ -1054,7 +1057,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap:wrap; gap:0.5rem;">
           <span id="copy-feedback" class="text-green font-bold" style="font-size:0.8rem; display:none;">✓ Copied to clipboard!</span>
           <div style="display:flex; gap:0.5rem;">
-            <button class="btn outline" id="btn-select-all-export">🔍 Select All</button>
+            <button class="btn outline" id="btn-select-all-export">📋 Select All &amp; Copy</button>
             <button class="btn blue" id="btn-copy-export">📋 Copy to Clipboard</button>
           </div>
         </div>
@@ -1069,8 +1072,13 @@
           <button class="btn outline" id="btn-close-history" style="min-height:auto; padding:0.2rem 0.5rem;">✕</button>
         </div>
         <p style="font-size:0.825rem; color:var(--text-muted); margin-bottom:0.75rem;">
-          Stored locally in your browser's persistent storage. Click <strong>📋 Copy Result</strong> on any past attempt to generate full results and missed question analysis for your error journal.
+          Stored locally in your browser's persistent storage. Click <strong>📋 Copy Full Exam Results</strong> or <strong>📋 Copy Result</strong> on any past attempt to generate full results and missed question analysis for your error journal.
         </p>
+        <div style="margin-bottom:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn green" id="btn-copy-history-latest" style="font-size:0.875rem; padding:0.6rem 1.25rem; font-weight:800; box-shadow:0 2px 8px rgba(5,150,105,0.25);">
+            📋 Copy Full Exam Results &amp; Missed Questions for Error Journal
+          </button>
+        </div>
         <div style="overflow-x:auto;">
           <table>
             <thead>

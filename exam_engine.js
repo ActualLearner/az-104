@@ -80,6 +80,7 @@
     dom.btnHistory = document.getElementById('btn-history');
     dom.historyModal = document.getElementById('history-modal');
     dom.historyTableBody = document.getElementById('history-table-body');
+    dom.btnCopyHistoryLatest = document.getElementById('btn-copy-history-latest');
     dom.btnCloseHistory = document.getElementById('btn-close-history');
     dom.btnClearHistory = document.getElementById('btn-clear-history');
     dom.mobilePaletteToggle = document.getElementById('mobile-palette-toggle');
@@ -296,7 +297,14 @@
         if (dom.exportMarkdownText) {
           dom.exportMarkdownText.focus();
           dom.exportMarkdownText.select();
-          showToast('Text selected! Press Ctrl+C (Cmd+C) to copy.', 'info', 2000);
+          try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+              showToast('✓ All text selected & copied to clipboard!', 'success', 2500);
+              return;
+            }
+          } catch (_) {}
+          showToast('Text selected! Press Ctrl+C (Cmd+C) to copy.', 'info', 2500);
         }
       });
     }
@@ -307,6 +315,18 @@
 
     if (dom.btnHistory) {
       dom.btnHistory.addEventListener('click', openHistoryModal);
+    }
+
+    if (dom.btnCopyHistoryLatest) {
+      dom.btnCopyHistoryLatest.addEventListener('click', () => {
+        const historyJson = localStorage.getItem(STORAGE_KEY_HISTORY);
+        const history = historyJson ? JSON.parse(historyJson) : [];
+        if (history.length === 0) {
+          showToast('No prior exam attempts recorded yet.', 'info', 3000);
+          return;
+        }
+        copyPastAttemptResult(0);
+      });
     }
 
     if (dom.btnCloseHistory) {
@@ -412,6 +432,16 @@
     return [...e1];
   }
 
+  function normalizeExamKey(key) {
+    if (!key) return null;
+    const lower = key.toLowerCase().trim();
+    if (lower === '1' || lower === 'exam1') return 'exam1';
+    if (lower === '2' || lower === 'exam2') return 'exam2';
+    if (lower === '3' || lower === 'exam3') return 'exam3';
+    if (lower === 'all' || lower === 'combined' || lower === 'mega') return 'combined';
+    return lower;
+  }
+
   function getDefaultExamTimeSeconds(examKey) {
     // 65 questions -> 100 minutes. 195 questions (combined pool) -> 300 minutes.
     if (examKey === 'combined') return 300 * 60;
@@ -420,7 +450,7 @@
 
   function loadSessionOrInit() {
     const urlParams = new URLSearchParams(window.location.search);
-    const paramExam = urlParams.get('exam');
+    const paramExam = normalizeExamKey(urlParams.get('exam'));
     const paramMode = urlParams.get('mode');
 
     let saved = localStorage.getItem(STORAGE_KEY_SESSION);
@@ -446,7 +476,7 @@
         flaggedQuestions = new Set(parsed.flaggedQuestions || []);
         
         const defaultTime = getDefaultExamTimeSeconds(currentExamKey);
-        // Ensure timeRemainingSeconds does not exceed current default exam time (100m for 65Q / 200m for combined)
+        // Ensure timeRemainingSeconds does not exceed current default exam time (100m for 65Q / 300m for combined)
         timeRemainingSeconds = (parsed.timeRemainingSeconds !== undefined && parsed.timeRemainingSeconds > 0)
           ? Math.min(parsed.timeRemainingSeconds, defaultTime)
           : defaultTime;
@@ -1164,6 +1194,26 @@
     const durationMin = Math.max(1, Math.round((scoreData.timeSpentSeconds || 60) / 60));
     const passStatus = scoreData.passed ? '✅ PASSED' : '❌ FAILED';
 
+    const isLegacyNoAnswers = (scoreData.userAnswers === undefined && (!answersMap || Object.keys(answersMap).length === 0));
+
+    let md = `# AZ-104 Exam Results & Error Journal Export\n\n`;
+    md += `## 📊 Attempt Summary\n`;
+    md += `- **Exam:** ${examTitle}\n`;
+    md += `- **Date/Time:** ${dateStr}\n`;
+    md += `- **Score:** ${scoreData.scaledScore} / 1000 (${scoreData.scorePct}%)\n`;
+    md += `- **Status:** ${passStatus} (Passing threshold: 700 / 1000)\n`;
+    md += `- **Performance:** ${scoreData.correctCount} of ${scoreData.totalQuestions} questions correct\n`;
+    md += `- **Time Spent:** ${durationMin} minutes\n`;
+    md += `- **Mode:** ${(scoreData.mode || 'timed').toUpperCase()}\n\n`;
+
+    if (isLegacyNoAnswers) {
+      md += `## 📈 Performance by Azure Domain\n\n`;
+      md += `*(Detailed per-domain breakdown is unavailable for this historical attempt recorded prior to question-level persistence.)*\n\n`;
+      md += `## ❌ Missed Questions Analysis\n\n`;
+      md += `*(Detailed question responses were not recorded for this legacy attempt. Question-level tracking and error journal SOP export are active for all subsequent attempts.)*\n`;
+      return md;
+    }
+
     // Domain breakdown calculation
     const domainStats = {};
     questionsList.forEach((q) => {
@@ -1179,16 +1229,6 @@
 
     // Missed questions list (unanswered or incorrect)
     const missedQuestions = questionsList.filter((q) => !evaluateQuestionAnswer(q, answersMap[q.id]));
-
-    let md = `# AZ-104 Exam Results & Error Journal Export\n\n`;
-    md += `## 📊 Attempt Summary\n`;
-    md += `- **Exam:** ${examTitle}\n`;
-    md += `- **Date/Time:** ${dateStr}\n`;
-    md += `- **Score:** ${scoreData.scaledScore} / 1000 (${scoreData.scorePct}%)\n`;
-    md += `- **Status:** ${passStatus} (Passing threshold: 700 / 1000)\n`;
-    md += `- **Performance:** ${scoreData.correctCount} of ${scoreData.totalQuestions} questions correct\n`;
-    md += `- **Time Spent:** ${durationMin} minutes\n`;
-    md += `- **Mode:** ${(scoreData.mode || 'timed').toUpperCase()}\n\n`;
 
     md += `## 📈 Performance by Azure Domain\n\n`;
     md += `| Domain | Correct / Total | Score % | Status |\n`;
@@ -1328,17 +1368,16 @@
     const attempt = history[attemptIndex];
     if (!attempt) return;
 
-    const examPool = getQuestionPool(attempt.examKey || 'exam1');
-    let questionsForAttempt = examPool;
+    const allPool = getQuestionPool('combined');
+    const qMap = new Map();
+    allPool.forEach((q) => qMap.set(q.id, q));
+
+    let questionsForAttempt = [];
     if (attempt.questionIds && attempt.questionIds.length > 0) {
-      const qMap = new Map();
-      examPool.forEach((q) => qMap.set(q.id, q));
-      if (qMap.size < attempt.questionIds.length) {
-        const allPool = getQuestionPool('combined');
-        allPool.forEach((q) => qMap.set(q.id, q));
-      }
       questionsForAttempt = attempt.questionIds.map((id) => qMap.get(id)).filter(Boolean);
-      if (questionsForAttempt.length === 0) questionsForAttempt = examPool;
+    }
+    if (questionsForAttempt.length === 0) {
+      questionsForAttempt = getQuestionPool(attempt.examKey || 'exam1');
     }
 
     const answersMap = attempt.userAnswers || {};
@@ -1364,6 +1403,7 @@
 
     const triggerFallbackModal = () => {
       if (dom.exportModal) {
+        dom.exportModal.style.zIndex = '700';
         dom.exportModal.style.display = 'flex';
       }
       if (dom.exportMarkdownText) {
@@ -1423,6 +1463,43 @@
   function updateExportMarkdownContent() {
     const filterType = dom.exportFilterSelect ? dom.exportFilterSelect.value : 'all-missed';
 
+    if (filterType === 'all-missed') {
+      let correctCount = 0;
+      activeQuestions.forEach((q) => {
+        if (evaluateQuestionAnswer(q, userAnswers[q.id])) correctCount++;
+      });
+      const total = activeQuestions.length;
+      const scorePct = Math.round((correctCount / total) * 100);
+      const scaledScore = Math.round((correctCount / total) * 1000);
+      const elapsedSeconds = Math.round((Date.now() - (examStartTime || Date.now())) / 1000);
+
+      const scoreData = {
+        date: new Date().toISOString(),
+        scaledScore,
+        scorePct,
+        passed: scaledScore >= 700,
+        correctCount,
+        totalQuestions: total,
+        timeSpentSeconds: Math.max(30, elapsedSeconds),
+        mode: currentMode,
+        userAnswers
+      };
+
+      const fullMd = generateFullExamResultsMarkdown(
+        currentExamKey,
+        scoreData,
+        userAnswers,
+        activeQuestions
+      );
+
+      const missedCount = activeQuestions.filter((q) => !evaluateQuestionAnswer(q, userAnswers[q.id])).length;
+      if (dom.exportCountLabel) {
+        dom.exportCountLabel.textContent = `(${missedCount} missed questions)`;
+      }
+      dom.exportMarkdownText.value = fullMd;
+      return;
+    }
+
     let targetQuestions = [];
     if (filterType === 'missed') {
       // Attempted and incorrect only
@@ -1431,9 +1508,6 @@
       targetQuestions = activeQuestions.filter((q) => flaggedQuestions.has(q.id));
     } else if (filterType === 'all') {
       targetQuestions = [...activeQuestions];
-    } else {
-      // all-missed: either incorrect or unanswered
-      targetQuestions = activeQuestions.filter((q) => !evaluateQuestionAnswer(q, userAnswers[q.id]));
     }
 
     if (dom.exportCountLabel) {
@@ -1446,37 +1520,62 @@
     }
 
     let markdown = `# AZ-104 Error Journal Export - ${new Date().toLocaleDateString()}\n`;
-    markdown += `**Exam Attempt:** ${currentExamKey.toUpperCase()} | **Mode:** ${currentMode.toUpperCase()} | **Total Selected:** ${targetQuestions.length}\n\n`;
+    markdown += `**Exam Attempt:** ${getExamTitle(currentExamKey)} | **Mode:** ${currentMode.toUpperCase()} | **Total Selected:** ${targetQuestions.length}\n\n`;
 
-    targetQuestions.forEach((q) => {
+    targetQuestions.forEach((q, idx) => {
       const userAns = userAnswers[q.id];
-      const isCorrect = evaluateQuestionAnswer(q, userAns);
-      const userStr = userAns ? (Array.isArray(userAns) ? userAns.join(', ') : userAns) : 'Unanswered';
-      const correctStr = Array.isArray(q.correctAnswer) ? q.correctAnswer.join(', ') : q.correctAnswer;
+      const isAns = (userAns !== undefined && userAns !== null && (!Array.isArray(userAns) || userAns.length > 0));
+
+      let userChoiceText = '*(Unanswered / Skipped)*';
+      if (isAns) {
+        if (Array.isArray(userAns)) {
+          userChoiceText = userAns.map((letter) => {
+            const opt = (q.options || []).find((o) => o.id === letter);
+            return `Option ${letter}${opt ? ': ' + opt.text : ''}`;
+          }).join(' AND ');
+        } else {
+          const opt = (q.options || []).find((o) => o.id === userAns);
+          userChoiceText = `Option ${userAns}${opt ? ': ' + opt.text : ''}`;
+        }
+      }
+
+      let correctChoiceText = '';
+      if (Array.isArray(q.correctAnswer)) {
+        correctChoiceText = q.correctAnswer.map((letter) => {
+          const opt = (q.options || []).find((o) => o.id === letter);
+          return `Option ${letter}${opt ? ': ' + opt.text : ''}`;
+        }).join(' AND ');
+      } else {
+        const opt = (q.options || []).find((o) => o.id === q.correctAnswer);
+        correctChoiceText = `Option ${q.correctAnswer}${opt ? ': ' + opt.text : ''}`;
+      }
+
       const exp = q.explanation || {};
 
       markdown += `---\n\n`;
-      markdown += `### [${q.domain}] ${q.topic}\n`;
-      markdown += `* **1. Diagnostic Verdict:** ${isCorrect ? '✅ Correct' : '❌ Incorrect'} (User picked: ${userStr}; Correct is: ${correctStr})\n`;
-      markdown += `* **2. The Scenario Trigger & Hidden Constraints:**\n`;
-      markdown += `  * ${exp.triggerConstraints || 'Scenario constraint: ' + q.topic}\n`;
-      markdown += `* **3. Flawed Mental Model:**\n`;
-      markdown += `  * ${exp.flawedMentalModel || 'Assumed incorrect SKU tier, permission boundary, or syntax.'}\n`;
-      markdown += `* **4. The Core Azure Mechanic (2026 Standard):**\n`;
-      markdown += `  * ${exp.coreMechanic || exp.verdict || ''}\n`;
-      markdown += `* **5. Distractor Killers:**\n`;
-
+      markdown += `### Question #${idx + 1}: [${q.id.toUpperCase()}] ${q.topic}\n`;
+      markdown += `**Domain:** ${q.domain}\n\n`;
+      markdown += `**Question Scenario:**\n`;
+      markdown += `> ${q.scenario.replace(/\n/g, '\n> ')}\n\n`;
+      markdown += `**Your Choice:** ${userChoiceText}\n\n`;
+      markdown += `**Correct Choice:** ${correctChoiceText}\n\n`;
+      markdown += `#### 1. Diagnostic Verdict\n${exp.verdict || ''}\n\n`;
+      markdown += `#### 2. Scenario Trigger & Hidden Constraints\n${exp.triggerConstraints || ''}\n\n`;
+      markdown += `#### 3. Flawed Mental Model\n${exp.flawedMentalModel || ''}\n\n`;
+      markdown += `#### 4. Core Azure Mechanic (2026 Standard)\n${exp.coreMechanic || ''}\n\n`;
+      markdown += `#### 5. Distractor Killers\n`;
       if (exp.distractors && Object.keys(exp.distractors).length > 0) {
         for (const [key, reason] of Object.entries(exp.distractors)) {
-          markdown += `  * *Option ${key}:* ${reason}\n`;
+          const opt = (q.options || []).find((o) => o.id === key);
+          const optLabel = opt ? `Option ${key} ("${opt.text}")` : `Option ${key}`;
+          markdown += `- **${optLabel}:** ${reason}\n`;
         }
       } else {
-        markdown += `  * Refer to MS Learn specifications.\n`;
+        markdown += `- Refer to Microsoft Learn specifications.\n`;
       }
-
-      markdown += `* **6. Exam Heuristic:**\n`;
-      markdown += `  * **"${exp.heuristic || 'Verify specific SKU prerequisites.'}"**\n`;
-      markdown += `* **Reference:** [Microsoft Learn Docs](${exp.msLearnUrl || 'https://learn.microsoft.com'})\n\n`;
+      markdown += `\n`;
+      markdown += `#### 6. Exam Heuristic\n> **"${exp.heuristic || ''}"**\n\n`;
+      markdown += `**Reference:** [${exp.msLearnUrl || 'Microsoft Learn'}](${exp.msLearnUrl || 'https://learn.microsoft.com'})\n\n`;
     });
 
     dom.exportMarkdownText.value = markdown;
@@ -1536,6 +1635,18 @@
         copyPastAttemptResult(idx);
       });
     });
+  }
+
+  // Expose test hook for verification harness
+  if (typeof window !== 'undefined') {
+    window._AZ104_ENGINE_TEST = {
+      evaluateQuestionAnswer,
+      generateFullExamResultsMarkdown,
+      getExamTitle,
+      getQuestionPool,
+      getDefaultExamTimeSeconds,
+      normalizeExamKey
+    };
   }
 
   // Initialize on DOM load

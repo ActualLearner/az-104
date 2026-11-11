@@ -145,6 +145,15 @@ def test_exams():
         for d_code in range(1, 6):
             assert exam_domains.get(d_code, 0) >= 5, f"Domain {d_code} underrepresented in {exam_name}: {exam_domains.get(d_code, 0)} questions"
 
+        if exam_name == "Exam 3":
+            # Strict blueprint ranges: D1 (14-16), D2 (11-13), D3 (14-16), D4 (11-13), D5 (8-10)
+            assert 14 <= exam_domains.get(1, 0) <= 16, f"Exam 3 Domain 1 outside blueprint (14-16): {exam_domains.get(1, 0)}"
+            assert 11 <= exam_domains.get(2, 0) <= 13, f"Exam 3 Domain 2 outside blueprint (11-13): {exam_domains.get(2, 0)}"
+            assert 14 <= exam_domains.get(3, 0) <= 16, f"Exam 3 Domain 3 outside blueprint (14-16): {exam_domains.get(3, 0)}"
+            assert 11 <= exam_domains.get(4, 0) <= 13, f"Exam 3 Domain 4 outside blueprint (11-13): {exam_domains.get(4, 0)}"
+            assert 8 <= exam_domains.get(5, 0) <= 10, f"Exam 3 Domain 5 outside blueprint (8-10): {exam_domains.get(5, 0)}"
+            print("  ✓ Exam 3 strictly conforms to all AZ-104 domain blueprint distribution ranges!")
+
     print("\n✓ All 195 questions passed structural, schema, uniqueness & distractor validation!")
     print("\nTotal Domain Distribution across 195 Questions:")
     for d, c in sorted(total_domain_counts.items()):
@@ -163,6 +172,8 @@ def test_exams():
     assert "function copyPastAttemptResult" in engine_content, "exam_engine.js missing copyPastAttemptResult"
     assert "function copyTextToClipboardWithFallback" in engine_content, "exam_engine.js missing copyTextToClipboardWithFallback"
     assert "userAnswers: JSON.parse(JSON.stringify(userAnswers))" in engine_content, "exam_engine.js must persist userAnswers in history record"
+    assert "isLegacyNoAnswers" in engine_content, "exam_engine.js must handle legacy history records without userAnswers"
+    assert "btnCopyHistoryLatest" in engine_content, "exam_engine.js missing btnCopyHistoryLatest binding"
     print("✓ exam_engine.js timer enforces 100m (65Q) and 300m (195Q) with robust error journal copy & persistence")
 
     # 5. Check exam_simulator.html loads scripts and essential elements
@@ -179,11 +190,14 @@ def test_exams():
     assert "Exam 3 — Standard Comprehensive Blueprint (65Q)" in sim_content, "exam_simulator.html missing 65Q label for Exam 3"
     assert "Combined Mega Mock (195 Questions Pool)" in sim_content, "exam_simulator.html missing 195Q label for Combined"
     assert "btn-copy-full-results" in sim_content, "exam_simulator.html missing btn-copy-full-results"
+    assert "btn-copy-history-latest" in sim_content, "exam_simulator.html missing prominent copy button in history modal"
     assert "export-markdown-text" in sim_content, "exam_simulator.html missing export-markdown-text"
     assert "btn-select-all-export" in sim_content, "exam_simulator.html missing btn-select-all-export"
+    assert "Select All &amp; Copy" in sim_content, "exam_simulator.html missing 'Select All & Copy' button label"
+    assert "#export-modal" in sim_content and "z-index: 700" in sim_content, "exam_simulator.html export modal must have higher z-index to overlay history modal"
     assert "btn-copy-export" in sim_content, "exam_simulator.html missing btn-copy-export"
     assert "1:40:00" in sim_content, "exam_simulator.html timer display initial format should be 1:40:00 (100 mins)"
-    print("✓ exam_simulator.html properly imports all scripts, labels, and 65Q/100m/195Q indicators")
+    print("✓ exam_simulator.html properly imports all scripts, labels, prominent copy buttons, and 65Q/100m/195Q indicators")
 
     # 6. Check index.html links to exam_simulator.html and shows accurate badges
     with open(os.path.join(base_dir, "index.html"), "r", encoding="utf-8") as fh:
@@ -205,6 +219,132 @@ def test_exams():
     assert "exam_engine.js" in sw_content, "sw.js missing exam_engine.js"
     assert "az104-hub-v4" in sw_content, "sw.js cache version should be bumped to v4"
     print("✓ Service Worker (sw.js) caches all simulator assets including exam 3")
+
+    # 8. Run Node E2E simulation of exam engine export markdown and legacy attempt handling
+    import subprocess
+    node_test_script = """
+const fs = require('fs');
+const vm = require('vm');
+
+const makeEl = () => {
+  const attrs = {};
+  return {
+    style: {},
+    classList: { add: () => {}, remove: () => {}, contains: () => false },
+    addEventListener: () => {},
+    querySelectorAll: () => [],
+    querySelector: () => null,
+    appendChild: () => {},
+    setAttribute: (k, v) => { attrs[k] = v; },
+    getAttribute: (k) => attrs[k] || null,
+    innerHTML: '',
+    textContent: '',
+    value: ''
+  };
+};
+
+const windowMock = { location: { search: '' }, scrollTo: () => {} };
+const documentMock = {
+  readyState: 'complete',
+  getElementById: (id) => makeEl(),
+  querySelectorAll: () => [],
+  addEventListener: () => {},
+  createElement: () => makeEl()
+};
+const localStorageData = {};
+const localStorageMock = {
+  getItem: (key) => localStorageData[key] || null,
+  setItem: (key, val) => { localStorageData[key] = String(val); },
+  removeItem: (key) => { delete localStorageData[key]; }
+};
+
+const sandbox = {
+  window: windowMock,
+  document: documentMock,
+  localStorage: localStorageMock,
+  navigator: {},
+  console: console,
+  setInterval: () => 1,
+  clearInterval: () => {},
+  setTimeout: (cb) => cb(),
+  Date: Date,
+  Math: Math,
+  URLSearchParams: URLSearchParams
+};
+
+vm.createContext(sandbox);
+
+['exam_questions_exam1.js', 'exam_questions_exam2.js', 'exam_questions_exam3.js'].forEach(file => {
+  const code = fs.readFileSync('""" + base_dir + """/' + file, 'utf-8');
+  vm.runInContext(code, sandbox);
+});
+
+const engineCode = fs.readFileSync('""" + base_dir + """/exam_engine.js', 'utf-8');
+vm.runInContext(engineCode, sandbox);
+
+const exp = sandbox.window._AZ104_ENGINE_TEST;
+if (!exp) throw new Error('Missing engine test hook');
+
+// Timers
+if (exp.getDefaultExamTimeSeconds('exam1') !== 6000) throw new Error('exam1 timer mismatch');
+if (exp.getDefaultExamTimeSeconds('exam2') !== 6000) throw new Error('exam2 timer mismatch');
+if (exp.getDefaultExamTimeSeconds('exam3') !== 6000) throw new Error('exam3 timer mismatch');
+if (exp.getDefaultExamTimeSeconds('combined') !== 18000) throw new Error('combined timer mismatch');
+
+// Exam 3 simulation with mixed answers
+const e3Questions = sandbox.window.AZ104_EXAM_3;
+const answersMap = {};
+e3Questions.forEach((q, idx) => {
+  if (idx < 50) {
+    answersMap[q.id] = q.correctAnswer;
+  } else {
+    const corr = Array.isArray(q.correctAnswer) ? q.correctAnswer[0] : q.correctAnswer;
+    const wrong = q.options.map(o => o.id).find(o => o !== corr);
+    answersMap[q.id] = wrong;
+  }
+});
+
+const scoreData = {
+  date: new Date().toISOString(),
+  scaledScore: Math.round((50 / 65) * 1000),
+  scorePct: Math.round((50 / 65) * 100),
+  passed: (50 / 65) >= 0.7,
+  correctCount: 50,
+  totalQuestions: 65,
+  timeSpentSeconds: 4500,
+  mode: 'timed',
+  userAnswers: answersMap
+};
+
+const md = exp.generateFullExamResultsMarkdown('exam3', scoreData, answersMap, e3Questions);
+if (!md.includes('Exam 3 — Standard Comprehensive Blueprint (65Q)')) throw new Error('Missing exam title');
+if (!md.includes('769 / 1000')) throw new Error('Missing score');
+if (!md.includes('✅ PASSED')) throw new Error('Missing pass badge');
+if (!md.includes('Performance by Azure Domain')) throw new Error('Missing domain table');
+if (!md.includes('Missed Questions Analysis (15 Missed Questions)')) throw new Error('Missing missed questions section');
+if (!md.includes('#### 1. Diagnostic Verdict')) throw new Error('Missing SOP 1');
+if (!md.includes('#### 6. Exam Heuristic')) throw new Error('Missing SOP 6');
+if (!md.includes('**Your Choice:** Option')) throw new Error('Missing choice text');
+
+// Legacy attempt verification
+const legacyScoreData = {
+  date: new Date().toISOString(),
+  scaledScore: 850,
+  scorePct: 85,
+  passed: true,
+  correctCount: 55,
+  totalQuestions: 65,
+  timeSpentSeconds: 3600,
+  mode: 'timed'
+};
+const mdLegacy = exp.generateFullExamResultsMarkdown('exam1', legacyScoreData, {}, sandbox.window.AZ104_EXAM_1);
+if (!mdLegacy.includes('850 / 1000')) throw new Error('Legacy score corrupted');
+if (!mdLegacy.includes('Detailed question responses were not recorded for this legacy attempt')) throw new Error('Missing legacy notice');
+if (mdLegacy.includes('| 0 / 65 |')) throw new Error('Legacy incorrectly calculated 0 correct');
+"""
+    result = subprocess.run(["node", "-e", node_test_script], capture_output=True, text=True)
+    assert result.returncode == 0, f"Node E2E verification failed:\n{result.stderr}\n{result.stdout}"
+    print("✓ End-to-end Node engine simulation verified (markdown generation, 6-part SOP, option labels, and legacy history resilience)")
 
     print("\n=== ALL RIGOROUS VERIFICATION TESTS PASSED SUCCESSFULLY ===")
 
