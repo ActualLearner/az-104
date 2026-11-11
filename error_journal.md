@@ -728,3 +728,333 @@
     * *Put NICs from two peered VNets in the same Application Security Group (ASG):* False; ASGs are bound to a single VNet.
 * **6. Exam Heuristic:**
     * **"RG location never limits resource region. VM + NIC + Disks = Same Region. VMSS Flexible Attach = Same Region + Same RG. ReadOnly Lock = BLOCKS move. CanNotDelete Lock = Allows move. Backup Vault = Same Region. Log Analytics = Any Region."**
+
+---
+
+## Alan Rodrigues Practice Test 02 (Exam Mode — Sat Nov 11, 2026 | Score: 78.4%, 51/65 Passed)
+
+### [Domain 3: Compute / Domain 1: Governance] Azure Disk Encryption (ADE) Key Vault Prerequisites (AR PT02 Q4)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Prepare an Azure Key Vault to support Azure Disk Encryption (ADE) for protecting Virtual Machine OS and data disks using BitLocker (Windows) or DM-Crypt (Linux).
+    * Constraint: Identify all mandatory Key Vault configuration prerequisites, access settings, and placement rules. User missed the access policy flag.
+* **3. Flawed Mental Model:**
+    * User recognized the region/subscription colocation and soft delete / purge protection requirements, but failed to select the access policy flag enabling Azure Disk Encryption for volume encryption.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * Azure Disk Encryption requires BitLocker/DM-Crypt keys and Key Encryption Keys (KEK) to be escrowed in an Azure Key Vault meeting three mandatory criteria:
+        1. **Regional & Subscription Colocation:** The Key Vault MUST reside in the **exact same Azure Region and same Subscription** as the VMs being encrypted. Cross-region or cross-subscription ADE is unsupported.
+        2. **Data Loss Safeguards:** **Soft Delete** and **Purge Protection** must be enabled on the vault to protect encryption keys from accidental or malicious permanent deletion.
+        3. **Compute Access Flag:** In Key Vault Access Policies / Access Configuration, the setting **"Azure Disk Encryption for volume encryption"** (PowerShell: `EnabledForDiskEncryption = $true`) MUST be explicitly enabled. This authorizes the Azure Compute resource provider (`Microsoft.Compute`) to unwrap keys and fetch secrets during VM boot.
+* **5. Distractor Killers:**
+    * *Deploying Key Vault in a paired region:* Fails ARM validation; ADE strictly requires local regional colocation with the target VM.
+    * *Standard Key Vault Access Policy without ADE flag:* Blocks the VM boot process because `Microsoft.Compute` lacks authorization to retrieve the volume encryption key.
+    * *Granting VM Managed Identity Contributor on Key Vault:* Unnecessary and insufficient; the platform service principal needs the ADE volume encryption access flag.
+* **6. Exam Heuristic:**
+    * **"ADE Key Vault Prerequisites = Same Region + Same Subscription + Soft Delete & Purge Protection + 'Azure Disk Encryption for volume encryption' flag enabled."**
+
+---
+
+### [Domain 2: Storage] Blob Lifecycle Rule Target: Base Blobs vs. Versions (AR PT02 Q5)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Determine whether active blobs in a container will automatically transition to Cool storage after 10 days under a specific Azure Blob lifecycle management JSON policy.
+    * Constraint: The rule's `"actions"` block contains ONLY `"version": { "tierToCool": { "daysAfterCreationGreaterThan": 10 } }`, with no `"baseBlob"` action block defined.
+* **3. Flawed Mental Model:**
+    * User selected "Yes", assuming `"version"` actions apply broadly to all blobs or that the active current blob is treated as a version.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * In Azure Blob Storage lifecycle management policies, action targets are strictly segregated into three distinct scopes:
+        - **`baseBlob`:** Targets the active, current version of the blob (e.g., `tierToCool`, `tierToArchive`, `delete`).
+        - **`snapshot`:** Targets point-in-time blob snapshots.
+        - **`version`:** Targets **historical non-current versions** generated when Blob Versioning is enabled and a blob is modified or overwritten.
+    * Actions declared inside `"version"` apply **exclusively to non-current versions**. The current, active base blob remains in its existing tier indefinitely.
+    * For the active base blob to tier to Cool after 10 days, the JSON policy MUST explicitly declare: `"baseBlob": { "tierToCool": { "daysAfterModificationGreaterThan": 10 } }`.
+    * Verdict is strictly **No**.
+* **5. Distractor Killers:**
+    * *Yes (the current blob is version 1):* Incorrect; Azure lifecycle engine distinguishes between active base blobs and version history.
+    * *Yes (creation age applies to root blobs):* False; `daysAfterCreationGreaterThan` inside the `version` block evaluates only the creation timestamp of historical non-current versions.
+* **6. Exam Heuristic:**
+    * **"Lifecycle rule JSON: Actions on `version` ONLY affect historical non-current versions. Transitioning active blobs requires an explicit `baseBlob` action block."**
+
+---
+
+### [Domain 2: Storage] Azure Files Tier Selection: Premium vs. Standard for Write-Intensive SMB (AR PT02 Q10)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Select the optimal Azure Storage service and tier to host write-intensive enterprise application data over SMB shares.
+    * Constraint: Requires consistent sub-millisecond latencies, high provisioned IOPS, and high throughput for continuous write-heavy workloads.
+* **3. Flawed Mental Model:**
+    * User selected Standard Azure Files (Transaction Optimized tier), assuming transaction optimization solves high-frequency write operations, overlooking underlying physical HDD latency limitations.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * **Standard Azure Files (GPv2):** Backed by spinning magnetic hard drives (HDDs). Provides shared bandwidth with double-digit millisecond latency. "Transaction Optimized" is purely a billing tier that reduces per-transaction API fees for high-transaction workloads, but does NOT improve physical disk I/O performance or latency.
+    * **Azure Files Premium (`FileStorage` account):** Backed by Solid-State Drives (SSDs). Purpose-built for enterprise lift-and-shift, databases, and write-heavy workloads. Delivers consistent single-digit / sub-millisecond latency, provisioned IOPS (up to 100,000 IOPS), and provisioned throughput (up to 10,340 MB/s) with bursting capability.
+    * When enterprise requirements specify write-intensive SMB workloads and low latency, **Azure Files Premium** is the mandatory architectural choice.
+* **5. Distractor Killers:**
+    * *Standard - Transaction Optimized:* Backed by HDDs; only lowers API transaction billing rates, cannot achieve sub-millisecond I/O latency.
+    * *Standard - Hot / Cool:* High latency HDD-backed shares suitable for general file shares or archives, not write-intensive databases.
+    * *Blob Storage (Page Blobs):* Exposes unmanaged block storage over REST, does not provide fully managed SMB/NFS file share protocols for multi-client mounting.
+* **6. Exam Heuristic:**
+    * **"Write-intensive + low latency / high IOPS SMB = Azure Files Premium (FileStorage SSD). Transaction Optimized = Standard HDD billing structure only."**
+
+---
+
+### [Domain 2: Storage] Storage Account Types Supporting Lifecycle Management Policies (AR PT02 Q12)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Determine which storage accounts in an enterprise environment support Azure Blob lifecycle management rules (auto-tiering and deletion).
+    * Constraint: Account list contains General Purpose v2 (`storage1000`), BlobStorage (`blobstore2000`), and Premium FileStorage (`filestore40000`).
+* **3. Flawed Mental Model:**
+    * User selected "All storage accounts", assuming lifecycle management is an account-agnostic control plane feature available across all storage resource types.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * Azure Lifecycle Management operates exclusively on **Blob objects** (Block Blobs and Append Blobs).
+    * **Supported Account Types:**
+        - **General Purpose v2 (GPv2):** Full support for blob tiering (Hot, Cool, Cold, Archive) and deletion.
+        - **BlobStorage:** Full support for blob tiering and deletion.
+        - **BlockBlobStorage:** Premium accounts support lifecycle rules (deletion and tiering between premium and cool/cold/archive where applicable).
+    * **Unsupported Account Types:**
+        - **`FileStorage` (filestore40000):** Dedicated exclusively to Premium Azure Files (SMB/NFS file shares). It does not contain blob containers, and Blob Lifecycle Management is not supported.
+        - **General Purpose v1 (GPv1):** Legacy account type lacking tiering and lifecycle automation (must upgrade to GPv2).
+    * Therefore, the rule applies to `storage1000` and `blobstore2000`, but CANNOT be applied to `filestore40000`.
+* **5. Distractor Killers:**
+    * *All storage accounts:* FileStorage accounts host file shares only; the Blob Lifecycle Management engine cannot be applied.
+    * *Only GPv2 accounts:* BlobStorage accounts also support lifecycle rules for block blobs.
+    * *filestore40000 supports lifecycle via tiering:* Premium Azure Files does not have access tiers (Hot/Cool/Archive); capacity is provisioned.
+* **6. Exam Heuristic:**
+    * **"Blob Lifecycle Management = GPv2, BlobStorage, BlockBlobStorage. NEVER FileStorage (filestore) or GPv1."**
+
+---
+
+### [Domain 3: Compute] Serverless Windows Container Hosting Without Kubernetes (AR PT02 Q15)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Deploy and host a Windows-based container image in Azure without managing Kubernetes clusters or underlying virtual machines.
+    * Constraint: Container base OS is **Windows** (e.g. Windows Server Core). Must select compute platforms that natively support Windows containers without AKS management overhead.
+* **3. Flawed Mental Model:**
+    * User selected Azure Web Apps for Containers ✅ and Azure Container Apps (ACA) ❌, assuming ACA provides serverless hosting for both Linux and Windows containers.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * **Azure Container Apps (ACA):** Built on Kubernetes (K8s/KEDA/Envoy) as an opinionated serverless application platform. ACA runs on Linux hosts and supports **Linux containers only**. It does NOT support Windows containers.
+    * **The Two Serverless / Managed Windows Container Options (No Kubernetes Management):**
+        1. **Azure Container Instances (ACI):** Serverless container primitives supporting both **Linux and Windows Server containers** (Windows Server 2019/2022 LTSC). Deploys in seconds with zero cluster management.
+        2. **Azure App Service (Web App for Containers):** Supports deploying custom Windows container images on Windows App Service Plans without exposing any Kubernetes or node infrastructure.
+    * Therefore, the correct pair of services is **Azure Container Instances (ACI)** and **Azure Web App for Containers**.
+* **5. Distractor Killers:**
+    * *Azure Container Apps (ACA):* Linux containers only; Windows container images fail deployment.
+    * *Azure Kubernetes Service (AKS):* Supports Windows node pools, but requires managing cluster infrastructure, node upgrades, and Kubernetes manifests (violates prompt constraint).
+    * *Azure Virtual Machines:* Requires full manual OS management, Docker daemon configuration, and OS patching.
+* **6. Exam Heuristic:**
+    * **"Windows containers without managing Kubernetes = Azure Container Instances (ACI) + Azure App Service (Web App for Containers). Azure Container Apps (ACA) = Linux ONLY."**
+
+---
+
+### [Domain 3: Compute] ACI Container Groups: Public Port Exposition vs. Shared Localhost (AR PT02 Q16)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Analyze multi-container communication and external access for an Azure Container Instance (ACI) container group running two containers: `web` (listening on port 80) and `database` (listening on port 3306).
+    * Constraint: The template defines `ipAddress.ports: [ { "port": 80, "protocol": "TCP" } ]`. Port 3306 is defined only inside the `database` container spec, not in the container group's public IP configuration.
+* **3. Flawed Mental Model:**
+    * User selected that MySQL is reachable externally over port 3306, assuming container port declarations automatically open ports on the group's public IP.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * An ACI **Container Group** shares the exact same lifecycle, local network namespace, and IP address (analogous to a Kubernetes Pod):
+        - **Inter-Container Communication (Localhost):** Containers within the group communicate with each other over **`localhost` / `127.0.0.1`**. The `web` container connects to MySQL using `127.0.0.1:3306`.
+        - **External Ingress Gating:** A container group port is accessible from outside (Internet or VNet) **ONLY IF** that port is explicitly exposed in the **group-level `ipAddress.ports` array**.
+        - Because port 3306 was omitted from `ipAddress.ports`, MySQL is completely shielded from external traffic. Only port 80 is reachable from the Internet.
+* **5. Distractor Killers:**
+    * *MySQL is reachable on port 3306 from the Internet:* False; port 3306 is not declared in the group-level public `ipAddress.ports`.
+    * *PHP container connects to MySQL using the container group's public IP:* False; intra-group traffic routes locally over `127.0.0.1` (connecting via public IP is inefficient and blocked).
+    * *Both containers must be separated into different groups:* False; co-locating tightly coupled web and database tiers in a shared container group is a standard design pattern for localhost networking.
+* **6. Exam Heuristic:**
+    * **"ACI Container Group = Shared localhost (`127.0.0.1`) internally. External reachability requires explicit declaration in group-level `ipAddress.ports`."**
+
+---
+
+### [Domain 4: Virtual Networking] Azure Subnet IP Math & The 5 Reserved Addresses (AR PT02 Q21)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Calculate the exact number of usable IP addresses available for Azure Virtual Machines in a subnet with address space prefix `/25`.
+    * Constraint: Calculate host capacity accounting for Azure Software Defined Networking (SDN) reservations vs. on-premises RFC 1918 rules.
+* **3. Flawed Mental Model:**
+    * User calculated $128 - 2 = 126$ usable IPs, applying traditional on-premises networking rules (subtracting only network .0 and broadcast .255).
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * In traditional on-premises networking, 2 addresses are reserved per subnet (network and broadcast).
+    * In **Azure Virtual Networks**, Azure **ALWAYS reserves exactly 5 IP addresses** in every subnet:
+        1. **`.0` (Network):** Subnet identification address.
+        2. **`.1` (Default Gateway):** Azure virtual router / default gateway for the subnet.
+        3. **`.2` (Azure DNS):** Maps to Azure DNS service IP (`168.63.129.16`).
+        4. **`.3` (Azure DNS Fallback):** Reserved for future Azure DNS coordination.
+        5. **`.255` (Broadcast):** Subnet broadcast address (broadcast is not routed in Azure SDN, but address is reserved).
+    * **Calculation for `/25`:**
+        - Total raw IPs: $2^{(32 - 25)} = 2^7 = 128$.
+        - Minus 5 Azure reserved IPs: $128 - 5 = \mathbf{123}$ usable host IP addresses.
+* **5. Distractor Killers:**
+    * *126 usable addresses:* Traditional on-premises calculation ($128 - 2$); invalid in Azure due to the 3 internal infrastructure reservations (.1, .2, .3).
+    * *128 usable addresses:* Total raw IP block without subtracting required network/gateway reservations.
+    * *120 usable addresses:* Subtracting 8 addresses; arbitrary incorrect math.
+* **6. Exam Heuristic:**
+    * **"Azure Subnet Usable IPs = $2^{(32 - \text{prefix})} - 5$. Azure ALWAYS reserves 5 addresses per subnet (.0, .1, .2, .3, .255)!"**
+
+---
+
+### [Domain 4: Virtual Networking] Azure Bastion Public IP Tier Requirements (Regional vs. Global) (AR PT02 Q24)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Associate a Public IP address with an Azure Bastion host deployment.
+    * Constraint: Determine whether Azure Bastion supports an Azure Public IP configured with the **Global tier**.
+* **3. Flawed Mental Model:**
+    * User selected "Yes", assuming all Standard SKU Public IP addresses can be associated with any Standard SKU Azure service regardless of tier.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * Azure Public IP addresses have two distinct tiers under the Standard SKU:
+        - **Regional Tier:** Bound to a single Azure region. Assigned to regional compute and networking resources (VMs, Application Gateways, Azure Firewall, Azure Bastion).
+        - **Global Tier:** Spans across multiple Azure regions. Exclusively designed to front-end Azure Cross-Region Load Balancers.
+    * **Azure Bastion Public IP Requirements:**
+        1. SKU: **Standard** (Basic SKU is unsupported).
+        2. Allocation: **Static** (Dynamic allocation is unsupported).
+        3. Tier: **Regional ONLY**. Global tier Public IPs are strictly unsupported by Azure Bastion.
+    * Attempting to associate a Global tier Public IP to Azure Bastion triggers an ARM validation failure.
+    * Answer is strictly **No**.
+* **5. Distractor Killers:**
+    * *Yes (Global tier provides cross-region failover for Bastion):* False; Bastion is a regional managed injection that routes within its local VNet and peered VNets.
+    * *Yes (Any Standard SKU Public IP is compatible):* False; Standard SKU has two mutually exclusive tiers (Regional vs. Global), and Bastion only supports Regional.
+* **6. Exam Heuristic:**
+    * **"Azure Bastion Public IP = Standard SKU + Static Allocation + Regional Tier ONLY. Global tier is reserved for Cross-Region Load Balancers."**
+
+---
+
+### [Domain 4: Virtual Networking] AzureBastionSubnet Mandatory Inbound NSG Security Rules (AR PT02 Q25)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Attach a Network Security Group (NSG) to `AzureBastionSubnet` to restrict and control network traffic.
+    * Constraint: Identify the mandatory Inbound rule required for administrative access to the Bastion service.
+* **3. Flawed Mental Model:**
+    * User selected allowing Inbound RDP (port 3389) and SSH (port 22) on `AzureBastionSubnet`, confusing the management transport protocol (browser to Bastion) with the target workload protocol (Bastion to VM).
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * Azure Bastion is an SSL/TLS reverse proxy that proxies sessions through the Azure Portal:
+        - **Inbound to `AzureBastionSubnet`:** Administrators connect from web browsers over the public Internet to Bastion using **HTTPS on TCP port 443**. Therefore, the NSG on `AzureBastionSubnet` **MUST have an Inbound Allow rule for TCP port 443** from `Internet` (or admin public IPs) and service tag `GatewayManager`.
+        - **Outbound from `AzureBastionSubnet`:** Azure Bastion connects to target VMs over internal private IP addresses using **RDP (TCP 3389)** and **SSH (TCP 22)**. These rules must be configured as **Outbound rules** towards target VM subnets.
+        - Configuring Inbound 3389/22 on `AzureBastionSubnet` is ineffective because Bastion never listens for direct inbound RDP/SSH connections from the Internet.
+* **5. Distractor Killers:**
+    * *Inbound RDP 3389 & SSH 22:* These are OUTBOUND rules from Bastion to the target VM subnets, never inbound to BastionSubnet.
+    * *Inbound HTTP 80:* Azure Bastion encrypts all client-to-bastion sessions using TLS; port 80 is never used.
+    * *Outbound HTTPS 443 only:* Bastion must have outbound access on ports 3389 and 22 to the target subnet to initiate VM sessions.
+* **6. Exam Heuristic:**
+    * **"`AzureBastionSubnet` NSG: INBOUND = HTTPS (TCP 443) from Internet/GatewayManager. OUTBOUND = RDP (TCP 3389) & SSH (TCP 22) to VirtualNetwork."**
+
+---
+
+### [Domain 5: Monitoring & Backup] Recovery Services Vault vs. Backup Vault Workload Boundaries (AR PT02 Q53)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Determine which workloads can be protected by an Azure **Recovery Services Vault** from a list containing: Azure Virtual Machines (`webvm01`), Azure File shares (`stcloudhubdeveus`), Azure Managed Disks, and Azure Blob Storage containers.
+    * Constraint: Differentiating the workload capabilities of Recovery Services Vault vs. Backup Vault.
+* **3. Flawed Mental Model:**
+    * User selected Blobs / Managed Disks for Recovery Services Vault, assuming Recovery Services Vault protects all Azure native resources.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * Microsoft divides backup architecture into two distinct vault resources with mutually exclusive workload engines:
+        - **Recovery Services Vault (IaaS / Enterprise Workloads):**
+            - **Azure Virtual Machines** (`webvm01`) — full VM snapshot and restore.
+            - **Azure Files shares** (`stcloudhubdeveus`) — snapshot-based share backups.
+            - **SQL Server / SAP HANA running in Azure VMs**.
+            - **On-premises workloads** (via MARS Agent, System Center DPM, or MABS).
+        - **Backup Vault (Modern PaaS Workloads):**
+            - **Azure Managed Disks** (agentless disk backups).
+            - **Azure Blobs** (Operational Backup for Blob containers).
+            - **Azure Database for PostgreSQL Flexible Servers**.
+            - **Azure Kubernetes Service (AKS) backup**.
+    * Therefore, `webvm01` and `stcloudhubdeveus` are protected via Recovery Services Vault. Managed Disks and Blobs require a Backup Vault.
+* **5. Distractor Killers:**
+    * *Azure Blobs:* Protected via Operational Backup managed inside a Backup Vault.
+    * *Azure Managed Disks:* Protected via Azure Disk Backup managed inside a Backup Vault.
+    * *Universal Vault:* Azure does not provide a single unified vault that manages both VM agent snapshots and modern PaaS operational backups under one policy.
+* **6. Exam Heuristic:**
+    * **"Recovery Services Vault = Full Azure VMs + Azure Files shares + SQL in VM + MARS. Backup Vault = Managed Disks + Blobs + AKS + PostgreSQL."**
+
+---
+
+### [Domain 5: Monitoring & Backup] Azure Disk Backup Configuration & RBAC Roles (AR PT02 Q54)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Configure scheduled, policy-based backups for an Azure Managed Disk without manual snapshot scripts.
+    * Constraint: Identify the required vault resource, agent requirements, and mandatory RBAC roles for the backup identity.
+* **3. Flawed Mental Model:**
+    * User selected installing the MARS (Microsoft Azure Recovery Services) agent inside the VM, confusing guest-level OS file backup with cloud-native managed disk block backup.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * **Azure Disk Backup Architecture:**
+        1. **Vault Type:** Managed Disks are backed up using a **Backup Vault** (not a Recovery Services Vault).
+        2. **Agentless Execution:** Operates entirely at the Azure storage control plane via REST APIs. No agent (neither MARS nor Azure Monitor Agent) is installed on the VM.
+        3. **Managed Identity & RBAC Permissions:**
+            - The Backup Vault must be enabled with a **System-Assigned Managed Identity**.
+            - On the **Source Disk** (or source RG): Assign **`Disk Backup Reader`** to the Backup Vault identity to allow reading disk metadata.
+            - On the **Target Resource Group** (where snapshots are stored): Assign **`Disk Snapshot Contributor`** to the Backup Vault identity to allow creating and managing snapshot points.
+            - During restore: The vault identity requires **`Disk Restore Operator`** on the target resource group.
+        4. **Disk Backup Policy:** Create a Disk backup policy inside the Backup Vault defining frequency and retention.
+* **5. Distractor Killers:**
+    * *Install MARS agent on VM:* MARS is an OS-level agent for backing up Windows files and folders to a Recovery Services Vault; it cannot back up Azure Managed Disks.
+    * *Use Recovery Services Vault:* Recovery Services Vault does not support standalone Managed Disk backup policies.
+    * *Assign Owner role on subscription:* Violates least privilege; built-in roles (`Disk Backup Reader`, `Disk Snapshot Contributor`) are purpose-built for Disk Backup.
+* **6. Exam Heuristic:**
+    * **"Azure Disk Backup = Backup Vault (Agentless). Vault Managed Identity needs `Disk Backup Reader` on Source Disk + `Disk Snapshot Contributor` on Target RG."**
+
+---
+
+### [Domain 1: Identity & Governance] Moving Resources into a Target Resource Group with ReadOnly Lock (AR PT02 Q57)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Move an existing Azure resource (e.g., VM, Public IP, or VNet) from source resource group `rg-source` into destination resource group `rg-az104-tst-eus`.
+    * Constraint: The destination resource group `rg-az104-tst-eus` has a **`ReadOnly`** management lock applied.
+* **3. Flawed Mental Model:**
+    * User answered "Yes", assuming locks only prevent changes to existing resources inside the target group, or confusing `CanNotDelete` with `ReadOnly`.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * **Official Microsoft Learn Resource Move Specification:**
+        > *"Azure resources cannot be moved if a Read-only management lock exists on the source resource group, destination resource group, subscription, or the resources themselves. You must remove the read-only lock before initiating the move."*
+    * **Why ReadOnly on the Target RG Blocks Resource Move:**
+        - Moving a resource into a target resource group is an ARM control plane write operation that modifies the target resource group's `resources` collection metadata.
+        - A `ReadOnly` lock strictly prohibits creating, modifying, or deleting resources within its scope.
+        - Because reparenting a resource into the target RG requires a write operation on the destination container, ARM rejects the move request with a `ScopeLocked` error.
+    * **Contrast with `CanNotDelete`:** A `CanNotDelete` lock on either the source or destination RG **DOES NOT** prevent moving resources, because moving is a reparenting operation, not a resource deletion.
+    * Answer is strictly **No**.
+* **5. Distractor Killers:**
+    * *Yes (moving is not a delete operation):* While true for `CanNotDelete`, a `ReadOnly` lock explicitly blocks write/create operations on the target RG container.
+    * *Yes (locks only apply to data plane operations):* Management locks strictly govern the ARM control plane (`management.azure.com`), which processes all move requests.
+* **6. Exam Heuristic:**
+    * **"`ReadOnly` lock on source RG OR destination RG = BLOCKS resource moves. `CanNotDelete` lock = Allows resource moves."**
+
+---
+
+### [Domain 5: Monitoring & Backup] Azure Files Backup Frequency in Recovery Services Vault (AR PT02 Q62)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Configure a scheduled backup policy in a Recovery Services Vault to protect an Azure Files share.
+    * Constraint: Identify the maximum backup frequency / shortest interval supported for Azure Files backups.
+* **3. Flawed Mental Model:**
+    * User selected "Daily every 12 hours" or assumed standard VM backup limits (once per day) apply equally to Azure Files.
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * **Backup Frequency Capabilities in Recovery Services Vault:**
+        - **Azure VM Backups (Standard Policy):** Supports a schedule frequency of **Once daily** (every 24 hours). (Enhanced policy supports multiple daily snapshots, but Standard VM policy is strictly once daily).
+        - **Azure Files Share Backups:** Powered by native Azure Files storage snapshots orchestrated by the vault. Because storage snapshots are instantaneous and lightweight, Azure Backup natively supports multiple snapshots per day.
+        - **Granular Schedule Support:** Azure Files backup policies support an **hourly schedule** that allows scheduling backups as frequent as **every 4 hours** (e.g., every 4, 6, 8, or 12 hours) in addition to daily, weekly, monthly, and yearly retention.
+    * Therefore, Azure Files share backups can run multiple times per day, as frequent as **every 4 hours**.
+* **5. Distractor Killers:**
+    * *Daily once per day only:* True for classic Azure VM standard backup policies, but incorrect for Azure Files share backups.
+    * *Every 15 minutes:* Exceeds supported backup schedule intervals (minimum supported interval is 4 hours).
+    * *Continuous replication:* Recovery Services Vault provides scheduled point-in-time snapshot orchestration, not continuous live replication.
+* **6. Exam Heuristic:**
+    * **"Azure Files Share Backup = Multiple backups per day (up to every 4 hours via hourly policy). VM Standard Policy = Once daily only."**
+
+---
+
+### [Domain 5: Monitoring & Backup] Azure Backup Reports & Cross-Region Log Analytics Workspaces (AR PT02 Q65)
+* **1. Diagnostic Verdict:** ❌ Incorrect
+* **2. The Scenario Trigger & Hidden Constraints:**
+    * Requirement: Configure Azure Backup Reports for a Recovery Services Vault located in `East US` to track backup trends, job success rates, and storage consumption.
+    * Constraint: The enterprise centralized Log Analytics workspace is located in `West Europe`. Can the diagnostic settings of the `East US` vault stream Azure Backup reporting data to the `West Europe` workspace?
+* **3. Flawed Mental Model:**
+    * User selected "No", assuming Azure Backup diagnostic logging is restricted to the same region as the vault (conflating VM backup regional boundaries with monitoring telemetry boundaries).
+* **4. The Core Azure Mechanic (2026 Standard):**
+    * **Data Plane vs. Telemetry Plane Boundaries:**
+        1. **Backup Data Plane (Strictly Regional):** A Recovery Services Vault can **ONLY** protect VMs and File shares located in the **exact same Azure Region** as the vault. Cross-region VM backup is impossible.
+        2. **Monitoring & Reporting Telemetry Plane (Globally Flexible):** Azure Monitor Diagnostic Settings allow streaming resource logs and metrics across regions. An Azure Recovery Services Vault in `East US` **CAN stream diagnostic logs (`AzureBackupReport`, `CoreAzureBackup`) to a Log Analytics workspace in ANY Azure region** (including `West Europe`), provided they belong to the same Entra ID tenant.
+    * Azure Backup Reports (built on Azure Workbooks and Power BI) are explicitly designed to consolidate multi-region, multi-vault backup telemetry into a single centralized Log Analytics workspace.
+    * Answer is strictly **Yes**.
+* **5. Distractor Killers:**
+    * *No (Log Analytics workspaces only accept logs from the same region):* False; Log Analytics supports cross-region log ingestion from Azure Diagnostic Settings globally.
+    * *No (Recovery Services Vault cannot cross subscription or regional boundaries):* Regional boundary applies strictly to the resources being protected (VMs/shares), never diagnostic telemetry.
+* **6. Exam Heuristic:**
+    * **"RSV VM Backup = STRICTLY same region. RSV Diagnostic Settings / Backup Reports = CAN stream to Log Analytics in ANY region."**
