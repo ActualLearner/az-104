@@ -14,7 +14,7 @@
   const STORAGE_KEY_HISTORY = 'az104_simulator_history_v1';
 
   // Application State
-  let currentExamKey = 'exam1'; // 'exam1' | 'exam2' | 'combined'
+  let currentExamKey = 'exam1'; // 'exam1' | 'exam2' | 'exam3' | 'combined'
   let currentMode = 'timed'; // 'timed' | 'practice'
   let activeQuestions = [];
   let currentIndex = 0;
@@ -65,12 +65,14 @@
     dom.domainBreakdownList = document.getElementById('domain-breakdown-list');
     dom.reviewQuestionsList = document.getElementById('review-questions-list');
     dom.reviewFilter = document.getElementById('review-filter');
+    dom.btnCopyFullResults = document.getElementById('btn-copy-full-results');
     dom.btnExportErrorJournal = document.getElementById('btn-export-error-journal');
     dom.exportModal = document.getElementById('export-modal');
     dom.exportFilterSelect = document.getElementById('export-filter-select');
     dom.exportCountLabel = document.getElementById('export-count-label');
     dom.exportMarkdownText = document.getElementById('export-markdown-text');
     dom.btnCloseExport = document.getElementById('btn-close-export');
+    dom.btnSelectAllExport = document.getElementById('btn-select-all-export');
     dom.btnCopyExport = document.getElementById('btn-copy-export');
     dom.copyFeedback = document.getElementById('copy-feedback');
     dom.btnRetakeExam = document.getElementById('btn-retake-exam');
@@ -271,6 +273,10 @@
       dom.reviewFilter.addEventListener('change', () => renderResultsReviewList());
     }
 
+    if (dom.btnCopyFullResults) {
+      dom.btnCopyFullResults.addEventListener('click', copyFullCurrentExamResults);
+    }
+
     if (dom.btnExportErrorJournal) {
       dom.btnExportErrorJournal.addEventListener('click', openErrorJournalExportModal);
     }
@@ -282,6 +288,16 @@
     if (dom.btnCloseExport) {
       dom.btnCloseExport.addEventListener('click', () => {
         dom.exportModal.style.display = 'none';
+      });
+    }
+
+    if (dom.btnSelectAllExport) {
+      dom.btnSelectAllExport.addEventListener('click', () => {
+        if (dom.exportMarkdownText) {
+          dom.exportMarkdownText.focus();
+          dom.exportMarkdownText.select();
+          showToast('Text selected! Press Ctrl+C (Cmd+C) to copy.', 'info', 2000);
+        }
       });
     }
 
@@ -377,18 +393,28 @@
     }
   }
 
+  function getExamTitle(examKey) {
+    if (examKey === 'exam1') return 'Exam 1 — Shireen Khan Gauntlet (65Q)';
+    if (examKey === 'exam2') return 'Exam 2 — Advanced Architecture & Edge Cases (65Q)';
+    if (examKey === 'exam3') return 'Exam 3 — Standard Comprehensive Blueprint (65Q)';
+    if (examKey === 'combined') return 'Combined Mega Mock (195 Questions Pool)';
+    return 'AZ-104 Exam';
+  }
+
   function getQuestionPool(examKey) {
     const e1 = window.AZ104_EXAM_1 || [];
     const e2 = window.AZ104_EXAM_2 || [];
+    const e3 = window.AZ104_EXAM_3 || [];
     if (examKey === 'exam1') return [...e1];
     if (examKey === 'exam2') return [...e2];
-    if (examKey === 'combined') return [...e1, ...e2];
+    if (examKey === 'exam3') return [...e3];
+    if (examKey === 'combined') return [...e1, ...e2, ...e3];
     return [...e1];
   }
 
   function getDefaultExamTimeSeconds(examKey) {
-    // 65 questions -> 100 minutes. 130 questions (combined pool) -> 200 minutes.
-    if (examKey === 'combined') return 200 * 60;
+    // 65 questions -> 100 minutes. 195 questions (combined pool) -> 300 minutes.
+    if (examKey === 'combined') return 300 * 60;
     return 100 * 60;
   }
 
@@ -974,7 +1000,9 @@
       scorePct,
       scaledScore,
       passed: scaledScore >= 700,
-      timeSpentSeconds: Math.max(30, elapsedSeconds)
+      timeSpentSeconds: Math.max(30, elapsedSeconds),
+      userAnswers: JSON.parse(JSON.stringify(userAnswers)),
+      questionIds: activeQuestions.map((q) => q.id)
     };
 
     try {
@@ -1129,6 +1157,263 @@
     }
   }
 
+  // Full Exam Results & Missed Questions Markdown Generator for Error Journal
+  function generateFullExamResultsMarkdown(examKey, scoreData, answersMap, questionsList) {
+    const examTitle = getExamTitle(examKey);
+    const dateStr = new Date(scoreData.date || Date.now()).toLocaleString();
+    const durationMin = Math.max(1, Math.round((scoreData.timeSpentSeconds || 60) / 60));
+    const passStatus = scoreData.passed ? '✅ PASSED' : '❌ FAILED';
+
+    // Domain breakdown calculation
+    const domainStats = {};
+    questionsList.forEach((q) => {
+      const d = q.domain || 'Unknown Domain';
+      if (!domainStats[d]) {
+        domainStats[d] = { total: 0, correct: 0 };
+      }
+      domainStats[d].total++;
+      if (evaluateQuestionAnswer(q, answersMap[q.id])) {
+        domainStats[d].correct++;
+      }
+    });
+
+    // Missed questions list (unanswered or incorrect)
+    const missedQuestions = questionsList.filter((q) => !evaluateQuestionAnswer(q, answersMap[q.id]));
+
+    let md = `# AZ-104 Exam Results & Error Journal Export\n\n`;
+    md += `## 📊 Attempt Summary\n`;
+    md += `- **Exam:** ${examTitle}\n`;
+    md += `- **Date/Time:** ${dateStr}\n`;
+    md += `- **Score:** ${scoreData.scaledScore} / 1000 (${scoreData.scorePct}%)\n`;
+    md += `- **Status:** ${passStatus} (Passing threshold: 700 / 1000)\n`;
+    md += `- **Performance:** ${scoreData.correctCount} of ${scoreData.totalQuestions} questions correct\n`;
+    md += `- **Time Spent:** ${durationMin} minutes\n`;
+    md += `- **Mode:** ${(scoreData.mode || 'timed').toUpperCase()}\n\n`;
+
+    md += `## 📈 Performance by Azure Domain\n\n`;
+    md += `| Domain | Correct / Total | Score % | Status |\n`;
+    md += `| :--- | :---: | :---: | :---: |\n`;
+    for (const [dName, st] of Object.entries(domainStats)) {
+      const pct = Math.round((st.correct / st.total) * 100);
+      const stLabel = pct >= 70 ? '✅ Pass' : '⚠️ Needs Review';
+      md += `| ${dName} | ${st.correct} / ${st.total} | ${pct}% | ${stLabel} |\n`;
+    }
+    md += `\n`;
+
+    md += `## ❌ Missed Questions Analysis (${missedQuestions.length} Missed Questions)\n\n`;
+    if (missedQuestions.length === 0) {
+      md += `🎉 **Flawless Execution!** All questions were answered correctly. No missed questions recorded for this attempt.\n`;
+      return md;
+    }
+
+    md += `Below is the complete breakdown of every missed question with question scenario, candidate's choice, correct choice, and the full 6-part diagnostic SOP ready for your error journal:\n\n`;
+
+    missedQuestions.forEach((q, idx) => {
+      const userAns = answersMap[q.id];
+      const isAns = (userAns !== undefined && userAns !== null && (!Array.isArray(userAns) || userAns.length > 0));
+
+      let userChoiceText = '*(Unanswered / Skipped)*';
+      if (isAns) {
+        if (Array.isArray(userAns)) {
+          userChoiceText = userAns.map((letter) => {
+            const opt = (q.options || []).find((o) => o.id === letter);
+            return `Option ${letter}${opt ? ': ' + opt.text : ''}`;
+          }).join(' AND ');
+        } else {
+          const opt = (q.options || []).find((o) => o.id === userAns);
+          userChoiceText = `Option ${userAns}${opt ? ': ' + opt.text : ''}`;
+        }
+      }
+
+      let correctChoiceText = '';
+      if (Array.isArray(q.correctAnswer)) {
+        correctChoiceText = q.correctAnswer.map((letter) => {
+          const opt = (q.options || []).find((o) => o.id === letter);
+          return `Option ${letter}${opt ? ': ' + opt.text : ''}`;
+        }).join(' AND ');
+      } else {
+        const opt = (q.options || []).find((o) => o.id === q.correctAnswer);
+        correctChoiceText = `Option ${q.correctAnswer}${opt ? ': ' + opt.text : ''}`;
+      }
+
+      const exp = q.explanation || {};
+
+      md += `---\n\n`;
+      md += `### Missed Question #${idx + 1}: [${q.id.toUpperCase()}] ${q.topic}\n`;
+      md += `**Domain:** ${q.domain}\n\n`;
+      md += `**Question Scenario:**\n`;
+      md += `> ${q.scenario.replace(/\n/g, '\n> ')}\n\n`;
+      md += `**Your Choice:** ${userChoiceText}\n\n`;
+      md += `**Correct Choice:** ${correctChoiceText}\n\n`;
+
+      md += `#### 1. Diagnostic Verdict\n`;
+      md += `${exp.verdict || ''}\n\n`;
+
+      md += `#### 2. Scenario Trigger & Hidden Constraints\n`;
+      md += `${exp.triggerConstraints || ''}\n\n`;
+
+      md += `#### 3. Flawed Mental Model\n`;
+      md += `${exp.flawedMentalModel || ''}\n\n`;
+
+      md += `#### 4. Core Azure Mechanic (2026 Standard)\n`;
+      md += `${exp.coreMechanic || ''}\n\n`;
+
+      md += `#### 5. Distractor Killers\n`;
+      if (exp.distractors && Object.keys(exp.distractors).length > 0) {
+        for (const [key, reason] of Object.entries(exp.distractors)) {
+          const opt = (q.options || []).find((o) => o.id === key);
+          const optLabel = opt ? `Option ${key} ("${opt.text}")` : `Option ${key}`;
+          md += `- **${optLabel}:** ${reason}\n`;
+        }
+      } else {
+        md += `- Refer to Microsoft Learn specifications.\n`;
+      }
+      md += `\n`;
+
+      md += `#### 6. Exam Heuristic\n`;
+      md += `> **"${exp.heuristic || ''}"**\n\n`;
+
+      md += `**Reference:** [${exp.msLearnUrl || 'Microsoft Learn Documentation'}](${exp.msLearnUrl || 'https://learn.microsoft.com'})\n\n`;
+    });
+
+    return md;
+  }
+
+  // 1-Click Copy Full Exam Results & Missed Questions for Error Journal
+  function copyFullCurrentExamResults() {
+    let correctCount = 0;
+    activeQuestions.forEach((q) => {
+      if (evaluateQuestionAnswer(q, userAnswers[q.id])) correctCount++;
+    });
+
+    const total = activeQuestions.length;
+    const scorePct = Math.round((correctCount / total) * 100);
+    const scaledScore = Math.round((correctCount / total) * 1000);
+    const elapsedSeconds = Math.round((Date.now() - (examStartTime || Date.now())) / 1000);
+
+    const scoreData = {
+      date: new Date().toISOString(),
+      scaledScore,
+      scorePct,
+      passed: scaledScore >= 700,
+      correctCount,
+      totalQuestions: total,
+      timeSpentSeconds: Math.max(30, elapsedSeconds),
+      mode: currentMode
+    };
+
+    const fullMarkdown = generateFullExamResultsMarkdown(
+      currentExamKey,
+      scoreData,
+      userAnswers,
+      activeQuestions
+    );
+
+    if (dom.exportCountLabel) {
+      const missedCount = activeQuestions.filter((q) => !evaluateQuestionAnswer(q, userAnswers[q.id])).length;
+      dom.exportCountLabel.textContent = `(${missedCount} missed questions)`;
+    }
+
+    copyTextToClipboardWithFallback(
+      fullMarkdown,
+      '✓ Full exam results & missed questions copied to clipboard in Error Journal SOP format!',
+      'Direct clipboard access restricted by browser. Results selected below — press Ctrl+C (Cmd+C) to copy!'
+    );
+  }
+
+  // Copy past attempt results from history modal
+  function copyPastAttemptResult(attemptIndex) {
+    const historyJson = localStorage.getItem(STORAGE_KEY_HISTORY);
+    const history = historyJson ? JSON.parse(historyJson) : [];
+    const attempt = history[attemptIndex];
+    if (!attempt) return;
+
+    const examPool = getQuestionPool(attempt.examKey || 'exam1');
+    let questionsForAttempt = examPool;
+    if (attempt.questionIds && attempt.questionIds.length > 0) {
+      const qMap = new Map();
+      examPool.forEach((q) => qMap.set(q.id, q));
+      if (qMap.size < attempt.questionIds.length) {
+        const allPool = getQuestionPool('combined');
+        allPool.forEach((q) => qMap.set(q.id, q));
+      }
+      questionsForAttempt = attempt.questionIds.map((id) => qMap.get(id)).filter(Boolean);
+      if (questionsForAttempt.length === 0) questionsForAttempt = examPool;
+    }
+
+    const answersMap = attempt.userAnswers || {};
+    const markdown = generateFullExamResultsMarkdown(
+      attempt.examKey || 'exam1',
+      attempt,
+      answersMap,
+      questionsForAttempt
+    );
+
+    copyTextToClipboardWithFallback(
+      markdown,
+      `✓ Past attempt (${new Date(attempt.date).toLocaleDateString()}) copied in Error Journal format!`,
+      'Direct clipboard access restricted by browser. Results selected below — press Ctrl+C (Cmd+C) to copy!'
+    );
+  }
+
+  // Robust Clipboard Helper with Full Modal Textarea Fallback
+  function copyTextToClipboardWithFallback(text, successMsg, fallbackMsg) {
+    if (dom.exportMarkdownText) {
+      dom.exportMarkdownText.value = text;
+    }
+
+    const triggerFallbackModal = () => {
+      if (dom.exportModal) {
+        dom.exportModal.style.display = 'flex';
+      }
+      if (dom.exportMarkdownText) {
+        dom.exportMarkdownText.focus();
+        dom.exportMarkdownText.select();
+      }
+      showToast(fallbackMsg || 'Text selected below. Press Ctrl+C (Cmd+C) or click Copy to Clipboard!', 'info', 4500);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          showToast(successMsg || 'Copied to clipboard!', 'success', 3500);
+          if (dom.copyFeedback) {
+            dom.copyFeedback.style.display = 'inline-block';
+            setTimeout(() => {
+              if (dom.copyFeedback) dom.copyFeedback.style.display = 'none';
+            }, 3000);
+          }
+        })
+        .catch(() => {
+          if (dom.exportMarkdownText) {
+            dom.exportMarkdownText.focus();
+            dom.exportMarkdownText.select();
+            try {
+              const successful = document.execCommand('copy');
+              if (successful) {
+                showToast(successMsg || 'Copied to clipboard!', 'success', 3500);
+                return;
+              }
+            } catch (_) {}
+          }
+          triggerFallbackModal();
+        });
+    } else {
+      if (dom.exportMarkdownText) {
+        dom.exportMarkdownText.focus();
+        dom.exportMarkdownText.select();
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            showToast(successMsg || 'Copied to clipboard!', 'success', 3500);
+            return;
+          }
+        } catch (_) {}
+      }
+      triggerFallbackModal();
+    }
+  }
+
   // Error Journal Export Feature (6-part standard SOP)
   function openErrorJournalExportModal() {
     updateExportMarkdownContent();
@@ -1198,38 +1483,11 @@
   }
 
   function copyExportMarkdownToClipboard() {
-    dom.exportMarkdownText.select();
-
-    const showSuccess = () => {
-      dom.copyFeedback.style.display = 'inline-block';
-      showToast('Copied to clipboard in 6-part Error Journal SOP format!', 'success');
-      setTimeout(() => {
-        dom.copyFeedback.style.display = 'none';
-      }, 3000);
-    };
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(dom.exportMarkdownText.value)
-        .then(showSuccess)
-        .catch(() => {
-          fallbackCopy();
-        });
-    } else {
-      fallbackCopy();
-    }
-
-    function fallbackCopy() {
-      try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-          showSuccess();
-        } else {
-          showToast('Please press Ctrl+C (Cmd+C) to copy the highlighted text.', 'info');
-        }
-      } catch (err) {
-        showToast('Please manually copy the highlighted text.', 'info');
-      }
-    }
+    copyTextToClipboardWithFallback(
+      dom.exportMarkdownText.value,
+      '✓ Copied to clipboard in 6-part Error Journal SOP format!',
+      'Please press Ctrl+C (Cmd+C) to copy the highlighted text.'
+    );
   }
 
   // History Modal
@@ -1244,11 +1502,11 @@
     const history = historyJson ? JSON.parse(historyJson) : [];
 
     if (history.length === 0) {
-      dom.historyTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:1rem;">No prior test attempts recorded on this device.</td></tr>`;
+      dom.historyTableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:1rem;">No prior test attempts recorded on this device.</td></tr>`;
       return;
     }
 
-    history.forEach((h) => {
+    history.forEach((h, index) => {
       const row = document.createElement('tr');
       const dateStr = new Date(h.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
       const durationMin = Math.max(1, Math.round((h.timeSpentSeconds || 60) / 60));
@@ -1261,8 +1519,22 @@
         <td>${h.correctCount} / ${h.totalQuestions}</td>
         <td><span class="badge ${h.passed ? 'badge-green' : 'badge-red'}">${h.passed ? 'PASS' : 'FAIL'}</span></td>
         <td>${durationMin} mins</td>
+        <td>
+          <button class="btn blue btn-history-copy" data-index="${index}" style="font-size:0.75rem; padding:0.25rem 0.55rem; white-space:nowrap;">
+            📋 Copy Result
+          </button>
+        </td>
       `;
       dom.historyTableBody.appendChild(row);
+    });
+
+    // Attach click listeners to all Copy Result buttons
+    const copyBtns = dom.historyTableBody.querySelectorAll('.btn-history-copy');
+    copyBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+        copyPastAttemptResult(idx);
+      });
     });
   }
 

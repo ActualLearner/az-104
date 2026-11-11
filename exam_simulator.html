@@ -843,8 +843,9 @@
           <span class="select-label">Select Exam:</span>
           <select class="custom-select" id="exam-select">
             <option value="exam1">Exam 1 — Shireen Khan Gauntlet (65Q)</option>
-            <option value="exam2">Exam 2 — Advanced Architecture & Edge Cases (65Q)</option>
-            <option value="combined">Combined Mega Mock (130 Questions Pool)</option>
+            <option value="exam2">Exam 2 — Advanced Architecture &amp; Edge Cases (65Q)</option>
+            <option value="exam3">Exam 3 — Standard Comprehensive Blueprint (65Q)</option>
+            <option value="combined">Combined Mega Mock (195 Questions Pool)</option>
           </select>
         </div>
         <div class="toolbar-field">
@@ -968,7 +969,8 @@
             840 / 1000 (55 of 65 questions correct)
           </p>
           <div style="display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap;">
-            <button class="btn green" id="btn-export-error-journal">📋 Export Missed Questions to Error Journal SOP</button>
+            <button class="btn green" id="btn-copy-full-results" style="font-size:0.95rem; padding:0.65rem 1.35rem; font-weight:800; box-shadow:0 4px 14px rgba(5,150,105,0.3);">📋 Copy Full Exam Results &amp; Missed Questions for Error Journal</button>
+            <button class="btn blue" id="btn-export-error-journal">⚙️ Custom Export</button>
             <button class="btn outline" id="btn-retake-exam">🔄 Retake Exam (Fresh Attempt)</button>
           </div>
         </div>
@@ -1051,7 +1053,10 @@
         <textarea id="export-markdown-text" style="width:100%; height:320px; font-family:monospace; font-size:0.775rem; padding:0.75rem; border:1px solid var(--border); border-radius:6px; background:#f8fafc; color:#0f172a; resize:vertical; outline:none;"></textarea>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap:wrap; gap:0.5rem;">
           <span id="copy-feedback" class="text-green font-bold" style="font-size:0.8rem; display:none;">✓ Copied to clipboard!</span>
-          <button class="btn blue" id="btn-copy-export">📋 Copy to Clipboard</button>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn outline" id="btn-select-all-export">🔍 Select All</button>
+            <button class="btn blue" id="btn-copy-export">📋 Copy to Clipboard</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1064,7 +1069,7 @@
           <button class="btn outline" id="btn-close-history" style="min-height:auto; padding:0.2rem 0.5rem;">✕</button>
         </div>
         <p style="font-size:0.825rem; color:var(--text-muted); margin-bottom:0.75rem;">
-          Stored locally in your browser's persistent storage.
+          Stored locally in your browser's persistent storage. Click <strong>📋 Copy Result</strong> on any past attempt to generate full results and missed question analysis for your error journal.
         </p>
         <div style="overflow-x:auto;">
           <table>
@@ -1077,6 +1082,7 @@
                 <th>Correct</th>
                 <th>Result</th>
                 <th>Time Spent</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="history-table-body">
@@ -1114,6 +1120,7 @@
   <!-- Load Exam Question Banks & Engine -->
   <script src="exam_questions_exam1.js"></script>
   <script src="exam_questions_exam2.js"></script>
+  <script src="exam_questions_exam3.js"></script>
   <script src="exam_engine.js"></script>
 </body>
 </html>

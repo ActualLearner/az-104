@@ -11,6 +11,7 @@ def test_exams():
     files = [
         "exam_questions_exam1.js",
         "exam_questions_exam2.js",
+        "exam_questions_exam3.js",
         "exam_engine.js",
         "exam_simulator.html",
         "index.html",
@@ -23,28 +24,33 @@ def test_exams():
         assert size > 0, f"File is empty: {path}"
         print(f"✓ File exists: {f} ({size} bytes)")
 
-    # 2. Extract JSON from exam 1 and exam 2
+    # 2. Extract JSON from exam 1, exam 2, and exam 3
     def extract_exam_data(filename):
         path = os.path.join(base_dir, filename)
         with open(path, "r", encoding="utf-8") as fh:
             content = fh.read()
-        match = re.search(r'window\.AZ104_EXAM_[12]\s*=\s*(\[[\s\S]*?\]);\s*$', content)
+        match = re.search(r'window\.AZ104_EXAM_[123]\s*=\s*(\[[\s\S]*?\]);\s*$', content)
         assert match, f"Could not find JSON array in {filename}"
         return json.loads(match.group(1))
 
     exam1 = extract_exam_data("exam_questions_exam1.js")
     exam2 = extract_exam_data("exam_questions_exam2.js")
+    exam3 = extract_exam_data("exam_questions_exam3.js")
 
     assert len(exam1) == 65, f"Exam 1 must have 65 questions, found {len(exam1)}"
     assert len(exam2) == 65, f"Exam 2 must have 65 questions, found {len(exam2)}"
+    assert len(exam3) == 65, f"Exam 3 must have 65 questions, found {len(exam3)}"
     print(f"✓ Exam 1 count: {len(exam1)} questions")
     print(f"✓ Exam 2 count: {len(exam2)} questions")
-    print(f"✓ Total pool: {len(exam1) + len(exam2)} questions")
+    print(f"✓ Exam 3 count: {len(exam3)} questions")
+    total_q = len(exam1) + len(exam2) + len(exam3)
+    print(f"✓ Total pool: {total_q} questions (3 Full 65Q Exams)")
+    assert total_q == 195, f"Total question pool must equal 195, found {total_q}"
 
     # 3. Check question integrity, uniqueness, schema, and distractor correctness
     all_ids = set()
     all_scenarios = set()
-    all_questions = [("Exam 1", exam1), ("Exam 2", exam2)]
+    all_questions = [("Exam 1", exam1), ("Exam 2", exam2), ("Exam 3", exam3)]
     total_domain_counts = {}
 
     for exam_name, q_list in all_questions:
@@ -56,7 +62,7 @@ def test_exams():
         for q in q_list:
             qid = q.get("id")
             assert qid, f"Missing id in {exam_name}"
-            assert qid not in all_ids, f"Duplicate question ID: {qid}"
+            assert qid not in all_ids, f"Duplicate question ID across exams: {qid}"
             all_ids.add(qid)
 
             topic = q.get("topic", "")
@@ -66,7 +72,7 @@ def test_exams():
 
             scenario = q.get("scenario", "")
             assert len(scenario) > 20, f"Scenario too short in {qid}"
-            assert scenario not in all_scenarios, f"Duplicate scenario in {qid}"
+            assert scenario not in all_scenarios, f"Duplicate scenario across exams in {qid}"
             all_scenarios.add(scenario)
 
             assert "options" in q and len(q["options"]) >= 4, f"Options < 4 in {qid}"
@@ -139,43 +145,55 @@ def test_exams():
         for d_code in range(1, 6):
             assert exam_domains.get(d_code, 0) >= 5, f"Domain {d_code} underrepresented in {exam_name}: {exam_domains.get(d_code, 0)} questions"
 
-    print("\n✓ All 130 questions passed structural, schema, uniqueness & distractor validation!")
-    print("\nTotal Domain Distribution across 130 Questions:")
+    print("\n✓ All 195 questions passed structural, schema, uniqueness & distractor validation!")
+    print("\nTotal Domain Distribution across 195 Questions:")
     for d, c in sorted(total_domain_counts.items()):
         print(f"  • {d}: {c} questions")
 
-    # 4. Check exam_engine.js timer logic & session configuration
+    # 4. Check exam_engine.js timer logic, session configuration, and result copy functionality
     with open(os.path.join(base_dir, "exam_engine.js"), "r", encoding="utf-8") as fh:
         engine_content = fh.read()
 
     assert "function getDefaultExamTimeSeconds(examKey)" in engine_content, "Missing getDefaultExamTimeSeconds in exam_engine.js"
-    assert "if (examKey === 'combined') return 200 * 60;" in engine_content, "Combined pool timer must be 200 minutes (12000s)"
+    assert "if (examKey === 'combined') return 300 * 60;" in engine_content, "Combined pool timer must be 300 minutes (18000s)"
     assert "return 100 * 60;" in engine_content, "Single exam timer must be 100 minutes (6000s)"
     assert "az104_simulator_session_v2" in engine_content, "Session key should use v2 to isolate 65-question state"
-    print("✓ exam_engine.js timer enforces 100m (65Q) and 200m (130Q) with safe session handling")
+    assert "function copyFullCurrentExamResults" in engine_content, "exam_engine.js missing copyFullCurrentExamResults"
+    assert "function generateFullExamResultsMarkdown" in engine_content, "exam_engine.js missing generateFullExamResultsMarkdown"
+    assert "function copyPastAttemptResult" in engine_content, "exam_engine.js missing copyPastAttemptResult"
+    assert "function copyTextToClipboardWithFallback" in engine_content, "exam_engine.js missing copyTextToClipboardWithFallback"
+    assert "userAnswers: JSON.parse(JSON.stringify(userAnswers))" in engine_content, "exam_engine.js must persist userAnswers in history record"
+    print("✓ exam_engine.js timer enforces 100m (65Q) and 300m (195Q) with robust error journal copy & persistence")
 
     # 5. Check exam_simulator.html loads scripts and essential elements
     with open(os.path.join(base_dir, "exam_simulator.html"), "r", encoding="utf-8") as fh:
         sim_content = fh.read()
     assert "exam_questions_exam1.js" in sim_content, "exam_simulator.html missing exam_questions_exam1.js"
     assert "exam_questions_exam2.js" in sim_content, "exam_simulator.html missing exam_questions_exam2.js"
+    assert "exam_questions_exam3.js" in sim_content, "exam_simulator.html missing exam_questions_exam3.js"
     assert "exam_engine.js" in sim_content, "exam_simulator.html missing exam_engine.js"
     assert "drawer-backdrop" in sim_content, "exam_simulator.html missing mobile drawer backdrop"
     assert "toast-container" in sim_content, "exam_simulator.html missing toast container"
     assert "Exam 1 — Shireen Khan Gauntlet (65Q)" in sim_content, "exam_simulator.html missing 65Q label for Exam 1"
-    assert "Exam 2 — Advanced Architecture & Edge Cases (65Q)" in sim_content, "exam_simulator.html missing 65Q label for Exam 2"
-    assert "Combined Mega Mock (130 Questions Pool)" in sim_content, "exam_simulator.html missing 130Q label for Combined"
-    assert "Question 1 of 65" in sim_content, "exam_simulator.html question badge mismatch"
+    assert "Exam 2 — Advanced Architecture &amp; Edge Cases (65Q)" in sim_content, "exam_simulator.html missing 65Q label for Exam 2"
+    assert "Exam 3 — Standard Comprehensive Blueprint (65Q)" in sim_content, "exam_simulator.html missing 65Q label for Exam 3"
+    assert "Combined Mega Mock (195 Questions Pool)" in sim_content, "exam_simulator.html missing 195Q label for Combined"
+    assert "btn-copy-full-results" in sim_content, "exam_simulator.html missing btn-copy-full-results"
+    assert "export-markdown-text" in sim_content, "exam_simulator.html missing export-markdown-text"
+    assert "btn-select-all-export" in sim_content, "exam_simulator.html missing btn-select-all-export"
+    assert "btn-copy-export" in sim_content, "exam_simulator.html missing btn-copy-export"
     assert "1:40:00" in sim_content, "exam_simulator.html timer display initial format should be 1:40:00 (100 mins)"
-    print("✓ exam_simulator.html properly imports all scripts, labels, and 65Q/100m indicators")
+    print("✓ exam_simulator.html properly imports all scripts, labels, and 65Q/100m/195Q indicators")
 
     # 6. Check index.html links to exam_simulator.html and shows accurate badges
     with open(os.path.join(base_dir, "index.html"), "r", encoding="utf-8") as fh:
         index_content = fh.read()
     assert "exam_simulator.html" in index_content, "index.html missing link to exam_simulator.html"
-    assert "130 Questions" in index_content, "index.html missing 130 Questions badge"
+    assert "195 Questions" in index_content, "index.html missing 195 Questions badge"
+    assert "195Q" in index_content, "index.html missing 195Q label"
     assert "65Q/100m" in index_content, "index.html missing 65Q/100m badge"
-    print("✓ index.html has active links and accurate 130Q / 65Q / 100m badges")
+    assert "exam_simulator.html?exam=exam3" in index_content, "index.html missing direct link to exam 3"
+    print("✓ index.html has active links and accurate 195Q / 65Q / 100m badges and Exam 3 button")
 
     # 7. Check sw.js caches new assets
     with open(os.path.join(base_dir, "sw.js"), "r", encoding="utf-8") as fh:
@@ -183,8 +201,10 @@ def test_exams():
     assert "exam_simulator.html" in sw_content, "sw.js missing exam_simulator.html"
     assert "exam_questions_exam1.js" in sw_content, "sw.js missing exam_questions_exam1.js"
     assert "exam_questions_exam2.js" in sw_content, "sw.js missing exam_questions_exam2.js"
+    assert "exam_questions_exam3.js" in sw_content, "sw.js missing exam_questions_exam3.js"
     assert "exam_engine.js" in sw_content, "sw.js missing exam_engine.js"
-    print("✓ Service Worker (sw.js) caches all simulator assets")
+    assert "az104-hub-v4" in sw_content, "sw.js cache version should be bumped to v4"
+    print("✓ Service Worker (sw.js) caches all simulator assets including exam 3")
 
     print("\n=== ALL RIGOROUS VERIFICATION TESTS PASSED SUCCESSFULLY ===")
 
