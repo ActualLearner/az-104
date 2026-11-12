@@ -1,0 +1,72 @@
+﻿ApexCore Consulting 
+Case Study - AZ-104
+
+
+Overview
+Headquartered in Denver, ApexCore Consulting is a consulting firm that also maintains branch offices in Portland and Miami.
+Existing Environment
+Azure Environment
+ApexCore's Azure subscription contains three resource groups: CoreRG1, CoreRG2, and CoreRG3.
+The subscription holds two storage accounts:
+* datastore1 is a StorageV2 account in West US 2 with hierarchical namespace enabled. It contains a container named data1 and a file share named docs1.
+* datastore2 is also a StorageV2 account in West US 2, but hierarchical namespace is disabled. It contains a container named data2 and a file share named docs2.
+
+Five virtual machines run in the subscription.
+  
+
+
+
+An Azure container registry in the subscription holds two container images: WinImg1, which runs Windows Server, and LinuxImg1, which runs Linux.
+The subscription also contains four other resources:
+* LogSpace1, a Log Analytics workspace, in CoreRG1.
+* AppSvc1, an Azure App Service web app, in CoreRG1.
+* NetVnet1, a virtual network, in CoreRG2.
+* corezone1.com, an Azure Private DNS zone, in CoreRG3.
+
+
+Azure Key Vault
+The subscription contains a key vault named SecVault1.
+SecVault1 holds four certificates:
+  
+
+SecVault1 also holds two keys:
+* CryptoKey1 is an RSA key with a key size of 4096.
+* CryptoKey2 is an EC key with the elliptic curve name set to P-256.
+
+
+Microsoft Entra Environment
+ApexCore's Azure subscription is linked to a Microsoft Entra tenant named apexcore.com.
+Four identities exist in the tenant:
+* Priya Shah holds the Global Administrator Microsoft Entra role, with no Azure role assigned.
+* Derek Nguyen holds the Attribute Definition Administrator Microsoft Entra role, with no Azure role assigned.
+* Lena Osei holds the Attribute Assignment Administrator Microsoft Entra role, with no Azure role assigned.
+* Carlos Vega holds no Microsoft Entra role but has the Reader Azure role on both CoreRG2 and CoreRG3.
+Two groups also exist in the tenant: 
+* Cohort1: a security group, 
+* Cohort2: a Microsoft 365 group.
+The apexcore.com tenant has a custom security attribute named AttribTag1.
+
+
+Requirements
+
+Planned Changes
+ApexCore intends to make the following changes:
+* Set up a data collection rule (DCR) called CollectRule1 that gathers only system events carrying an event ID of 4648, sourced exclusively from Node2 and Node4.
+* Within datastore1, add a new container called data2, configured with three stored access policies (Policy1, Policy2, and Policy3) plus a legal hold for immutable blob storage.
+* Organize storage account content into directories wherever this is achievable.
+* Give Carlos Vega the permissions needed to link corezone1.com to NetVnet1.
+* Apply AttribTag1 to every apexcore.com resource that supports it.
+* Within datastore2, set up an encryption scope named EncScope1.
+* Use WinImg1 or LinuxImg1 when deploying new containers.
+
+Technical Requirements
+ApexCore's technical requirements are as follows:
+* AppSvc1 must use TLS.
+* The principle of least privilege must be followed throughout.
+* Permissions should be granted only at the scope actually required.
+* EncScope1 must be the mechanism used to encrypt storage services.
+* data1 and docs1 need to be backed up using Azure Backup as often as the service allows.
+* Where feasible, the virtual machines should be encrypted with Azure Disk Encryption paired with a key encryption key (KEK).
+
+
+*************** Case study ends ***************

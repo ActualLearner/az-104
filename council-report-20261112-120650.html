@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Council Report — AZ-104 Study Strategy</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f7f8fa;
+    color: #1a1a2e;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    background: #1a1a2e;
+    color: #fff;
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .header .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b8fa8;
+    margin-bottom: 0.5rem;
+  }
+  .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+  .header .question {
+    font-size: 1rem;
+    color: #c5c8d9;
+    border-left: 3px solid #4f8ef7;
+    padding-left: 1rem;
+    font-style: italic;
+  }
+  .header .meta {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #6b6f88;
+  }
+
+  /* Verdict card */
+  .verdict-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e4e6f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .verdict-card h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .verdict-card p { margin-bottom: 0.75rem; color: #3a3d52; }
+  .verdict-card ul { margin: 0.5rem 0 0.75rem 1.25rem; color: #3a3d52; }
+  .verdict-card li { margin-bottom: 0.4rem; }
+  .verdict-card strong { color: #1a1a2e; }
+
+  .section-agrees h2 { color: #2e7d32; }
+  .section-agrees { border-top: 4px solid #4caf50; }
+  .section-clashes h2 { color: #e65100; }
+  .section-clashes { border-top: 4px solid #ff9800; }
+  .section-blindspots h2 { color: #6a1b9a; }
+  .section-blindspots { border-top: 4px solid #9c27b0; }
+  .section-rec h2 { color: #0d47a1; }
+  .section-rec { border-top: 4px solid #1565c0; background: #f0f4ff; }
+  .section-first h2 { color: #fff; }
+  .section-first {
+    background: #1565c0;
+    border-top: none;
+    color: #fff;
+    border-radius: 12px;
+  }
+  .section-first p, .section-first strong { color: #fff; }
+  .section-first .one-thing {
+    font-size: 1.15rem;
+    font-weight: 600;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 0.5rem;
+    border-left: 4px solid #90caf9;
+  }
+
+  /* Agreement visual */
+  .alignment-grid {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e4e6f0;
+  }
+  .alignment-grid h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; color: #1a1a2e; }
+  .advisor-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .advisor-name { width: 180px; font-size: 0.85rem; font-weight: 600; color: #3a3d52; flex-shrink: 0; }
+  .advisor-bar {
+    flex: 1;
+    height: 10px;
+    border-radius: 5px;
+    background: #e4e6f0;
+    position: relative;
+    overflow: hidden;
+  }
+  .advisor-bar .fill { height: 100%; border-radius: 5px; }
+  .advisor-verdict { font-size: 0.8rem; color: #6b6f88; width: 80px; text-align: right; flex-shrink: 0; }
+  .agrees { background: #4caf50; }
+  .mostly { background: #8bc34a; }
+  .nuanced { background: #ff9800; }
+
+  /* Collapsible */
+  details {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e6f0;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+  }
+  summary {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1a1a2e;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before {
+    content: "▶";
+    font-size: 0.65rem;
+    color: #8b8fa8;
+    transition: transform 0.2s;
+  }
+  details[open] summary::before { transform: rotate(90deg); }
+  .details-body {
+    padding: 0 1.5rem 1.25rem;
+    color: #3a3d52;
+    border-top: 1px solid #f0f1f7;
+    margin-top: 0;
+    padding-top: 1rem;
+  }
+  .details-body p { margin-bottom: 0.6rem; }
+  .details-body ul { margin: 0.4rem 0 0.6rem 1.2rem; }
+  .details-body li { margin-bottom: 0.3rem; }
+
+  .advisor-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+  }
+  .tag-contrarian { background: #fce4ec; color: #c62828; }
+  .tag-firstprinciples { background: #e8f5e9; color: #2e7d32; }
+  .tag-expansionist { background: #e3f2fd; color: #1565c0; }
+  .tag-outsider { background: #f3e5f5; color: #6a1b9a; }
+  .tag-executor { background: #fff3e0; color: #e65100; }
+
+  .peer-tag {
+    font-size: 0.75rem;
+    color: #8b8fa8;
+    font-weight: 400;
+  }
+
+  .footer {
+    text-align: center;
+    color: #8b8fa8;
+    font-size: 0.78rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e4e6f0;
+  }
+  .footer a { color: #4f8ef7; text-decoration: none; }
+
+  .section-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b8fa8;
+    margin-bottom: 0.5rem;
+  }
+  h3.collapsible-heading { font-size: 1rem; font-weight: 700; margin: 0 0 1rem; color: #1a1a2e; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="label">LLM Council — AZ-104 Study Strategy</div>
+    <h1>Should I abandon "save Shireen" and start Shireen Khan tests now?</h1>
+    <div class="question">
+      Candidate has 24 days until AZ-104 (Dec 5–8, 2026). Planned to exhaust all other resources first (AI simulator + Alan Rodrigues), then do Shireen last. Just discovered Shireen has 6 × ~90 questions = ~530 total. Alan Rodrigues PT01: 73.8%, PT02: 78.4%. Custom simulator: 195 questions.
+    </div>
+    <div class="meta">5 advisors · 5 peer reviewers · 1 chairman synthesis · 2026-11-12</div>
+  </div>
+
+  <!-- VERDICT sections -->
+  <div class="verdict-card section-agrees">
+    <h2>✅ Where the Council Agrees</h2>
+    <p><strong>The "save Shireen" strategy is void — abandon it immediately.</strong> Every advisor reached this independently and from different angles. The original logic was built on a factual error (3–4 short tests vs. 6 × 90 questions). You cannot optimize around a premise that was false.</p>
+    <p><strong>Hard questions belong at the front, not the back.</strong> This was unanimous and well-reasoned. A wrong answer in week one gives you three weeks to close the gap. A wrong answer in week three gives you anxiety. Diagnostic value is highest when time to course-correct is longest.</p>
+    <p><strong>Unseen questions are not intrinsically more valuable than reviewed ones.</strong> The "preserve novelty" instinct feels rational but isn't. What matters on exam day is whether you've internalized the knowledge domain — not whether the question wording is fresh. Practice tests are diagnostic instruments, not finite ammunition.</p>
+  </div>
+
+  <div class="verdict-card section-clashes">
+    <h2>⚡ Where the Council Clashes</h2>
+    <p><strong>How much to sweat PT01/PT02 wrong answers before moving forward.</strong></p>
+    <p>The Contrarian says: spend two days auditing your mistake domains before touching Shireen. The Executor says: PT01/PT02 are done — open Shireen Test 1 today.</p>
+    <p><strong>Resolution:</strong> Do not spend two full days auditing. Spend 30–60 minutes tonight reviewing wrong answers by domain, flag your two or three weakest areas, then start Shireen Test 1 tomorrow. Don't let gap analysis become the new delay tactic.</p>
+    <p style="margin-top:1rem;"><strong>How manageable "22 questions/day" actually is.</strong></p>
+    <p>The Expansionist called it "not an emergency — that's a system." All five peer reviewers flagged this as dangerously optimistic. One 90-question Shireen test plus proper wrong-answer review is <em>3–4 hours minimum</em>. Take the pessimists' side: if you don't have 3–4 hours/day, depth over volume wins.</p>
+  </div>
+
+  <div class="verdict-card section-blindspots">
+    <h2>🔍 Blind Spots the Council Caught</h2>
+    <p><strong>Is your exam slot actually booked?</strong> "December 5–8" is a four-day window, not a confirmed date. If it's not locked, the urgency calculus is undefined. Booking creates the accountability that makes any plan real.</p>
+    <p><strong>How many hours/day can you realistically study?</strong> Not one advisor asked. 530 questions over 24 days works at 3–4 hrs/day; it's impossible at 1–2. If you're constrained, prioritize <em>which</em> Shireen tests over attempting all six.</p>
+    <p><strong>AZ-104 content updates (2023).</strong> If Shireen or Alan Rodrigues predates the content refresh, high-volume grinding may produce false confidence. Verify your resources are current before treating any score as a reliable signal.</p>
+    <p><strong>Burnout risk.</strong> A 24-day 3–4 hrs/day sprint has a real cognitive ceiling. Build in at least one light day per week intentionally — or you'll get one accidentally at the worst time.</p>
+  </div>
+
+  <div class="verdict-card section-rec">
+    <h2>📋 The Recommendation</h2>
+    <p><strong>Start Shireen Khan Test 1 tomorrow. Make it your primary resource. Reserve Tests 5 and 6 for cold-run simulations in the final 3 days before the exam.</strong></p>
+    <ul>
+      <li><strong>Tonight (30–60 min):</strong> Review PT01/PT02 wrong answers by domain. Flag your 2–3 weakest areas. This is not a two-day audit — one focused pass to prime your attention for Shireen.</li>
+      <li><strong>Days 1–18:</strong> Shireen Tests 1–4, one every 3–4 days. After each: full review session on wrong answers, with extra attention to pre-identified weak domains. Do not skip review to move faster.</li>
+      <li><strong>Days 19–21:</strong> AI simulator (195 questions / 3 sessions) as targeted drilling on domains Shireen revealed as persistent weaknesses. Lower difficulty = confidence calibration, not primary prep.</li>
+      <li><strong>Days 22–24:</strong> Shireen Tests 5 and 6, taken cold. These are your exam simulations. Score honestly. Light review only — no cramming new material.</li>
+      <li><strong>Alan Rodrigues remaining tests:</strong> Only if you have surplus time. Not the priority.</li>
+    </ul>
+    <p style="margin-top:0.5rem;"><em>If your daily study window is under 2 hours, cut the AI simulator entirely and focus exclusively on Shireen with full review. Depth over volume.</em></p>
+  </div>
+
+  <div class="verdict-card section-first">
+    <h2>🎯 The One Thing to Do First</h2>
+    <div class="one-thing">
+      Book your exam slot for a specific date — right now, before you open any practice test.<br><br>
+      A fixed date transforms this from an abstract planning problem into a real countdown. Every other decision becomes easier once the endpoint is locked.<br><br>
+      <em>If the slot is already booked:</em> open Shireen Test 1 tomorrow morning and do not rationalize any reason to delay it further.
+    </div>
+  </div>
+
+  <!-- Advisor alignment visual -->
+  <div class="alignment-grid">
+    <h3 class="collapsible-heading">Advisor Positions at a Glance</h3>
+    <div class="advisor-row">
+      <div class="advisor-name">🔴 The Contrarian</div>
+      <div class="advisor-bar"><div class="fill nuanced" style="width:70%"></div></div>
+      <div class="advisor-verdict">Start now*</div>
+    </div>
+    <div class="advisor-row">
+      <div class="advisor-name">🟢 First Principles</div>
+      <div class="advisor-bar"><div class="fill agrees" style="width:100%"></div></div>
+      <div class="advisor-verdict">Start now</div>
+    </div>
+    <div class="advisor-row">
+      <div class="advisor-name">🔵 The Expansionist</div>
+      <div class="advisor-bar"><div class="fill agrees" style="width:100%"></div></div>
+      <div class="advisor-verdict">Start now</div>
+    </div>
+    <div class="advisor-row">
+      <div class="advisor-name">🟣 The Outsider</div>
+      <div class="advisor-bar"><div class="fill agrees" style="width:100%"></div></div>
+      <div class="advisor-verdict">Start now</div>
+    </div>
+    <div class="advisor-row">
+      <div class="advisor-name">🟠 The Executor</div>
+      <div class="advisor-bar"><div class="fill agrees" style="width:100%"></div></div>
+      <div class="advisor-verdict">Start now</div>
+    </div>
+    <p style="font-size:0.78rem;color:#8b8fa8;margin-top:0.75rem;">* The Contrarian agrees on starting Shireen now but diverges on the prerequisite: audit PT01/PT02 gaps first (2 days vs. tonight).</p>
+    <p style="font-size:0.78rem;color:#8b8fa8;margin-top:0.25rem;">Peer reviewers: 5/5 voted <strong>First Principles</strong> as the strongest response.</p>
+  </div>
+
+  <!-- Collapsible: Individual Advisor Responses -->
+  <h3 class="collapsible-heading" style="margin:1.5rem 0 0.75rem;">Full Advisor Responses</h3>
+
+  <details>
+    <summary><span class="advisor-tag tag-contrarian">The Contrarian</span> Abandoning the strategy isn't enough — fix your gaps first</summary>
+    <div class="details-body">
+      <p>The "save Shireen" strategy was never strategic — it was procrastination dressed up as planning. But here's the flaw nobody's naming: abandoning it now doesn't automatically fix the problem.</p>
+      <p>530 questions across 24 days sounds manageable until you do the math honestly. That's ~22 questions/day if you do <em>nothing else</em> — no review, no gap-filling, no re-reads. Meaningful practice requires reviewing every wrong answer, understanding why, and reinforcing weak domains. Realistically, one full 90-question Shireen test plus proper review takes 3–4 hours minimum.</p>
+      <p>The deeper flaw: more questions ≠ better retention. If you're burning through Shireen tests at a pace that doesn't allow consolidation, you're just burning your best resource for the dopamine hit of "completing" something.</p>
+      <p>The real question nobody's asking: what were your wrong answers on Alan PT01 and PT02, and have you actually fixed those gaps? A 73–78% score leaves a 22–26% failure zone unaddressed. Piling on 530 more questions before closing those gaps compounds the problem.</p>
+      <p><strong>What you should actually do:</strong> Stop debating sequencing and spend two days auditing your PT01/PT02 mistakes by domain. Then decide which resource targets your weakest domains hardest.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="advisor-tag tag-firstprinciples">First Principles</span> You're asking the wrong question — reframe from first principles</summary>
+    <div class="details-body">
+      <p>Strip away the meta-strategy entirely. What are you actually trying to accomplish? <strong>Pass AZ-104 on December 5–8.</strong> That's it. Everything else is scaffolding.</p>
+      <p>Here's the flawed assumption baked into the entire "save Shireen" strategy: that unseen questions are intrinsically more valuable than reviewed ones. <strong>They are not.</strong> What matters is whether you've internalized the knowledge domain, not whether the specific question wording is novel. Practice tests are diagnostic instruments, not finite ammunition.</p>
+      <p>The real question isn't "Shireen now or Shireen later?" It's: <em>"Which resource closes my weakest knowledge gaps fastest?"</em></p>
+      <p>If Shireen's tests are genuinely harder and more comprehensive, they are your best diagnostic tool. Using your weakest mirror last — when there's no time to fix what it reveals — is backwards. Diagnostic value is highest when you still have time to course-correct.</p>
+      <p><strong>Start Shireen immediately.</strong> Use her tests as the primary knowledge-gap detector. Use Alan Rodrigues and your AI simulator for reinforcement on weak domains. Save one or two Shireen tests for final cold-run simulation within 3 days of the exam.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="advisor-tag tag-expansionist">The Expansionist</span> You have a volume advantage — use it as a training system</summary>
+    <div class="details-body">
+      <p>The "save Shireen" strategy was built on scarcity that doesn't exist. Now that you know you have 530 questions, the whole framing flips — this isn't a resource to protect, it's a <em>massive</em> volume advantage most AZ-104 candidates don't have.</p>
+      <p>530 high-difficulty questions across 24 days is roughly 22 questions per day. That's not an emergency — that's a system. You could run Shireen questions daily as your primary reps, use Alan Rodrigues as a periodic benchmark, and weave in your AI simulator for gap-targeted drilling. That's three complementary feedback loops running simultaneously, not sequentially.</p>
+      <p>The bigger upside: Shireen's high difficulty isn't a reason to delay — it's a reason to frontload. Hard questions expose unknown unknowns earlier. Every wrong answer in week one is a week of learning. Every wrong answer in week three is just anxiety.</p>
+      <p>Blow up the sequencing plan entirely. Start Shireen now, run it as your backbone, and let the other resources fill in around it. The candidate who finishes all 530 Shireen questions with a week to spare is in a completely different position than the one who cracks them open on day 20.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="advisor-tag tag-outsider">The Outsider</span> The original logic is void — you can't optimize a misunderstanding</summary>
+    <div class="details-body">
+      <p>The "save Shireen" strategy sounds like it made sense at the time, but it was built on a factual error — you thought you were preserving a small resource, but you were actually sitting on your largest one. The original logic is void. You can't optimize around a misunderstanding.</p>
+      <p>You're treating practice tests like a finite fuel tank to be rationed. But if the goal is exam readiness, you want <em>maximum exposure to hard questions as early as possible</em>, so you have time to actually learn from wrong answers. Saving hard questions for the end means you identify gaps too late to fix them.</p>
+      <p>The AI simulator is probably the lowest-stakes resource — use it for warm-up or gap-filling, not as a primary sequence anchor.</p>
+      <p>Simple reframe: treat every day without hard practice questions as a wasted diagnostic opportunity. You've been holding the diagnostic tool in your hands the whole time.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="advisor-tag tag-executor">The Executor</span> Stop planning. Here's what you do Monday morning.</summary>
+    <div class="details-body">
+      <p>Drop the "save Shireen" strategy. Right now. Here's the actual plan:</p>
+      <p><strong>Monday morning action:</strong> Open Shireen Khan Test 1. Take it. That's your new primary resource.</p>
+      <p>You cannot sprint through 530 questions in the final week. The math doesn't work. At 6 × 90 questions, it's a full training regime on its own.</p>
+      <ul>
+        <li><strong>Days 1–18:</strong> Rotate through Shireen's 6 tests (one every ~3 days). After each test, spend 1 day reviewing every wrong answer — not skimming, actually looking up the topic.</li>
+        <li><strong>Days 19–22:</strong> AI simulator (195 questions over 3 sessions). Lower difficulty = confidence calibration tool, not primary prep.</li>
+        <li><strong>Days 23–24:</strong> Rescan Alan Rodrigues PT01/PT02 wrong answers. 2–3 hours, not full retakes.</li>
+      </ul>
+      <p>The only question you need to answer today: <em>What time are you sitting down to take Shireen Test 1?</em> Not "this week." Today or tomorrow. Everything else is planning theater.</p>
+    </div>
+  </details>
+
+  <!-- Collapsible: Peer Reviews -->
+  <h3 class="collapsible-heading" style="margin:1.5rem 0 0.75rem;">Peer Review Highlights</h3>
+
+  <details>
+    <summary>Peer Review Consensus Summary</summary>
+    <div class="details-body">
+      <p><strong>Strongest response — 5/5 reviewers: First Principles (Response B)</strong><br>
+      Unanimously selected for attacking the root assumption ("unseen questions are intrinsically more valuable"), reframing the goal correctly, and giving the most actionable integration plan including the cold-simulation reservation tactic.</p>
+
+      <p><strong>Biggest blind spot — 3/5 reviewers: The Expansionist (Response E)</strong><br>
+      "22 questions/day — that's a system" ignores review time entirely. 22 raw questions/day ≠ 22 questions + wrong-answer review + domain reinforcement, which is 3–4 hours/day minimum. The other 2 reviewers flagged The Executor for dismissing Alan Rodrigues PT01/PT02 too aggressively given the 22–26% failure zone.</p>
+
+      <p><strong>Shared blind spot — flagged by 5/5 reviewers:</strong><br>
+      No advisor asked whether the exam date is confirmed. "December 5–8" is a 4-day window, not a booked slot. This is the actual first action item. Additionally: no advisor asked how many hours/day the candidate can realistically study, or modeled burnout risk over a 24-day intensive sprint.</p>
+    </div>
+  </details>
+
+  <div class="footer">
+    Council session: 2026-11-12 · AZ-104 study strategy · 5 advisors · 5 reviewers · 1 chairman<br>
+    Methodology by <a href="https://x.com/karpathy" target="_blank">Andrej Karpathy</a>. Adaptation by <a href="https://instagram.com/tenfoldmarc" target="_blank">@tenfoldmarc</a>.
+  </div>
+
+</div>
+</body>
+</html>
