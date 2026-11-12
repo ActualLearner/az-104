@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0284c7">
+  <title>AZ-104 Master Guide: App Service Deployment & Authentication Architecture</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1.5rem 1rem 4rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin-top: 2rem; margin-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; color: var(--accent-indigo); margin-top: 1.4rem; margin-bottom: 0.5rem; }
+    h4 { font-size: 0.95rem; font-weight: 700; color: #334155; margin-top: 1rem; margin-bottom: 0.4rem; }
+    p { margin-bottom: 1rem; font-size: 0.925rem; color: #334155; }
+    ul, ol { margin-left: 1.5rem; margin-bottom: 1.2rem; font-size: 0.925rem; color: #334155; }
+    li { margin-bottom: 0.35rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1.2rem 0; overflow-x: auto; display: block; }
+    th, td { padding: 0.65rem 0.85rem; text-align: left; border: 1px solid var(--border); }
+    th { background: #f8fafc; font-weight: 700; color: #1e293b; }
+    tr:nth-child(even) { background: #fbfcfe; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; color: #0f172a; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85rem; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 1.15rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1.2rem; }
+    pre code { background: transparent; color: inherit; padding: 0; font-size: 0.85rem; }
+    blockquote { border-left: 4px solid var(--accent-amber); background: #fffbeb; padding: 0.85rem 1.15rem; border-radius: 6px; margin: 1.2rem 0; font-size: 0.875rem; color: #92400e; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+    .callout-blue { border-left: 4px solid var(--accent-blue); background: #f0f9ff; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .callout-green { border-left: 4px solid var(--accent-green); background: #f0fdf4; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .callout-red { border-left: 4px solid var(--accent-red); background: #fef2f2; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .diagram-box { background: #0f172a; color: #f8fafc; padding: 1.25rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; line-height: 1.5; overflow-x: auto; margin: 1.2rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Back to Master Command Hub</a>
+      <span style="font-size:0.8rem; color:var(--text-muted);">AZ-104 Core Architecture Series</span>
+      <a href="azure_abac_role_assignment_conditions_master_guide.html">Next: Azure ABAC Conditions →</a>
+    </div>
+
+    <div class="content">
+      <span class="badge badge-purple">Domain 3: Compute & App Services</span>
+      <h1>App Service Deployment &amp; Authentication Architecture</h1>
+      <p style="font-size:0.95rem; color:var(--text-muted);">
+        Comprehensive end-to-end breakdown: The SCM/Kudu engine, Web Deploy, FTP vs FTPS, deployment credentials, Basic Auth deprecation, and built-in RBAC roles.
+      </p>
+
+      <div class="callout-green">
+        <strong>🎯 30-Second Exam Cheat Sheet:</strong><br>
+        • <strong>Developer Least Privilege:</strong> Always assign <code>Website Contributor</code> (never Owner/Contributor).<br>
+        • <strong>Modern Deployments:</strong> Web Deploy + Microsoft Entra ID (Bearer token over port 443). Enforces MFA and RBAC.<br>
+        • <strong>Legacy Deployments:</strong> FTP/FTPS &amp; Publish Profiles use Basic Auth (static passwords). Insecure, no MFA, high risk.<br>
+        • <strong>Modern Security Baseline:</strong> Disable Basic Auth on <code>basicPublishingCredentialsPolicies/ftp</code> and <code>/scm</code>.<br>
+        • <strong>SCM vs SCIM:</strong> <em>SCM</em> = Source Control Management (App Service Kudu). <em>SCIM</em> = Identity sync for Entra ID users to SaaS apps.
+      </div>
+
+      <h2>1. The Under-the-Hood Anatomy: Public Site vs. SCM "Kudu" Twin</h2>
+      <p>
+        When you deploy an Azure App Service web app named <code>PortalApp</code>, Azure secretly provisions <strong>two web endpoints</strong> backed by the same storage:
+      </p>
+      
+      <div class="diagram-box">
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Azure App Service Hosting                       │
+├───────────────────────────────────┬────────────────────────────────────┤
+│ 1. Public Workload Endpoint       │ 2. Secret Management SCM Twin      │
+│    https://portalapp.azurewebsites.net │    https://portalapp.scm.azurewebsites.net │
+├───────────────────────────────────┴────────────────────────────────────┤
+│ Under-the-hood File System:                                           │
+│   Windows: C:\home\site\wwwroot\ (HTML, JS, Binaries, Configs)         │
+│   Linux:   /home/site/wwwroot/                                         │
+└────────────────────────────────────────────────────────────────────────┘
+      </div>
+
+      <p>
+        The public endpoint is what end-users hit. The <strong>SCM (Source Control Management)</strong> site, powered by the open-source <strong>Kudu</strong> service, is the administrative backdoor. It provides:
+      </p>
+      <ul>
+        <li><strong>Deployment Engine:</strong> Receives Web Deploy, Git, ZIP Deploy, and GitHub Actions payloads.</li>
+        <li><strong>Interactive Debug Console:</strong> PowerShell / Bash terminal directly inside the running container or sandbox.</li>
+        <li><strong>Process Explorer &amp; Diagnostic Logs:</strong> Live process memory dumps, streaming execution logs.</li>
+      </ul>
+
+      <h2>2. FTP vs. FTPS: Why Cloud Security Rejects It</h2>
+      <p>
+        FTP (File Transfer Protocol) was invented in 1971. While familiar to webmasters, it represents an anti-pattern in modern enterprise cloud architecture.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Protocol</th>
+            <th>Ports Used</th>
+            <th>Data Encryption</th>
+            <th>Authentication Type</th>
+            <th>AZ-104 Exam Assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Plain FTP</strong></td>
+            <td>Port 21</td>
+            <td>❌ Plaintext (Zero encryption)</td>
+            <td>Static Username + Password</td>
+            <td><strong>Strictly Forbidden:</strong> Credentials and source code transmitted cleartext over internet.</td>
+          </tr>
+          <tr>
+            <td><strong>FTPS (FTP over SSL/TLS)</strong></td>
+            <td>Port 990 (Implicit) or Port 21 (Explicit)</td>
+            <td>✅ Encrypted via TLS</td>
+            <td>Static Username + Password</td>
+            <td><strong>Legacy / Insecure:</strong> Encrypted in transit, but still uses Basic Auth. No MFA, no Entra ID, all-or-nothing access.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Fatal Flaws of FTP/FTPS on the Exam:</h3>
+      <ol>
+        <li><strong>No Entra ID Integration:</strong> You cannot log into an FTP client using your corporate Azure identity (<code>user@company.com</code>).</li>
+        <li><strong>Zero MFA Support:</strong> FTP clients cannot prompt for mobile push notifications or FIDO2 hardware keys.</li>
+        <li><strong>All-or-Nothing Blast Radius:</strong> An FTP user has unrestricted write/delete access across the entire <code>wwwroot</code> directory.</li>
+      </ol>
+
+      <h2>3. Web Deploy (MSDeploy): The Enterprise Standard</h2>
+      <p>
+        <strong>Web Deploy (Microsoft Web Deployment Tool)</strong> was created by Microsoft to package, synchronize, and deploy web applications directly over HTTPS (Port <strong>443</strong>).
+      </p>
+      <ul>
+        <li><strong>Delta Sync:</strong> Only transfers files that have changed since the previous deployment, minimizing downtime and bandwidth.</li>
+        <li><strong>SCM Integration:</strong> Connects to <code>https://&lt;app&gt;.scm.azurewebsites.net/msdeploy.axd</code>.</li>
+        <li><strong>Entra ID Authentication:</strong> Developers logging in from Visual Studio or Azure CLI authenticate with their personal Microsoft Entra ID account, satisfying zero-trust requirements.</li>
+      </ul>
+
+      <h2>4. The Three Deployment Credential Models</h2>
+      <p>Azure App Service supports three credential tiers:</p>
+
+      <div class="diagram-box">
+1. Microsoft Entra ID (Recommended):
+   Developer (alice@corp.com) ──[Entra ID MFA]──> OAuth Token ──> Web Deploy (Port 443) ──> App Service
+   (Audited, Least Privilege, Zero Static Passwords)
+
+2. Application-Level Credentials (Publishing Profile):
+   Developer ──[*.PublishSettings XML File with $app password]──> App Service
+   (Scoped to 1 App, Static Password, No MFA)
+
+3. User-Level Deployment Credentials:
+   Developer ──[Single Username/Password set in Portal]──> ANY App Service in Subscription
+   (High Blast Radius, Subscription-wide, Legacy)
+      </div>
+
+      <h2>5. Disabling Basic Auth &amp; Enforcing Zero-Trust</h2>
+      <p>
+        In modern Azure tenants, organizations enforce policies to turn off basic credentials completely:
+      </p>
+      <ul>
+        <li><code>basicPublishingCredentialsPolicies/ftp</code>: Set to <code>false</code> to disable all FTP/FTPS access.</li>
+        <li><code>basicPublishingCredentialsPolicies/scm</code>: Set to <code>false</code> to force all deployments to use Entra ID tokens (blocks publish profiles).</li>
+      </ul>
+
+      <pre><code># Azure CLI: Permanently block Basic Authentication deployments
+az resource update --resource-group rg-prod --name ftp \
+  --resource-type basicPublishingCredentialsPolicies \
+  --parent sites/PortalApp --set properties.allow=false
+
+az resource update --resource-group rg-prod --name scm \
+  --resource-type basicPublishingCredentialsPolicies \
+  --parent sites/PortalApp --set properties.allow=false</code></pre>
+
+      <h2>6. App Service Built-in RBAC Matrix</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Can Deploy Code?</th>
+            <th>Can Restart App?</th>
+            <th>Can Change Config?</th>
+            <th>Can Scale Plan?</th>
+            <th>Least Privilege For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Website Contributor</strong></td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>❌ No</td>
+            <td><strong>Application Developers</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Web Plan Contributor</strong></td>
+            <td>❌ No</td>
+            <td>❌ No</td>
+            <td>❌ No</td>
+            <td>✅ Yes</td>
+            <td><strong>Infrastructure Capacity Engineers</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Contributor</strong></td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>Full management (Over-privileged for devs)</td>
+          </tr>
+          <tr>
+            <td><strong>Owner</strong></td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>✅ Yes</td>
+            <td>Subscription Administrators (Grants IAM access)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>7. SCM vs. SCIM: Never Confuse These Acronyms</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>SCM (Source Control Management)</th>
+            <th>SCIM (System for Cross-domain Identity Management)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Azure Service</strong></td>
+            <td>Azure App Service</td>
+            <td>Microsoft Entra ID</td>
+          </tr>
+          <tr>
+            <td><strong>Purpose</strong></td>
+            <td>Deployment engine &amp; debug console (Kudu)</td>
+            <td>Automated user provisioning protocol</td>
+          </tr>
+          <tr>
+            <td><strong>Endpoint</strong></td>
+            <td><code>https://&lt;app&gt;.scm.azurewebsites.net</code></td>
+            <td><code>https://&lt;saas-app&gt;/scim/v2/Users</code></td>
+          </tr>
+          <tr>
+            <td><strong>Example Use</strong></td>
+            <td>Uploading web app code and viewing logs</td>
+            <td>Syncing employee accounts into Slack, Zoom, Salesforce</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>8. Exam Question Scenarios &amp; Distractor Dissection</h2>
+      
+      <div class="callout-blue">
+        <strong>Exam Scenario:</strong> "The development team plans to publish updates to PortalApp using Web Deploy. They must authenticate using their Microsoft Entra ID accounts. The solution must follow the principle of least privilege."
+        <ul style="margin-top:0.5rem; margin-left:1.25rem;">
+          <li>❌ <strong>Distractor: Owner / Contributor</strong> — Allows deleting the app and changing permissions. Violates least privilege.</li>
+          <li>❌ <strong>Distractor: User-level FTPS Credentials</strong> — Uses basic auth, subscription-wide blast radius, does not use Entra ID.</li>
+          <li>❌ <strong>Distractor: Application-level FTPS Credentials</strong> — Does not use Entra ID accounts, lacks MFA.</li>
+          <li>✅ <strong>CORRECT: Website Contributor</strong> — Provides deployment and web app management rights with zero IAM or plan scaling permissions.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

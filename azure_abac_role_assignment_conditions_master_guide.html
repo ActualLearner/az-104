@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0284c7">
+  <title>AZ-104 Master Guide: Azure Role Assignment Conditions (ABAC)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1.5rem 1rem 4rem;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin-top: 2rem; margin-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; color: var(--accent-indigo); margin-top: 1.4rem; margin-bottom: 0.5rem; }
+    p { margin-bottom: 1rem; font-size: 0.925rem; color: #334155; }
+    ul, ol { margin-left: 1.5rem; margin-bottom: 1.2rem; font-size: 0.925rem; color: #334155; }
+    li { margin-bottom: 0.35rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1.2rem 0; overflow-x: auto; display: block; }
+    th, td { padding: 0.65rem 0.85rem; text-align: left; border: 1px solid var(--border); }
+    th { background: #f8fafc; font-weight: 700; color: #1e293b; }
+    tr:nth-child(even) { background: #fbfcfe; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; color: #0f172a; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85rem; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 1.15rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1.2rem; }
+    pre code { background: transparent; color: inherit; padding: 0; font-size: 0.85rem; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+    .callout-green { border-left: 4px solid var(--accent-green); background: #f0fdf4; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .callout-blue { border-left: 4px solid var(--accent-blue); background: #f0f9ff; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .callout-red { border-left: 4px solid var(--accent-red); background: #fef2f2; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .diagram-box { background: #0f172a; color: #f8fafc; padding: 1.25rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; line-height: 1.5; overflow-x: auto; margin: 1.2rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Back to Master Command Hub</a>
+      <span style="font-size:0.8rem; color:var(--text-muted);">AZ-104 Core Architecture Series</span>
+      <a href="app_service_deployment_and_auth_master_guide.html">← Prev: App Service Deployment</a>
+    </div>
+
+    <div class="content">
+      <span class="badge badge-purple">Domain 1 &amp; 2: Identity, Governance &amp; Storage</span>
+      <h1>Azure Role Assignment Conditions (Azure ABAC)</h1>
+      <p style="font-size:0.95rem; color:var(--text-muted);">
+        Mastering Attribute-Based Access Control: Supported storage services, condition syntax, boolean logic evaluation, and how to deconstruct exam traps.
+      </p>
+
+      <div class="callout-green">
+        <strong>🎯 30-Second Exam Cheat Sheet:</strong><br>
+        • <strong>What is ABAC:</strong> Adding fine-grained conditional filters to an existing RBAC role assignment.<br>
+        • <strong>Supported Storage Services:</strong> Supported on <strong>Blob Storage (containers &amp; blobs)</strong> and <strong>Queue Storage</strong> ONLY. (Never Files or Tables!).<br>
+        • <strong>The Disjunction Pattern:</strong> <code>(Action != write) OR (Constraint)</code> means <strong>all reads are 100% permitted</strong>; the constraint only restricts write operations.<br>
+        • <strong>Attribute Sources:</strong> Request (path, container name), Resource (Blob Index Tags), Principal (Entra ID Custom Security Attributes).
+      </div>
+
+      <h2>1. Why Does Azure ABAC Exist?</h2>
+      <p>
+        In traditional Azure RBAC, access is governed strictly by the <strong>Scope</strong> (Management Group, Subscription, Resource Group, Resource).
+      </p>
+      <p>
+        <strong>The Problem:</strong> Imagine a storage account containing 500 blob containers. If you want UserA to access only 20 specific containers, you would have to create 20 separate role assignments at each container level.
+      </p>
+      <ul>
+        <li>Azure subscriptions enforce a hard limit of <strong>4,000 role assignments</strong>.</li>
+        <li>Managing hundreds of micro-assignments causes massive administrative overhead.</li>
+      </ul>
+      <p>
+        <strong>The ABAC Solution:</strong> Assign the role <em>once</em> at the Storage Account scope, and attach a <strong>Condition</strong> (e.g., <code>@Request[container:name] == 'archive'</code>). Access is evaluated dynamically at runtime.
+      </p>
+
+      <h2>2. Supported Services &amp; Resource Actions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Azure Service</th>
+            <th>Supports Role Conditions?</th>
+            <th>Key Supported Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Azure Blob Storage</strong></td>
+            <td>✅ <strong>YES</strong></td>
+            <td>Read Blob, Write Blob, Delete Blob, Delete Blob Version, Add Blob, Create Container</td>
+          </tr>
+          <tr>
+            <td><strong>Azure Queue Storage</strong></td>
+            <td>✅ <strong>YES</strong></td>
+            <td>Read Messages, Add Messages, Delete Messages, Update Messages</td>
+          </tr>
+          <tr>
+            <td><strong>Azure Files</strong></td>
+            <td>❌ <strong>NO</strong></td>
+            <td>Not supported. (Exam Distractor!)</td>
+          </tr>
+          <tr>
+            <td><strong>Azure Tables</strong></td>
+            <td>❌ <strong>NO</strong></td>
+            <td>Not supported. (Exam Distractor!)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>3. Anatomy of a Condition Expression</h2>
+      <p>An Azure ABAC condition consists of an action check combined with attribute predicates:</p>
+
+      <div class="diagram-box">
+(
+  @Request[Microsoft.Storage/storageAccounts/blobServices/containers/blobs:path] StringLike 'finance/*'
+)
+AND
+(
+  @Resource[Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags:Project{$key$}] StringEquals 'Alpha'
+)
+      </div>
+
+      <h3>The Three Sources of Attributes:</h3>
+      <ol>
+        <li><strong>Request Attributes (<code>@Request</code>):</strong> Parameters passed in the current REST API call (e.g., target container name, blob path prefix).</li>
+        <li><strong>Resource Attributes (<code>@Resource</code>):</strong> Metadata stored on the target Azure resource, specifically <strong>Blob Index Tags</strong> (key-value pairs indexed on blobs).</li>
+        <li><strong>Principal Attributes (<code>@Principal</code>):</strong> Metadata stored on the user identity in Microsoft Entra ID, specifically <strong>Custom Security Attributes</strong>.</li>
+      </ol>
+
+      <h2>4. The Boolean Logic Engine: The "Action != Write" Trap</h2>
+      <p>
+        In Microsoft certification exams, the test-writers love to test your understanding of <strong>Boolean Disjunction (<code>OR</code>)</strong>.
+      </p>
+      <p>Consider this standard condition template:</p>
+      <pre><code>RuleBeta = (Action is NOT a blob-write) OR (Blob path contains '2')</code></pre>
+
+      <div class="diagram-box">
+                            User requests READ on file1.dat
+                                         │
+                   Is the operation a write action?
+                       /                       \
+                     YES                       NO
+                     /                           \
+         Clause 1 = FALSE                    Clause 1 = TRUE
+                 │                                   │
+      Must check Clause 2:                  Condition SATISFIED!
+    Does path contain '2'?               (TRUE or Anything = TRUE)
+      /              \                               │
+    YES              NO                              ▼
+  Allowed          DENIED                      ACCESS GRANTED
+      </div>
+
+      <div class="callout-blue">
+        <strong>Why is it written with an <code>OR</code>?</strong><br>
+        If the policy were written as <code>Blob path contains '2'</code> without the <code>Action != write</code> clause, the user would be blocked from <em>reading</em> any other files! Adding <code>(Action != write) OR</code> ensures that <strong>read operations are completely unrestricted</strong>, and the path constraint is only enforced when the user attempts a <strong>write operation</strong>.
+      </div>
+
+      <h2>5. Deep Walkthrough: Shireen Khan Questions 2, 3 &amp; 4</h2>
+      
+      <h3>The Setup:</h3>
+      <ul>
+        <li><code>storagenorth</code>: container <code>archive</code> (<code>file1.dat</code>), container <code>media</code> (<code>file2.dat</code>).</li>
+        <li><code>storagesouth</code>: container <code>archive</code> (<code>file3.dat</code>).</li>
+        <li><strong>Priya:</strong> <code>Storage Blob Data Reader</code> at Subscription with <code>RuleAlpha</code>: <code>(action != read) OR (container == 'archive')</code>.</li>
+        <li><strong>Sam:</strong> <code>Storage Blob Data Owner</code> at <code>storagenorth</code> with <code>RuleBeta</code>: <code>(action != write) OR (path contains '2')</code>.</li>
+      </ul>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Target &amp; Operation</th>
+            <th>Clause 1 Evaluation</th>
+            <th>Clause 2 Evaluation</th>
+            <th>Full Expression Result</th>
+            <th>Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Q2:</strong> Priya reads <code>file2.dat</code></td>
+            <td><code>media/file2.dat</code> (Read)</td>
+            <td><code>action != read</code> $\to$ <strong>FALSE</strong></td>
+            <td><code>container == 'archive'</code> $\to$ <strong>FALSE</strong></td>
+            <td>FALSE OR FALSE $\to$ <strong>FALSE</strong></td>
+            <td>❌ <strong>Denied</strong> (Answer: False)</td>
+          </tr>
+          <tr>
+            <td><strong>Q3:</strong> Priya reads <code>file3.dat</code></td>
+            <td><code>archive/file3.dat</code> (Read)</td>
+            <td><code>action != read</code> $\to$ <strong>FALSE</strong></td>
+            <td><code>container == 'archive'</code> $\to$ <strong>TRUE</strong></td>
+            <td>FALSE OR TRUE $\to$ <strong>TRUE</strong></td>
+            <td>✅ <strong>Allowed</strong> (Answer: True)</td>
+          </tr>
+          <tr>
+            <td><strong>Q4:</strong> Sam reads <code>file1.dat</code></td>
+            <td><code>archive/file1.dat</code> (Read)</td>
+            <td><code>action != write</code> $\to$ <strong>TRUE</strong></td>
+            <td><code>path contains '2'</code> $\to$ <strong>FALSE</strong></td>
+            <td>TRUE OR FALSE $\to$ <strong>TRUE</strong></td>
+            <td>✅ <strong>Allowed</strong> (Answer: True)</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -323,14 +323,14 @@
 
     <!-- TOP NAVIGATION -->
     <nav class="top-nav">
-      <a class="nav-link active" href="#workflow">⚡ Daily Flow</a>
+      <a class="nav-link active" href="#workflow">⚡ Active Flow</a>
       <a class="nav-link" href="#roadmap">🗺️ Roadmap</a>
       <a class="nav-link" href="exam_simulator.html" style="background:var(--accent-indigo); color:#ffffff; box-shadow:0 2px 6px rgba(79,70,229,0.3);">🎯 Exam Simulator (195Q)</a>
       <a class="nav-link" href="#practice">🧪 Practice Exams</a>
-      <a class="nav-link" href="#labs">🔬 Official Labs</a>
-      <a class="nav-link" href="#study-stack">📚 Study Stack</a>
-      <a class="nav-link" href="#notes">📝 Notes & Guides</a>
-      <a class="nav-link" href="#error-journal">📓 Error Journal</a>
+      <a class="nav-link" href="#notes">📝 Master Guides</a>
+      <a class="nav-link" href="app_service_deployment_and_auth_master_guide.html" target="_blank" style="background:#0284c7; color:#fff;">🚀 App Service Auth</a>
+      <a class="nav-link" href="azure_abac_role_assignment_conditions_master_guide.html" target="_blank" style="background:#4f46e5; color:#fff;">🔐 Azure ABAC</a>
+      <a class="nav-link" href="#error-journal">📓 Error Journal (71Q)</a>
       <a class="nav-link" href="#readiness">🎯 Readiness Gate</a>
       <a class="nav-link" href="reddit-az104-research-2024-2025.html" target="_blank" style="background:#0f172a; color:#fff;">📊 Reddit Study (N=38)</a>
     </nav>
@@ -350,177 +350,95 @@
       </div>
     </header>
 
-    <!-- SECTION 1: DAILY WORKFLOW -->
+    <!-- SECTION 1: STREAMLINED ACTIVE WORKFLOW -->
     <section class="card" id="workflow">
-      <h2>⚡ Sequential Daily Flow: Disciplined 6-Stage Progression</h2>
+      <h2>⚡ Streamlined 3-Stage Exam Sprint: Alan → Practice Exams → Exam Pass</h2>
       <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
-        Follow this strict sequential pipeline: build foundational domain theory first, consolidate hands-on muscle memory, baseline on MS Learn, cram high-altitude architecture, conquer unguided scenario challenges, and finish with Shireen Khan's practice gauntlet.
+        The verified, distraction-free progression: Complete comprehensive theory once, execute rigorous high-difficulty practice exams with forensic error journaling, and sit the official exam with high confidence.
       </p>
 
       <div class="grid-3">
-        <div class="step-box">
-          <span class="step-num">1</span>
+        <div class="step-box" style="border-top: 4px solid var(--accent-green); background:#f0fdf4;">
+          <span class="step-num" style="background:var(--accent-green);">1</span>
           <div class="step-title">Sequential Theory (Alan Rodrigues)</div>
+          <span class="badge badge-green" style="margin-bottom:0.4rem;">100% COMPLETE</span>
           <div class="step-desc">
-            Complete the <strong>Alan Rodrigues AZ-104 Course</strong> on Udemy (1.25x–1.5x) <em>strictly in sequential order</em> (Identity → Governance → Storage → Compute → Networking → Monitoring). Never skip ahead; Azure services have strict architectural dependencies.
+            Finished all <strong>313 lectures</strong> across all 5 syllabus domains (Identity → Governance → Storage → Compute → Networking → Monitoring). Architectural foundation and mental models fully established.
           </div>
         </div>
 
-        <div class="step-box">
-          <span class="step-num">2</span>
-          <div class="step-title">Post-Course Guided Labs (01–11)</div>
+        <div class="step-box" style="border-top: 4px solid var(--accent-indigo); background:#f5f3ff;">
+          <span class="step-num" style="background:var(--accent-indigo);">2</span>
+          <div class="step-title">Practice Exams &amp; Error Journaling</div>
+          <span class="badge badge-purple" style="margin-bottom:0.4rem;">ACTIVE STAGE</span>
           <div class="step-desc">
-            Execute all official <strong>Microsoft Learning GitHub Labs (01–11)</strong> in the Azure Portal at the end of the course. Solidify tactile muscle memory, blade locations, and resource group lifecycles. <em>Golden Rule: Delete Resource Groups immediately!</em>
+            Execute high-difficulty exams: <strong>Alan Rodrigues PT1 &amp; PT2</strong>, custom <strong>195-Question Exam Simulator</strong>, and <strong>Shireen Khan's 6 Practice Tests</strong>. Every missed question is forensically broken down into the 6-part Error Journal.
           </div>
         </div>
 
-        <div class="step-box">
+        <div class="step-box" style="border-top: 4px solid var(--accent-blue);">
           <span class="step-num">3</span>
-          <div class="step-title">Full Diagnostic Baseline (MS Learn)</div>
+          <div class="step-title">Readiness Gate &amp; Official Exam</div>
+          <span class="badge badge-blue" style="margin-bottom:0.4rem;">TARGET: LATE NOV / DEC</span>
           <div class="step-desc">
-            Take the <strong>Microsoft Learn 50-Question Assessment</strong> ONLY after finishing all 5 domains. Because questions are randomly drawn from the entire syllabus, testing early wastes questions on unstudied topics. This gives an unpolluted baseline score.
-          </div>
-        </div>
-
-        <div class="step-box">
-          <span class="step-num">4</span>
-          <div class="step-title">Architectural Cram (John Savill)</div>
-          <div class="step-desc">
-            Watch <strong>John Savill's AZ-104 Exam Cram V2</strong> & deep-dive masterclasses on YouTube. Connects disparate topics into unified enterprise topologies (Hub-Spoke, VNet Peering, Private Endpoints, Storage Replication, and Entra ID governance).
-          </div>
-        </div>
-
-        <div class="step-box">
-          <span class="step-num">5</span>
-          <div class="step-title">Unguided Scenarios (No Guides)</div>
-          <div class="step-desc">
-            Ask your AI partner for an <strong>Enterprise Scenario Challenge</strong> with real-world constraints. Build the entire architecture in the live Azure Portal with <em>zero step-by-step guides</em>. Verify traffic/permissions, test edge failure cases, then teardown.
-          </div>
-        </div>
-
-        <div class="step-box">
-          <span class="step-num">6</span>
-          <div class="step-title">Testing Gauntlet (Shireen Khan)</div>
-          <div class="step-desc">
-            Calibrate with Tutorials Dojo 20Q sampler, then tackle <strong>Shireen Khan's 6 Practice Exams on Udemy</strong> (Review Mode only). Paste every wrong answer & guess into chat for deep <strong>AI Error Journaling</strong> until scoring <strong>≥85%</strong>.
+            Validate scoring consistency (≥70–75%+ on Shireen Khan tests). Review master reference guides and weak topic clusters. Sit the official Pearson VUE exam and pass AZ-104 (≥700 / 1000).
           </div>
         </div>
       </div>
 
       <!-- Current Action Item -->
-      <div class="callout">
-        <strong>📍 Active Phase — Phase 2: Practice Exams &amp; Diagnostic Error Journaling</strong><br>
-        1. <strong>Video Course:</strong> ✅ <strong>313 / 313 lectures COMPLETE</strong> (Alan Rodrigues AZ-104, Nov 8 2026).<br>
-        2. <strong>Current Sprint:</strong> Tutorials Dojo Sampler → Alan Rodrigues Practice Tests 1 &amp; 2 → Shireen Khan (final gate).<br>
-        3. <strong>Protocol:</strong> Every missed/guessed question gets pasted to AI for dissection → auto-logged to <a href="error_journal.html" target="_blank" style="font-weight:700; color:var(--accent-green);">Error Journal</a>.<br>
-        4. <strong>Exam Target:</strong> Dec 5–8, 2026 (ESI Voucher expires ~Dec 19, 2026).
+      <div class="callout" style="border-left-color:var(--accent-indigo); background:#faf5ff;">
+        <strong>📍 Active Phase — Stage 2: Practice Exams &amp; Active Error Journaling</strong><br>
+        1. <strong>Theory Foundation:</strong> ✅ <strong>313 / 313 lectures COMPLETE</strong> (Alan Rodrigues AZ-104).<br>
+        2. <strong>Practice Progress:</strong> Alan PT01 (73.8%), Alan PT02 (78.4%), Shireen Khan Test #1 (74.4% cold — 67/90 correct!).<br>
+        3. <strong>Forensic Protocol:</strong> All 22 missed mechanics from Shireen Test #1 logged into <a href="error_journal.html" target="_blank" style="font-weight:700; color:var(--accent-indigo);">Error Journal (71 entries total)</a>.<br>
+        4. <strong>Exam Target:</strong> Booking for late November / early December (ESI Voucher valid through Dec 19, 2026).
       </div>
     </section>
 
-    <!-- SECTION 2: 5-PHASE MASTER ROADMAP -->
+    <!-- SECTION 2: STREAMLINED ROADMAP -->
     <section class="card" id="roadmap">
-      <h2>🗺️ The 5-Phase Master Roadmap</h2>
+      <h2>🗺️ The Streamlined Master Roadmap</h2>
       <table>
         <thead>
           <tr>
-            <th>Phase</th>
+            <th>Stage</th>
             <th>Primary Focus</th>
             <th>Core Activities</th>
-            <th>Target Platform</th>
-            <th>Exit Benchmark</th>
+            <th>Status / Outcome</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Phase 1</strong><br><span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">✅ DONE</span></td>
-            <td><strong>Sequential Theory & Architectural Foundations</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Domains 1 to 5</span></td>
-            <td>Alan Rodrigues AZ-104 Course in sequential order (1.25x–1.5x)</td>
-            <td>Udemy (Personal Plan)</td>
-            <td>100% Course Completion; Core architectural models understood</td>
+            <td><strong>Stage 1</strong></td>
+            <td><strong>Sequential Theory &amp; Foundations</strong></td>
+            <td>Alan Rodrigues AZ-104 Course in sequential order (Domains 1 to 5)</td>
+            <td><span class="badge badge-green">✅ 100% COMPLETE</span> (313 Lectures)</td>
           </tr>
           <tr>
-            <td><strong>Phase 2</strong></td>
-            <td><strong>Guided Portal Labs & Tactile Muscle Memory</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Hands-On Execution</span></td>
-            <td>Execute Official GitHub Labs 01–11 in Azure Portal; verify CLI/ARM</td>
-            <td>Azure Portal / Sandbox</td>
-            <td>Complete Labs 01–11; 100% clean resource group teardown</td>
+            <td><strong>Stage 2</strong></td>
+            <td><strong>Practice Exams &amp; Error Journaling</strong></td>
+            <td>
+              • Alan Rodrigues PT01 (73.8%) &amp; PT02 (78.4%)<br>
+              • AZ-104 Exam Simulator (3 Exams • 195 Questions)<br>
+              • Shireen Khan 6 Full Exams (Test 1: 74% cold)<br>
+              • 6-Part SOP Error Journaling
+            </td>
+            <td><span class="badge badge-purple">⚡ ACTIVE NOW</span> (71 Errors Mastered)</td>
           </tr>
           <tr>
-            <td><strong>Phase 3</strong></td>
-            <td><strong>Diagnostic Baseline & Savill Architectural Cram</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Cross-Domain Synthesis</span></td>
-            <td>MS Learn 50-Q Comprehensive Assessment + John Savill Study Cram V2</td>
-            <td>MS Learn + YouTube</td>
-            <td>Baseline score recorded on MS Learn; Savill Cram fully digested</td>
-          </tr>
-          <tr>
-            <td><strong>Phase 4</strong></td>
-            <td><strong>Unguided Scenario Challenges ("No Training Wheels")</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Active Problem Solving</span></td>
-            <td>Build AI-generated enterprise constraint scenarios in Portal with zero guides</td>
-            <td>Azure Portal + Chat Prompt</td>
-            <td>Deploy and validate 3+ complex scenarios without external instructions</td>
-          </tr>
-          <tr>
-            <td><strong>Phase 5</strong></td>
-            <td><strong>Practice Test Gauntlet & Exam Day Sprint</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">Distractor Elimination</span></td>
-            <td>Tutorials Dojo 20Q sampler → Shireen Khan 6 Full Tests (Review Mode) + Error Journaling</td>
-            <td>Udemy + Pearson VUE</td>
-            <td><strong>Score ≥85% on Shireen Khan Practice Tests → Pass AZ-104 (≥700/1000)</strong></td>
+            <td><strong>Stage 3</strong></td>
+            <td><strong>Readiness Gate &amp; Official Exam</strong></td>
+            <td>
+              • Cold simulation on Shireen Tests 5 &amp; 6<br>
+              • Final targeted drill on Identity &amp; Governance<br>
+              • Sit Pearson VUE AZ-104 Exam
+            </td>
+            <td><span class="badge badge-blue">🎯 Target: Pass (≥700 / 1000)</span></td>
           </tr>
         </tbody>
       </table>
     </section>
-
-    <!-- SECTION 2.5: UNGUIDED SCENARIO CHALLENGES -->
-    <section class="card" id="unguided-scenarios">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
-        <div>
-          <h2>🎯 Unguided Scenario Challenges: "No Training Wheels" Protocol</h2>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
-            After completing Alan's course, the guided labs, and Savill's Cram, you take real-world enterprise requirements from your AI partner and build them directly in the Azure Portal <strong>without step-by-step guides</strong>.
-          </p>
-        </div>
-        <span class="badge badge-purple">Phase 4 Execution</span>
-      </div>
-
-      <div class="grid-3" style="margin-bottom:1rem;">
-        <div class="step-box">
-          <div style="font-weight:700; font-size:0.85rem; color:#1e293b; margin-bottom:0.25rem;">1. Request Prompt</div>
-          <div class="step-desc">Tell the AI: <em>"Give me Scenario Challenge [X]"</em>. You receive business goals, security policies, and SKU constraints.</div>
-        </div>
-        <div class="step-box">
-          <div style="font-weight:700; font-size:0.85rem; color:#1e293b; margin-bottom:0.25rem;">2. Build Solo in Portal</div>
-          <div class="step-desc">Open Azure Portal. Provision networking, compute, storage, or identity without opening any step-by-step tutorials.</div>
-        </div>
-        <div class="step-box">
-          <div style="font-weight:700; font-size:0.85rem; color:#1e293b; margin-bottom:0.25rem;">3. Verify & Teardown</div>
-          <div class="step-desc">Run DNS/connectivity checks, verify RBAC/firewall denial, and immediately delete the Resource Group.</div>
-        </div>
-      </div>
-
-      <!-- Pre-loaded Scenario Challenge 01 -->
-      <div class="scenario-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-          <span style="font-weight:800; font-size:0.9rem; color:var(--accent-indigo);">🔥 Ready Challenge: Scenario 01 — Zero-Trust Multi-Tier Storage & Private DNS</span>
-          <span class="badge badge-green">Ready to Deploy</span>
-        </div>
-        <p style="font-size:0.825rem; color:#334155; margin-bottom:0.6rem;">
-          <strong>Enterprise Scenario:</strong> An enterprise application tier must securely store unstructured customer files in Azure Blob Storage. For compliance, the storage account must be completely inaccessible from the public internet. Compute resources must communicate over a private RFC 1918 internal IP address.
-        </p>
-        <div style="font-size:0.8rem; line-height:1.55; color:#475569;">
-          <strong>Your Engineering Constraints:</strong>
-          <ul style="margin-left:1.25rem; margin-top:0.25rem; margin-bottom:0.5rem;">
-            <li><strong>Resource Group:</strong> <span class="code-pill">rg-scenario01-securetier</span> (in your allowed region: Spain Central, UAE North, or Central India).</li>
-            <li><strong>Virtual Network:</strong> <span class="code-pill">vnet-workload</span> (<span class="code-pill">10.10.0.0/16</span>) with two subnets: <span class="code-pill">snet-compute</span> (<span class="code-pill">10.10.1.0/24</span>) and <span class="code-pill">snet-endpoints</span> (<span class="code-pill">10.10.2.0/24</span>).</li>
-            <li><strong>Storage Security:</strong> General-purpose v2 Storage Account with public network access <strong>Disabled</strong> (<span class="code-pill">Enabled from selected virtual networks and IP addresses</span> or <span class="code-pill">Disabled</span>).</li>
-            <li><strong>Private Connectivity:</strong> Create a <strong>Private Endpoint</strong> for the <span class="code-pill">blob</span> sub-resource placed in <span class="code-pill">snet-endpoints</span>, integrated with Private DNS Zone <span class="code-pill">privatelink.blob.core.windows.net</span>.</li>
-            <li><strong>Verification:</strong> Confirm that resolving the storage FQDN from outside returns a public endpoint that rejects connections (403), while inside the VNet the FQDN resolves to the private 10.10.2.x IP.</li>
-            <li><strong>Teardown:</strong> <span class="code-pill">az group delete --name rg-scenario01-securetier --no-wait --yes</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-
     <!-- SECTION: PRACTICE EXAMS -->
     <section class="card" id="practice">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
@@ -604,9 +522,16 @@
             <td>ACI/Containers, Azure Files Backup, Subnet IP Math</td>
             <td><a href="error_journal.html" target="_blank" style="color:var(--accent-indigo); font-weight:700;">14 entries ↗</a></td>
           </tr>
-          <tr style="opacity:0.5;">
-            <td><strong>Shireen Khan — Full Exam 1</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">(Final Gate)</span></td>
-            <td>Review</td>
+          <tr>
+            <td><strong>Shireen Khan — Practice Test 01</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Udemy 90Q (ApexCore Case Study)</span></td>
+            <td>Exam (71m)</td>
+            <td><span style="font-weight:700; color:var(--accent-green);">67/90 (74.4% — Baseline Pass)</span></td>
+            <td>Identity (69%), Storage (74%)</td>
+            <td><a href="error_journal.html" target="_blank" style="color:var(--accent-indigo); font-weight:700;">22 entries ↗</a></td>
+          </tr>
+          <tr style="opacity:0.6;">
+            <td><strong>Shireen Khan — Practice Test 02</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">Udemy 90Q Full Exam</span></td>
+            <td>Upcoming</td>
             <td>—</td>
             <td>—</td>
             <td>—</td>
@@ -795,6 +720,20 @@
           <h3 style="font-size:0.95rem; margin-bottom:0.5rem; color:var(--accent-indigo);">📘 Master Reference Guides</h3>
           <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.8;">
             <li>
+              <strong>App Service Deployment &amp; Auth Master Guide:</strong>
+              <a href="app_service_deployment_and_auth_master_guide.html" target="_blank" style="color:var(--accent-blue); font-weight:700;">
+                SCM/Kudu, Web Deploy, FTPS vs Entra ID &amp; Built-in Roles (HTML)
+              </a>
+              — <a href="app_service_deployment_and_auth_master_guide.md" target="_blank">.md version</a>
+            </li>
+            <li>
+              <strong>Azure ABAC &amp; Conditions Master Guide:</strong>
+              <a href="azure_abac_role_assignment_conditions_master_guide.html" target="_blank" style="color:var(--accent-indigo); font-weight:700;">
+                Role Assignment Conditions, Disjunction &amp; Storage ABAC (HTML)
+              </a>
+              — <a href="azure_abac_role_assignment_conditions_master_guide.md" target="_blank">.md version</a>
+            </li>
+            <li>
               <strong>Azure Placement & Boundary Matrix:</strong>
               <a href="azure_placement_and_boundary_matrix.html" target="_blank" style="color:var(--accent-green); font-weight:700;">
                 Region, VNet, RG & Cross-Resource Rules (HTML)
@@ -845,6 +784,12 @@
           <h3 style="font-size:0.95rem; margin-bottom:0.5rem; color:var(--accent-indigo);">🏛️ LLM Council Decision Reports</h3>
           <ul style="font-size:0.85rem; margin-left:1.25rem; line-height:1.8;">
             <li>
+              <strong>Council: Shireen Khan Strategy (Nov 12):</strong>
+              <a href="council-report-20261112-120650.html" target="_blank" style="color:var(--accent-green); font-weight:700;">
+                Abandon "Save Shireen" Strategy → Start Now (5/5 Unanimous)
+              </a>
+            </li>
+            <li>
               <strong>Council: Exam Strategy (Oct 23):</strong>
               <a href="council-report-2026-10-23.html" target="_blank">
                 Original Study Strategy Decision Report
@@ -875,7 +820,7 @@
             <li>
               <strong>Active Error Journal:</strong>
               <a href="error_journal.html" target="_blank" style="color:var(--accent-green); font-weight:700;">
-                Full Distractor Dissection Journal (49 entries so far)
+                Full Distractor Dissection Journal (71 entries logged)
               </a>
             </li>
           </ul>
@@ -887,12 +832,12 @@
     <section class="card" id="error-journal">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
         <div>
-          <h2>📓 Active Error Journal: 49 Key Azure Mechanics Mastered</h2>
+          <h2>📓 Active Error Journal: 71 Key Azure Mechanics Mastered</h2>
           <p style="font-size:0.85rem; color:var(--text-muted);">
             Forensic error logs from practice exams & diagnostic drills (see <a href="error_logging_guide.html" target="_blank" style="font-weight:700; color:var(--accent-indigo);">SOP Protocol</a> &amp; <a href="error_journal.html" target="_blank" style="font-weight:700; color:var(--accent-green);">Full Markdown Journal</a>):
           </p>
         </div>
-        <a class="btn green" href="error_journal.html" target="_blank" style="font-size:0.75rem;">📄 Open Full Markdown Journal (49 Entries)</a>
+        <a class="btn green" href="error_journal.html" target="_blank" style="font-size:0.75rem;">📄 Open Full Markdown Journal (71 Entries)</a>
       </div>
 
       <div class="grid-2" style="margin-top:1rem;">

@@ -87,14 +87,14 @@
       <a href="#top">Top ↑</a>
     </div>
     <div class="content">
-<h1 id="az-104-active-error-journal">AZ-104 Active Error Journal</h1>
+<h1>AZ-104 Active Error Journal</h1>
 <p><strong>Personalized High-Yield Mistake Tracker &amp; Distractor Dissection</strong></p>
 <blockquote>
 <p><em>Protocol Reference:</em> See <a href="file:///home/actual/projects/az-104/error_logging_guide.md">error_logging_guide.md</a> for the diagnostic framework.<br />
 <em>Core Rule:</em> Every logged entry breaks down the scenario trigger, flawed assumption, underlying Azure mechanic, distractor killers, and exam heuristic.</p>
 </blockquote>
 <hr />
-<h3 id="domain-2-storage-secondary-region-read-access-without-failover-q12">[Domain 2: Storage] Secondary Region Read Access Without Failover (Q12)</h3>
+<h3>[Domain 2: Storage] Secondary Region Read Access Without Failover (Q12)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -111,7 +111,7 @@
 <li><strong>"Secondary read access without failover = Always RA-GRS / RA-GZRS."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-resizing-vms-in-an-availability-set-q16">[Domain 3: Compute] Resizing VMs in an Availability Set (Q16)</h3>
+<h3>[Domain 3: Compute] Resizing VMs in an Availability Set (Q16)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -128,7 +128,7 @@
 <li><strong>"AllocationFailed resizing an Availability Set VM = Deallocate ALL VMs in the set first."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-uploading-on-premises-vhd-disks-to-azure-q22">[Domain 2: Storage] Uploading On-Premises VHD Disks to Azure (Q22)</h3>
+<h3>[Domain 2: Storage] Uploading On-Premises VHD Disks to Azure (Q22)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -144,7 +144,7 @@
 <li><strong>"Upload on-prem .vhd to Azure = Always <code>Add-AzVhd</code> (Page Blob, 512-byte boundary)."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-point-to-site-vpn-vnet-peering-route-propagation-q24q25">[Domain 4: Virtual Networking] Point-to-Site VPN &amp; VNet Peering Route Propagation (Q24/Q25)</h3>
+<h3>[Domain 4: Virtual Networking] Point-to-Site VPN &amp; VNet Peering Route Propagation (Q24/Q25)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -161,7 +161,7 @@
 <li><strong>"P2S VPN clients cannot reach newly peered VNet = Re-download and re-install client VPN package."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-1-governance-azure-policy-enforcement-region-restrictions">[Domain 1: Governance] Azure Policy Enforcement &amp; Region Restrictions</h3>
+<h3>[Domain 1: Governance] Azure Policy Enforcement &amp; Region Restrictions</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ⚠️ Lab Observation</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -174,7 +174,7 @@
 <li><strong>"Azure Policy Deny action blocks ARM deployment at template validation before any cost or provisioning occurs."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-storage-firewalls-dynamic-client-ips">[Domain 2: Storage] Storage Firewalls &amp; Dynamic Client IPs</h3>
+<h3>[Domain 2: Storage] Storage Firewalls &amp; Dynamic Client IPs</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ⚠️ Lab Observation</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -187,7 +187,7 @@
 <li><strong>"Storage Account Firewall 403 on known network = Check dynamic ISP IP rotation or missing VNet Service Endpoint."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-blob-container-leases-error-412-precondition-failed">[Domain 2: Storage] Blob Container Leases (Error 412 Precondition Failed)</h3>
+<h3>[Domain 2: Storage] Blob Container Leases (Error 412 Precondition Failed)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ⚠️ Lab Observation</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -200,7 +200,7 @@
 <li><strong>"HTTP 412 on Storage Blob / Container = Active lease lock. Must break lease."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-control-plane-vs-data-plane-rbac">[Domain 1: Identity &amp; Governance] Control Plane vs Data Plane RBAC</h3>
+<h3>[Domain 1: Identity &amp; Governance] Control Plane vs Data Plane RBAC</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ⚠️ Critical Distractor Trap</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -213,7 +213,7 @@
 <li><strong>"Subscription Owner/Contributor cannot read/write blob data without <code>Storage Blob Data [Role]</code> or Access Keys."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-azure-virtual-machine-licensing-azure-hybrid-benefit-ahb">[Domain 3: Compute] Azure Virtual Machine Licensing &amp; Azure Hybrid Benefit (AHB)</h3>
+<h3>[Domain 3: Compute] Azure Virtual Machine Licensing &amp; Azure Hybrid Benefit (AHB)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> 💡 High-Yield Architecture Standard</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -234,7 +234,7 @@
 <li><strong>"Azure Hybrid Benefit (AHB) = Eliminates OS license fees (runs at base Linux compute rate). Minimum 16 cores. Zero-downtime toggle via <code>licenseType</code>."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-resource-group-deployments-vs-properties-blade-td-sampler-q6">[Domain 1: Identity &amp; Governance] Resource Group Deployments vs. Properties Blade (TD Sampler Q6)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Resource Group Deployments vs. Properties Blade (TD Sampler Q6)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User picked "Yes"; Correct is "No")</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -252,7 +252,7 @@
 <li><strong>"ARM template history, inputs, outputs, and deployment timestamps = Always the <code>Deployments</code> blade under the Resource Group (never <code>Properties</code>)."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-app-service-deployment-slots-scaling-dimensions-td-sampler-q3">[Domain 3: Compute] App Service Deployment Slots &amp; Scaling Dimensions (TD Sampler Q3)</h3>
+<h3>[Domain 3: Compute] App Service Deployment Slots &amp; Scaling Dimensions (TD Sampler Q3)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -272,7 +272,7 @@
 <li><strong>"App Service Staging Slots = Requires Standard (S1) tier or higher. Changing pricing tiers = Always 'Scale Up'."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-cost-optimization-azure-advisor-vs-azure-monitor-td-sampler-q5">[Domain 5: Monitoring &amp; Backup] Cost Optimization: Azure Advisor vs. Azure Monitor (TD Sampler Q5)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] Cost Optimization: Azure Advisor vs. Azure Monitor (TD Sampler Q5)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -290,7 +290,7 @@
 <li><strong>"Identify underutilized/idle VMs to cut costs or right-size = Always Azure Advisor (never Azure Monitor)."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-azcopy-cli-syntax-recursive-directory-migration-td-sampler-q7">[Domain 2: Storage] AzCopy CLI Syntax &amp; Recursive Directory Migration (TD Sampler Q7)</h3>
+<h3>[Domain 2: Storage] AzCopy CLI Syntax &amp; Recursive Directory Migration (TD Sampler Q7)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -310,7 +310,7 @@
 <li><strong>"Upload local folder + subfolders to Azure Blob = <code>azcopy copy &lt;LocalPath&gt; &lt;BlobURL&gt; --recursive</code>."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-app-service-os-isolation-multi-runtime-plan-sizing-td-timed-q2">[Domain 3: Compute] App Service OS Isolation &amp; Multi-Runtime Plan Sizing (TD Timed Q2)</h3>
+<h3>[Domain 3: Compute] App Service OS Isolation &amp; Multi-Runtime Plan Sizing (TD Timed Q2)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -331,7 +331,7 @@
 <li><strong>"App Service Plan = 1 OS per plan. ASP.NET Framework requires Windows, Python/PHP requires Linux → Minimum 2 plans."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-regional-vcpu-quotas-stopped-deallocated-vms-trap-td-timed-q3">[Domain 3: Compute] Regional vCPU Quotas: Stopped (Deallocated) VMs Trap (TD Timed Q3)</h3>
+<h3>[Domain 3: Compute] Regional vCPU Quotas: Stopped (Deallocated) VMs Trap (TD Timed Q3)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (Partial 1/3)</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -359,7 +359,7 @@
 <li><strong>"Stopped (Deallocated) VMs stop billing, but STILL CONSUME vCPU quota. Only deleting the VM frees quota."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-azure-load-balancer-session-persistence-td-timed-q4">[Domain 4: Virtual Networking] Azure Load Balancer Session Persistence (TD Timed Q4)</h3>
+<h3>[Domain 4: Virtual Networking] Azure Load Balancer Session Persistence (TD Timed Q4)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -380,7 +380,7 @@
 <li><strong>"Route user requests to the SAME backend VM on Azure Load Balancer = Session persistence: Client IP."</strong></li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-entra-id-custom-domain-verification-dns-records-td-timed-q5">[Domain 1: Identity &amp; Governance] Entra ID Custom Domain Verification DNS Records (TD Timed Q5)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Entra ID Custom Domain Verification DNS Records (TD Timed Q5)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong></li>
@@ -402,8 +402,8 @@
 <li><strong>"Entra ID Custom Domain verification DNS record = TXT (primary) or MX (fallback). Never A, CNAME, or SOA."</strong></li>
 </ul>
 <hr />
-<h2 id="alan-rodrigues-practice-test-01-exam-mode-nov-9-2026-score-73-4865-passed">Alan Rodrigues Practice Test 01 (Exam Mode — Nov 9, 2026 | Score: 73%, 48/65 Passed)</h2>
-<h3 id="domain-2-storage-customer-managed-keys-cmk-key-types-azure-key-vault-ar-pt01-q6">[Domain 2: Storage] Customer-Managed Keys (CMK) Key Types &amp; Azure Key Vault (AR PT01 Q6)</h3>
+<h2>Alan Rodrigues Practice Test 01 (Exam Mode — Nov 9, 2026 | Score: 73%, 48/65 Passed)</h2>
+<h3>[Domain 2: Storage] Customer-Managed Keys (CMK) Key Types &amp; Azure Key Vault (AR PT01 Q6)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -433,7 +433,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-blob-lifecycle-management-json-path-filtering-ar-pt01-q8">[Domain 2: Storage] Blob Lifecycle Management JSON Path Filtering (AR PT01 Q8)</h3>
+<h3>[Domain 2: Storage] Blob Lifecycle Management JSON Path Filtering (AR PT01 Q8)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -463,7 +463,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-minimum-nsgs-for-multi-region-vnets-ar-pt01-q20">[Domain 4: Virtual Networking] Minimum NSGs for Multi-Region VNets (AR PT01 Q20)</h3>
+<h3>[Domain 4: Virtual Networking] Minimum NSGs for Multi-Region VNets (AR PT01 Q20)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -492,7 +492,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-nsg-evaluation-flow-for-inbound-internet-rdp-ar-pt01-q21">[Domain 4: Virtual Networking] NSG Evaluation Flow for Inbound Internet RDP (AR PT01 Q21)</h3>
+<h3>[Domain 4: Virtual Networking] NSG Evaluation Flow for Inbound Internet RDP (AR PT01 Q21)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -523,7 +523,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-azure-provided-dns-reverse-lookup-ptr-domain-suffix-taxonomy-ar-pt01-q23">[Domain 4: Virtual Networking] Azure-Provided DNS Reverse Lookup (PTR) &amp; Domain Suffix Taxonomy (AR PT01 Q23)</h3>
+<h3>[Domain 4: Virtual Networking] Azure-Provided DNS Reverse Lookup (PTR) &amp; Domain Suffix Taxonomy (AR PT01 Q23)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -568,7 +568,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-subnet-without-nsg-vs-nic-nsg-inbound-rdp-ar-pt01-q24">[Domain 4: Virtual Networking] Subnet Without NSG vs. NIC NSG Inbound RDP (AR PT01 Q24)</h3>
+<h3>[Domain 4: Virtual Networking] Subnet Without NSG vs. NIC NSG Inbound RDP (AR PT01 Q24)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -609,7 +609,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-app-service-outbound-connectivity-to-private-vnet-resources-ar-pt01-q28">[Domain 3: Compute] App Service Outbound Connectivity to Private VNet Resources (AR PT01 Q28)</h3>
+<h3>[Domain 3: Compute] App Service Outbound Connectivity to Private VNet Resources (AR PT01 Q28)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -638,7 +638,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-arm-template-deployment-mode-parameter-ar-pt01-q36">[Domain 1: Identity &amp; Governance] ARM Template Deployment Mode Parameter (AR PT01 Q36)</h3>
+<h3>[Domain 1: Identity &amp; Governance] ARM Template Deployment Mode Parameter (AR PT01 Q36)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -672,7 +672,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-azure-abac-supported-blob-storage-data-plane-roles-ar-pt01-q47">[Domain 1: Identity &amp; Governance] Azure ABAC Supported Blob Storage Data-Plane Roles (AR PT01 Q47)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Azure ABAC Supported Blob Storage Data-Plane Roles (AR PT01 Q47)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -707,7 +707,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-deleting-entra-id-user-with-group-assigned-licenses-ar-pt01-q50">[Domain 1: Identity &amp; Governance] Deleting Entra ID User with Group-Assigned Licenses (AR PT01 Q50)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Deleting Entra ID User with Group-Assigned Licenses (AR PT01 Q50)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -740,7 +740,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-deleting-entra-id-security-group-with-directly-assigned-licenses-ar-pt01-q51">[Domain 1: Identity &amp; Governance] Deleting Entra ID Security Group with Directly Assigned Licenses (AR PT01 Q51)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Deleting Entra ID Security Group with Directly Assigned Licenses (AR PT01 Q51)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -769,7 +769,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-workload-segregation-backup-vault-vs-recovery-services-vault-ar-pt01-q52">[Domain 5: Monitoring &amp; Backup] Workload Segregation: Backup Vault vs. Recovery Services Vault (AR PT01 Q52)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] Workload Segregation: Backup Vault vs. Recovery Services Vault (AR PT01 Q52)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -814,7 +814,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-recovery-services-vault-standard-vs-enhanced-backup-policies-ar-pt01-q53">[Domain 5: Monitoring &amp; Backup] Recovery Services Vault: Standard vs. Enhanced Backup Policies (AR PT01 Q53)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] Recovery Services Vault: Standard vs. Enhanced Backup Policies (AR PT01 Q53)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -853,7 +853,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-cross-subscription-vm-move-dependent-resource-bundling-ar-pt01-q56">[Domain 1: Identity &amp; Governance] Cross-Subscription VM Move: Dependent Resource Bundling (AR PT01 Q56)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Cross-Subscription VM Move: Dependent Resource Bundling (AR PT01 Q56)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -889,7 +889,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-resource-locks-vs-moving-resources-ar-pt01-q57-official-spec-vs-author-defect">[Domain 1: Identity &amp; Governance] Resource Locks vs. Moving Resources (AR PT01 Q57 — Official Spec vs. Author Defect)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Resource Locks vs. Moving Resources (AR PT01 Q57 — Official Spec vs. Author Defect)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ⚠️ Candidate Answer Validated (Official Microsoft Behavior: "No")</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -925,7 +925,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-stored-access-policies-maximum-limit-per-container-ar-pt01-q63">[Domain 2: Storage] Stored Access Policies Maximum Limit per Container (AR PT01 Q63)</h3>
+<h3>[Domain 2: Storage] Stored Access Policies Maximum Limit per Container (AR PT01 Q63)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -955,7 +955,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-iis-guest-log-collection-via-ama-rbac-boundaries-ar-pt01-q65">[Domain 5: Monitoring &amp; Backup] IIS Guest Log Collection via AMA &amp; RBAC Boundaries (AR PT01 Q65)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] IIS Guest Log Collection via AMA &amp; RBAC Boundaries (AR PT01 Q65)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -993,7 +993,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="master-synthesis-all-domains-the-azure-region-resource-group-cross-resource-placement-matrix">[Master Synthesis: All Domains] The Azure Region, Resource Group &amp; Cross-Resource Placement Matrix</h3>
+<h3>[Master Synthesis: All Domains] The Azure Region, Resource Group &amp; Cross-Resource Placement Matrix</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ⚠️ Master Diagnostic Synthesis &amp; Universal Placement Rules</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1049,8 +1049,8 @@
 </li>
 </ul>
 <hr />
-<h2 id="alan-rodrigues-practice-test-02-exam-mode-sat-nov-11-2026-score-784-5165-passed">Alan Rodrigues Practice Test 02 (Exam Mode — Sat Nov 11, 2026 | Score: 78.4%, 51/65 Passed)</h2>
-<h3 id="domain-3-compute-domain-1-governance-azure-disk-encryption-ade-key-vault-prerequisites-ar-pt02-q4">[Domain 3: Compute / Domain 1: Governance] Azure Disk Encryption (ADE) Key Vault Prerequisites (AR PT02 Q4)</h3>
+<h2>Alan Rodrigues Practice Test 02 (Exam Mode — Sat Nov 11, 2026 | Score: 78.4%, 51/65 Passed)</h2>
+<h3>[Domain 3: Compute / Domain 1: Governance] Azure Disk Encryption (ADE) Key Vault Prerequisites (AR PT02 Q4)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1083,7 +1083,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-blob-lifecycle-rule-target-base-blobs-vs-versions-ar-pt02-q5">[Domain 2: Storage] Blob Lifecycle Rule Target: Base Blobs vs. Versions (AR PT02 Q5)</h3>
+<h3>[Domain 2: Storage] Blob Lifecycle Rule Target: Base Blobs vs. Versions (AR PT02 Q5)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1118,7 +1118,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-azure-files-tier-selection-premium-vs-standard-for-write-intensive-smb-ar-pt02-q10">[Domain 2: Storage] Azure Files Tier Selection: Premium vs. Standard for Write-Intensive SMB (AR PT02 Q10)</h3>
+<h3>[Domain 2: Storage] Azure Files Tier Selection: Premium vs. Standard for Write-Intensive SMB (AR PT02 Q10)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1148,7 +1148,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-2-storage-storage-account-types-supporting-lifecycle-management-policies-ar-pt02-q12">[Domain 2: Storage] Storage Account Types Supporting Lifecycle Management Policies (AR PT02 Q12)</h3>
+<h3>[Domain 2: Storage] Storage Account Types Supporting Lifecycle Management Policies (AR PT02 Q12)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1188,7 +1188,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-serverless-windows-container-hosting-without-kubernetes-ar-pt02-q15">[Domain 3: Compute] Serverless Windows Container Hosting Without Kubernetes (AR PT02 Q15)</h3>
+<h3>[Domain 3: Compute] Serverless Windows Container Hosting Without Kubernetes (AR PT02 Q15)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1222,7 +1222,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-3-compute-aci-container-groups-public-port-exposition-vs-shared-localhost-ar-pt02-q16">[Domain 3: Compute] ACI Container Groups: Public Port Exposition vs. Shared Localhost (AR PT02 Q16)</h3>
+<h3>[Domain 3: Compute] ACI Container Groups: Public Port Exposition vs. Shared Localhost (AR PT02 Q16)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1255,7 +1255,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-azure-subnet-ip-math-the-5-reserved-addresses-ar-pt02-q21">[Domain 4: Virtual Networking] Azure Subnet IP Math &amp; The 5 Reserved Addresses (AR PT02 Q21)</h3>
+<h3>[Domain 4: Virtual Networking] Azure Subnet IP Math &amp; The 5 Reserved Addresses (AR PT02 Q21)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1296,7 +1296,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-azure-bastion-public-ip-tier-requirements-regional-vs-global-ar-pt02-q24">[Domain 4: Virtual Networking] Azure Bastion Public IP Tier Requirements (Regional vs. Global) (AR PT02 Q24)</h3>
+<h3>[Domain 4: Virtual Networking] Azure Bastion Public IP Tier Requirements (Regional vs. Global) (AR PT02 Q24)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1335,7 +1335,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-4-virtual-networking-azurebastionsubnet-mandatory-inbound-nsg-security-rules-ar-pt02-q25">[Domain 4: Virtual Networking] AzureBastionSubnet Mandatory Inbound NSG Security Rules (AR PT02 Q25)</h3>
+<h3>[Domain 4: Virtual Networking] AzureBastionSubnet Mandatory Inbound NSG Security Rules (AR PT02 Q25)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1368,7 +1368,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-recovery-services-vault-vs-backup-vault-workload-boundaries-ar-pt02-q53">[Domain 5: Monitoring &amp; Backup] Recovery Services Vault vs. Backup Vault Workload Boundaries (AR PT02 Q53)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] Recovery Services Vault vs. Backup Vault Workload Boundaries (AR PT02 Q53)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1413,7 +1413,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-azure-disk-backup-configuration-rbac-roles-ar-pt02-q54">[Domain 5: Monitoring &amp; Backup] Azure Disk Backup Configuration &amp; RBAC Roles (AR PT02 Q54)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] Azure Disk Backup Configuration &amp; RBAC Roles (AR PT02 Q54)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1453,7 +1453,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-1-identity-governance-moving-resources-into-a-target-resource-group-with-readonly-lock-ar-pt02-q57">[Domain 1: Identity &amp; Governance] Moving Resources into a Target Resource Group with ReadOnly Lock (AR PT02 Q57)</h3>
+<h3>[Domain 1: Identity &amp; Governance] Moving Resources into a Target Resource Group with ReadOnly Lock (AR PT02 Q57)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1489,7 +1489,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-azure-files-backup-frequency-in-recovery-services-vault-ar-pt02-q62">[Domain 5: Monitoring &amp; Backup] Azure Files Backup Frequency in Recovery Services Vault (AR PT02 Q62)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] Azure Files Backup Frequency in Recovery Services Vault (AR PT02 Q62)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1523,7 +1523,7 @@
 </li>
 </ul>
 <hr />
-<h3 id="domain-5-monitoring-backup-azure-backup-reports-cross-region-log-analytics-workspaces-ar-pt02-q65">[Domain 5: Monitoring &amp; Backup] Azure Backup Reports &amp; Cross-Region Log Analytics Workspaces (AR PT02 Q65)</h3>
+<h3>[Domain 5: Monitoring &amp; Backup] Azure Backup Reports &amp; Cross-Region Log Analytics Workspaces (AR PT02 Q65)</h3>
 <ul>
 <li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect</li>
 <li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
@@ -1552,6 +1552,855 @@
 </li>
 <li><strong>6. Exam Heuristic:</strong><ul>
 <li><strong>"RSV VM Backup = STRICTLY same region. RSV Diagnostic Settings / Backup Reports = CAN stream to Log Analytics in ANY region."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 2: Storage] RBAC Role Assignment Conditions with Boolean Disjunction (SK PT01 Q4)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: False; Correct Answer: True)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Determine whether user <code>Sam</code> can read <code>file1.dat</code> from container <code>archive</code> in storage account <code>storagenorth</code>.</li>
+<li>Context: <code>storagenorth</code> contains containers <code>archive</code> (with <code>file1.dat</code>) and <code>media</code> (with <code>file2.dat</code>).</li>
+<li>Role Assignment: <code>Sam</code> is assigned <code>Storage Blob Data Owner</code> at the <code>storagenorth</code> scope with an ABAC condition named <code>RuleBeta</code>.</li>
+<li>Condition Logic: Satisfied if the requested action is <strong>NOT</strong> a blob-write action, <strong>OR</strong> the blob's path contains <code>'2'</code>.</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed <code>file1.dat</code> is blocked because its path does not contain <code>'2'</code>, failing to apply boolean <code>OR</code> short-circuit logic or confusing the condition as requiring both criteria.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Azure RBAC Role Assignment Conditions (ABAC) evaluate expressions using standard boolean operators (<code>AND</code>, <code>OR</code>, <code>NOT</code>).</li>
+<li>The condition formula is: <code>(!ActionIsBlobWrite) OR (BlobPathContains('2'))</code>.</li>
+<li>When <code>Sam</code> attempts to <strong>read</strong> <code>file1.dat</code>:<ol>
+<li>Action requested: <code>Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read</code>.</li>
+<li>First operand evaluation: Is this NOT a blob-write action? <code>True</code> (read is not write).</li>
+<li>Under boolean <code>OR</code> disjunction: <code>True OR [anything] = True</code>.</li>
+<li>The condition evaluates to <code>True</code>, so <code>Sam</code>'s <code>Storage Blob Data Owner</code> role grants the read operation immediately.</li>
+</ol>
+</li>
+<li>The path restriction containing <code>'2'</code> only evaluates if the action is a write operation (where <code>!ActionIsBlobWrite</code> is <code>False</code>).</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>False (Path does not contain '2'):</em> Ignores the disjunctive <code>OR</code>; because reading satisfies the first expression (<code>NOT write</code>), the second expression is irrelevant for read requests.</li>
+<li><em>False (Storage Blob Data Owner does not include read permissions):</em> <code>Storage Blob Data Owner</code> grants full data plane control (<code>*/read</code>, <code>*/write</code>, <code>*/delete</code>, <code>*/add/action</code>).</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"In Azure RBAC conditions with <code>OR</code>, if an action satisfies <code>NOT Write</code>, ALL read operations evaluate to TRUE regardless of path or attribute tags."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] VM Contributor Role Scope vs Disk Snapshots (SK PT01 Q10)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: True; Correct Answer: False)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Determine whether user <code>Taylor</code> can manage disks and disk snapshots of VM <code>cacheVM</code>.</li>
+<li>Context: Management Group hierarchy contains Subscriptions <code>Falcon</code> (under <code>CorpMG</code>) and <code>Osprey</code> (under <code>OpsMG</code>). <code>cacheVM</code> resides in <code>Osprey</code>.</li>
+<li>Role Assignments: <code>Taylor</code> is granted <code>Virtual Machine Contributor</code> at <code>OpsMG</code> scope, and <code>Virtual Machine User Login</code> at <code>cacheVM</code> scope.</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed <code>Virtual Machine Contributor</code> provides end-to-end management over all compute-related artifacts, including disk snapshots.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><code>Virtual Machine Contributor</code> grants management permissions strictly across the <code>Microsoft.Compute/virtualMachines/*</code> namespace, including attaching/detaching disks and starting/stopping VMs.</li>
+<li><strong>Disk Snapshots</strong> belong to an entirely separate ARM resource namespace: <code>Microsoft.Compute/snapshots/*</code>.</li>
+<li><code>Virtual Machine Contributor</code> <strong>does NOT</strong> include snapshot creation or management actions (<code>Microsoft.Compute/snapshots/write</code> or <code>delete</code>).</li>
+<li>Managing disk snapshots requires roles such as <code>Disk Snapshot Contributor</code>, subscription/RG <code>Contributor</code>, or <code>Owner</code>.</li>
+<li>While <code>Taylor</code> can manage <code>cacheVM</code> and attach existing disks, <code>Taylor</code> cannot create or manage disk snapshots.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>True (VM Contributor manages all VM resources):</em> False; snapshots are independent ARM child/top-level resources outside the VM Contributor role definition.</li>
+<li><em>True (Virtual Machine User Login grants snapshot access):</em> <code>Virtual Machine User Login</code> only provides guest OS login rights via Microsoft Entra credentials.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"<code>Virtual Machine Contributor</code> CANNOT create or manage disk snapshots — snapshots require <code>Disk Snapshot Contributor</code>, <code>Contributor</code>, or custom role."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 3: Compute] ACR Deployment Failure Resolution: ACR Tasks vs Container Pull Identity (SK PT01 Q17)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: Yes; Correct Answer: No)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Resolve deployment failure when deploying an Azure Container Instance (ACI) using image <code>webappimage</code> from private Azure Container Registry <code>corpRegistry</code>.</li>
+<li>Proposed Solution: Assign the <code>AcrPull</code> role to <code>ACR-Tasks-Network</code> for <code>corpRegistry</code>.</li>
+<li>Constraint: Determine if this proposed solution enables ACI to pull the container image and resolve the error.</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed <code>ACR-Tasks-Network</code> is an internal platform network identity responsible for cross-service image delivery or pulling within Azure.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>ACR Tasks</strong> is an internal ACR build engine used for cloud-based container image compilation, automated patch triggers, and base image update pipelines.</li>
+<li><code>ACR-Tasks-Network</code> is a service identity strictly used for executing internal ACR tasks inside the registry.</li>
+<li>When Azure Container Instances (ACI) pulls an image from a private ACR:<ol>
+<li>ACI acts as the external consumer/client connecting to the ACR data plane.</li>
+<li>ACR authenticates the client via either:</li>
+<li><strong>Managed Identity:</strong> The ACI container group's User-Assigned or System-Assigned Managed Identity, which must hold the <strong><code>AcrPull</code></strong> role on the registry.</li>
+<li><strong>Registry Credentials:</strong> Admin user credentials (username/key) or an Entra ID Service Principal passed during ACI creation.</li>
+</ol>
+</li>
+<li>Assigning <code>AcrPull</code> to <code>ACR-Tasks-Network</code> grants pull permissions to the internal ACR build worker, leaving ACI completely unauthenticated.</li>
+<li>Answer is strictly <strong>No</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>Yes (Assign AcrPull to ACR-Tasks):</em> ACR Tasks is an image compilation engine, not the runtime identity of an external ACI container group.</li>
+<li><em>Yes (ACR Tasks handles VNet image distribution):</em> False; compute services establish direct connections to the ACR login server endpoint (<code>*.azurecr.io</code>).</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Assigning <code>AcrPull</code> to ACR-Tasks NEVER resolves external compute pull failures. <code>AcrPull</code> must be assigned to the compute resource's Managed Identity (or use Admin credentials / SPN)."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 3: Compute] ACR Quick Authentication via Admin User for ACI (SK PT01 Q18)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: No; Correct Answer: Yes)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Resolve deployment failure when deploying an Azure Container Instance (ACI) using image <code>webappimage</code> from private Azure Container Registry <code>corpRegistry</code>.</li>
+<li>Proposed Solution: Set <strong>Admin user to Enable</strong> for <code>corpRegistry</code>.</li>
+<li>Constraint: "Does this solution meet the goal?" (Evaluates technical feasibility, NOT least privilege).</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User answered "No" assuming enabling the Admin user is prohibited by security best practices or that ACI cannot authenticate using static registry keys.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Azure Container Registry includes an optional <strong>Admin user</strong> account (disabled by default for production governance).</li>
+<li>Enabling the Admin user creates a username (identical to the ACR name) and two 512-bit access passwords.</li>
+<li>These admin credentials grant direct <code>AcrPull</code> and <code>AcrPush</code> data plane permissions.</li>
+<li>In ACI deployment templates, CLI, or the Azure Portal, specifying the ACR login server, Admin username, and password immediately allows ACI to authenticate and pull images without configuring Managed Identities or Entra ID role assignments.</li>
+<li>Because the question asks <strong>"Does this meet the goal?"</strong>, technical feasibility is sufficient.</li>
+<li>Answer is strictly <strong>Yes</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>No (Admin user is insecure / not recommended):</em> Question evaluates whether the solution resolves the deployment failure, not whether it satisfies least privilege.</li>
+<li><em>No (ACI requires Managed Identity):</em> False; ACI supports both Managed Identities and direct ACR admin credentials.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"On 'Does this meet the goal?' questions: Enabling ACR Admin User IS a functional solution for ACI/App Service image pull. Distinguish capability from least-privilege."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] Storage Account Contributor Key Management Capabilities (SK PT01 Q21)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: No; Correct Answer: Yes)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Ensure <code>UserA</code> can view (list) storage account access keys and regenerate them when necessary for storage account <code>datastore01</code>.</li>
+<li>Proposed Solution: Assign the <strong><code>Storage Account Contributor</code></strong> role to <code>UserA</code> for <code>datastore01</code>.</li>
+<li>Constraint: "Does this solution meet the goal?" (Validates role capability, not least privilege).</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User answered "No" because <code>Storage Account Key Operator Service Role</code> is the dedicated role for key regeneration, assuming <code>Storage Account Contributor</code> cannot manage keys.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><code>Storage Account Contributor</code> grants broad management permissions across <code>Microsoft.Storage/storageAccounts/*</code>.</li>
+<li>Specifically, <code>Storage Account Contributor</code> includes:<ul>
+<li><code>Microsoft.Storage/storageAccounts/listkeys/action</code> (viewing access keys).</li>
+<li><code>Microsoft.Storage/storageAccounts/regeneratekey/action</code> (regenerating primary and secondary keys).</li>
+</ul>
+</li>
+<li>While <code>Storage Account Key Operator Service Role</code> is the narrower, least-privilege role often assigned to Key Vault for managed storage keys, <code>Storage Account Contributor</code> completely fulfills both requirements (viewing and regenerating keys).</li>
+<li>Since least privilege was not requested, the proposed solution succeeds.</li>
+<li>Answer is strictly <strong>Yes</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>No (Only Key Operator can regenerate keys):</em> False; <code>Storage Account Contributor</code> has full control plane actions across storage accounts, including key actions.</li>
+<li><em>No (Contributor cannot access keys without Owner):</em> False; both <code>Contributor</code> and <code>Storage Account Contributor</code> possess <code>listkeys/action</code>.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Unless 'least privilege' is explicitly required, <code>Storage Account Contributor</code> CAN list and regenerate storage keys. Capability != Least Privilege."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 3: Compute] Immediate VM Host Relocation for Scheduled Maintenance (SK PT01 Q27)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: No; Correct Answer: Yes)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Virtual machine <code>ShireenVM</code> will be affected by an upcoming scheduled platform maintenance event on its physical host node.</li>
+<li>Objective: Immediately relocate <code>ShireenVM</code> to a different physical host to avoid the maintenance impact.</li>
+<li>Proposed Solution: From the <code>ShireenVM</code> <strong>Redeploy + reapply</strong> blade, click <strong>Redeploy</strong>.</li>
+<li>Constraint: Does this solution achieve the objective?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User answered "No", assuming Redeploy is only used to recover frozen VMs or that moving hosts during scheduled maintenance requires manual reprovisioning.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>When Azure flags a physical hypervisor node for hardware maintenance, VMs running on that node receive scheduled maintenance notifications.</li>
+<li><strong>Redeploy Workflow:</strong><ol>
+<li>Clicking <strong>Redeploy</strong> stops the VM and deallocates it from its current physical host.</li>
+<li>The VM is provisioned on a fresh, healthy physical hardware node within the same datacenter cluster.</li>
+<li>The VM powers back on.</li>
+<li>By moving to new physical hardware, <code>ShireenVM</code> is immediately cleared from the scheduled maintenance event of the old host node.</li>
+</ol>
+</li>
+<li><strong>State Retention:</strong><ul>
+<li>Persistent OS and data managed disks are preserved.</li>
+<li>Ephemeral temporary disks (<code>D:\</code> / <code>/dev/sdb1</code>) are wiped.</li>
+<li>Dynamic Public IPs change unless configured as Static.</li>
+</ul>
+</li>
+<li>Answer is strictly <strong>Yes</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>No (Redeploy causes permanent data loss):</em> False; managed disks persist across redeployment; only temporary scratch disks are reset.</li>
+<li><em>No (Must wait for Azure maintenance window):</em> Azure explicitly recommends proactive Redeploy for administrators who want to control the timing of planned downtime.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Proactively avoid scheduled host maintenance or move off degraded hardware = Click 'Redeploy' on the VM."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 3: Compute] Azure Container Instance (ACI) CPU Resource Contention (SK PT01 Q31)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: Move svc-worker to a separate container group; Correct Answer: Remove the resource limit for both containers)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: In container group <code>PodGroup1</code>, prevent <code>svc-worker</code> from consuming CPU resources in a way that degrades <code>svc-api</code>.</li>
+<li>Context:<ul>
+<li><code>PodGroup1</code> hosts two containers: <code>svc-api</code> (CPU request: 2, limit: 2) and <code>svc-worker</code> (CPU request: 3, limit: 4).</li>
+<li>Total group requested CPU = 5; total limit = 6.</li>
+</ul>
+</li>
+<li>Constraint: Resolve CPU contention within the container group without unnecessary architectural disruption.</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User selected moving <code>svc-worker</code> to a separate container group, assuming multi-container groups cannot throttle CPU bursting without separating pods.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>In Azure Container Instances (ACI):<ul>
+<li><strong>Resource Request:</strong> The guaranteed minimum CPU/memory allocated to the container.</li>
+<li><strong>Resource Limit:</strong> The maximum bursting boundary. If a container's limit exceeds its request, it can burst into available host CPU, causing contention for sibling containers.</li>
+<li><strong>Default Behavior When Limit is Removed:</strong> When resource limits are omitted or removed, ACI caps the container's maximum usage <strong>strictly equal to its resource request</strong>.</li>
+</ul>
+</li>
+<li>By removing the limits on both containers:<ul>
+<li><code>svc-api</code> request is 2, limit becomes 2.</li>
+<li><code>svc-worker</code> request is 3, limit becomes 3.</li>
+<li><code>svc-worker</code> can no longer burst to 4 CPUs; it is strictly throttled to 3 CPUs.</li>
+<li><code>svc-api</code> is completely protected from resource contention.</li>
+</ul>
+</li>
+<li>Moving <code>svc-worker</code> to a new group destroys shared local networking (<code>localhost</code>), shared volumes, and coordinated pod lifecycle.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>Move svc-worker to a separate container group:</em> Disruptive and unnecessary architectural rework; breaks container group co-location.</li>
+<li><em>Increase PodGroup1 total CPU limit:</em> Allows worker to burst further without guaranteeing API protection.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"In ACI container groups: Removing/omitting resource limits restricts maximum container usage strictly to its resource request, eliminating burst contention."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] Group-Based Licensing Requirements in Microsoft Entra ID (SK PT01 Q38)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: UserA, SecGroup01, and M365Group01; Correct Answer: UserA only)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Determine which identities can be directly assigned a newly purchased Microsoft Fabric license.</li>
+<li>Context: Tenant is running on the <strong>Microsoft Entra ID Free</strong> tier.</li>
+<li>Identities: <code>UserA</code> (individual user), <code>SecGroup01</code> (Security group), <code>M365Group01</code> (Microsoft 365 group).</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed group-based licensing is available across all Microsoft Entra ID tiers, including the Free tier.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Group-Based Licensing allows administrators to assign product licenses (e.g., Microsoft 365, Microsoft Fabric, Power BI) to groups so members automatically inherit licenses.</li>
+<li><strong>Licensing Prerequisite:</strong><ul>
+<li>Group-Based Licensing <strong>strictly requires Microsoft Entra ID P1 or P2</strong> (or qualifying Microsoft 365 / Office 365 suites).</li>
+</ul>
+</li>
+<li><strong>Free Tier Limitation:</strong><ul>
+<li>The <strong>Microsoft Entra ID Free</strong> tier <strong>CANNOT assign licenses to groups</strong>.</li>
+<li>Licenses can <strong>ONLY be assigned directly to individual users</strong> (<code>UserA</code>).</li>
+<li>Attempting to assign licenses to <code>SecGroup01</code> or <code>M365Group01</code> fails validation.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>UserA, SecGroup01, and M365Group01:</em> Groups cannot be assigned licenses in a Free tier tenant.</li>
+<li><em>SecGroup01 only / M365Group01 only:</em> Group type does not bypass the Entra ID P1/P2 tier requirement.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Entra ID Free tier CANNOT assign licenses to groups. Group-based licensing strictly requires Entra ID P1 or P2. Free tier = Direct user assignment only."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] SSPR Target Assignment Scopes in Microsoft Entra ID (SK PT01 Q39)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: UserA and SecGroup01 only; Correct Answer: SecGroup01 and M365Group01 only)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Enable Self-Service Password Reset (SSPR) from the Microsoft Entra admin center.</li>
+<li>Context: Tenant contains <code>UserA</code> (user), <code>SecGroup01</code> (Security group), and <code>M365Group01</code> (Microsoft 365 group).</li>
+<li>Question: For which specific identities can SSPR be directly enabled via the portal scope configuration?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed SSPR can be targeted directly to individual user accounts (<code>UserA</code>) or that M365 groups cannot be used for SSPR pilot scoping.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>In the Microsoft Entra admin center (<strong>Password reset &gt; Properties</strong>), the SSPR enablement setting provides three scopes:<ol>
+<li><strong>None:</strong> Disabled for all users.</li>
+<li><strong>Selected:</strong> Enabled for members of chosen groups.</li>
+<li><strong>All:</strong> Enabled for all users in the tenant.</li>
+</ol>
+</li>
+<li>When configuring <strong>Selected</strong>:<ul>
+<li>The object picker <strong>ONLY accepts Groups</strong>.</li>
+<li>Individual user objects (<code>UserA</code>) <strong>CANNOT</strong> be selected directly in the SSPR scope blade.</li>
+<li>Supported group types include <strong>Security groups</strong> (<code>SecGroup01</code>) and <strong>Microsoft 365 groups</strong> (<code>M365Group01</code>).</li>
+<li>To grant SSPR to <code>UserA</code>, <code>UserA</code> must be added as a direct member of an enabled group (nested groups are not supported for SSPR).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>UserA and SecGroup01 only:</em> Individual user objects cannot be targeted in the SSPR "Selected" picker; only groups appear.</li>
+<li><em>UserA only:</em> Individual users are invalid targets for SSPR scoping.</li>
+<li><em>SecGroup01 only:</em> Microsoft 365 groups are fully valid targets alongside security groups.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"SSPR 'Selected' scope can ONLY target Groups (Security or M365 groups). You can NEVER target individual users directly."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] Cross-Region Key Vault Secret Access (SK PT01 Q42)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: kv-primary and kv-archive only; Correct Answer: kv-primary, kv-secondary, or kv-archive)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Container App <code>checkout-app</code> requires secret retrieval from an Azure Key Vault.</li>
+<li>Context:<ul>
+<li><code>kv-primary</code>: Same RG, same Region as <code>checkout-app</code>.</li>
+<li><code>kv-secondary</code>: Different RG, different Region.</li>
+<li><code>kv-archive</code>: Different RG, same Region.</li>
+</ul>
+</li>
+<li>Question: Which Key Vault(s) can <code>checkout-app</code> retrieve secrets from?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed Key Vault secret access cannot cross Azure regional boundaries or requires co-location within the same region.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Azure Key Vault is a globally reachable public REST endpoint (<code>https://&lt;vault-name&gt;.vault.azure.net/</code>) protected by Microsoft Entra ID authentication and access policies/RBAC.</li>
+<li><strong>No Regional or Resource Group Boundaries:</strong><ul>
+<li>Any compute resource (Container Apps, VMs, App Services, Functions) equipped with a Managed Identity or Service Principal can authenticate and read secrets from <strong>ANY Key Vault</strong> within the tenant.</li>
+<li>There is zero restriction requiring the Key Vault to be in the same Resource Group, Subscription, or Region.</li>
+<li>While same-region placement is recommended to minimize network latency and inter-region egress costs, cross-region secret retrieval is fully supported.</li>
+</ul>
+</li>
+<li>Therefore, <code>checkout-app</code> can access <code>kv-primary</code>, <code>kv-secondary</code>, or <code>kv-archive</code>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>kv-primary only:</em> Incorrectly assumes both region and RG must match.</li>
+<li><em>kv-primary and kv-archive only:</em> Incorrectly assumes Key Vault access cannot cross Azure regional boundaries.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Key Vault has NO regional or resource group boundaries. Any compute resource can retrieve secrets from ANY Key Vault across regions/RGs via Entra ID RBAC."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 2: Storage] Azure Files Maximum Backup Frequency (SK PT01 Q48)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: Every 4 hours; Correct Answer: Every hour)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Technical requirement specifies Azure file share <code>docs1</code> must be backed up using Azure Backup as frequently as the service allows.</li>
+<li>Question: What is the maximum backup frequency supported for Azure Files share backups?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User selected "Every 4 hours", confusing common portal dropdown defaults with the maximum platform limit (up to 24 snapshots per day = every 1 hour).</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Azure Backup for Azure Files orchestrates native Azure Files storage snapshots managed through a Recovery Services Vault.</li>
+<li><strong>Azure Files Backup Frequency Limits:</strong><ul>
+<li>Azure Files backup policies support multiple backups per day, up to <strong>24 backups per day</strong>.</li>
+<li>24 backups per day equals a backup frequency of <strong>Every 1 hour</strong>.</li>
+<li>Supported hourly intervals include 1, 2, 4, 6, 8, or 12 hours.</li>
+<li>Therefore, the most frequent backup schedule supported by the service is <strong>Every hour</strong>.</li>
+</ul>
+</li>
+<li><strong>Comparison with Other Workloads:</strong><ul>
+<li><strong>Azure Files:</strong> Up to 24/day (Every 1 hour).</li>
+<li><strong>Azure VM (Enhanced Policy):</strong> Up to every 4 hours.</li>
+<li><strong>Azure VM (Standard Policy):</strong> Once daily (every 24 hours).</li>
+<li><strong>Azure Blobs (Vaulted):</strong> Once daily or weekly.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>Every 4 hours:</em> A valid schedule interval, but not the maximum frequency allowed by the service.</li>
+<li><em>Every 15 minutes:</em> Unsupported; minimum interval for Azure Files snapshots in Azure Backup is 1 hour.</li>
+<li><em>Daily:</em> The default for classic VM backup, not Azure Files.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Maximum Azure Files Backup Frequency = Every 1 hour (up to 24 backups/day). Standard VM = 1/day; Blob Vaulted = 1/day."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] Custom Security Attributes Object Target Limits (SK PT01 Q49/Q51)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: True; Correct Answer: False)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: In tenant <code>ApexCore</code>, assign custom security attribute <code>AttribTag1</code> to <code>Cohort1</code> (Security group) or <code>Cohort2</code> (Microsoft 365 group).</li>
+<li>Context: <code>Priya Shah</code> is Global Administrator; <code>Lena Osei</code> is Attribute Assignment Administrator.</li>
+<li>Question: True/False: Can <code>AttribTag1</code> be assigned to <code>Cohort1</code> or <code>Cohort2</code>?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed Custom Security Attributes can be applied to Groups, or that Global Administrator privileges can bypass target object limitations.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>Microsoft Entra Custom Security Attributes</strong> are business-specific key-value pairs used for categorization and ABAC authorization rules.</li>
+<li><strong>Supported Target Directory Objects:</strong><ol>
+<li><strong>Users</strong></li>
+<li><strong>Service Principals</strong> (Enterprise Applications)</li>
+<li><strong>Managed Identities</strong></li>
+</ol>
+</li>
+<li><strong>Strictly Unsupported Target Objects:</strong><ul>
+<li><strong>Groups</strong> (Security groups, Microsoft 365 groups, Distribution groups) are <strong>completely unsupported</strong>.</li>
+<li>Devices, administrative units, and directory roles also cannot have custom security attributes assigned.</li>
+</ul>
+</li>
+<li>Even a <code>Global Administrator</code> or <code>Attribute Assignment Administrator</code> cannot assign custom security attributes to a group object because the underlying schema does not support it.</li>
+<li>Answer is strictly <strong>False</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>True (Global Admin can assign any attribute):</em> RBAC permissions cannot alter directory object schema constraints.</li>
+<li><em>True (Groups support custom attributes):</em> Groups support standard Graph Directory Extension attributes, but NOT Custom Security Attributes.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Custom Security Attributes CANNOT be assigned to Groups. Supported targets are strictly: Users, Service Principals, and Managed Identities."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] Azure Disk Encryption KEK Requirements &amp; PowerShell Cmdlet (SK PT01 Q52)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: <code>Set-AzDiskEncryptionKey</code> and <code>Key2</code>; Correct Answer: <code>Set-AzVMDiskEncryptionExtension</code> and <code>Key1</code>)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Enable Azure Disk Encryption (ADE) on virtual machines with a Key Encryption Key (KEK) stored in Azure Key Vault <code>SecVault1</code>.</li>
+<li>Context: <code>SecVault1</code> contains <code>Key1</code> (RSA 4096) and <code>Key2</code> (Elliptic Curve EC P-256).</li>
+<li>Question: Which PowerShell cmdlet and key must be used?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User selected <code>Key2</code> (EC) and cmdlet <code>Set-AzDiskEncryptionKey</code>, unaware of ADE's strict RSA requirement and official cmdlet naming.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>1. Cryptographic Key Type Requirements for ADE KEK:</strong><ul>
+<li>Azure Disk Encryption wraps BitLocker (Windows) or DM-Crypt (Linux) volume keys with a Key Encryption Key (KEK).</li>
+<li>ADE KEKs <strong>strictly require RSA keys</strong> (supported sizes: 2048, 3072, or 4096 bits).</li>
+<li><strong>Elliptic Curve (EC) keys are NOT supported</strong> as KEKs for ADE. Therefore, <code>Key1</code> (RSA 4096) must be selected.</li>
+</ul>
+</li>
+<li><strong>2. PowerShell Cmdlet for ADE:</strong><ul>
+<li>ADE operates as a VM extension (<code>AzureDiskEncryption</code>).</li>
+<li>The official cmdlet to enable ADE on an existing VM is <strong><code>Set-AzVMDiskEncryptionExtension</code></strong>.</li>
+<li><code>Set-AzDiskEncryptionKey</code> is a non-existent cmdlet.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>Key2 (EC P-256):</em> ADE KEK rejects all Elliptic Curve keys; RSA only.</li>
+<li><em><code>Set-AzDiskEncryptionKey</code>:</em> Fictitious cmdlet name; VM extensions use <code>Set-AzVMDiskEncryptionExtension</code>.</li>
+<li><em><code>Update-AzDisk</code>:</em> Used for Server-Side Encryption (SSE) with CMK, not ADE.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Azure Disk Encryption (ADE) KEK = RSA ONLY (2048/3072/4096, never EC) + cmdlet <code>Set-AzVMDiskEncryptionExtension</code>."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 2: Storage] Immutable Blob Storage Policy Limits per Container (SK PT01 Q55)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: 0; Correct Answer: 1)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: In storage account <code>datastore1</code>, container <code>data2</code> currently has 3 stored access policies and 1 legal hold configured.</li>
+<li>Question: What is the maximum number of <strong>additional immutable blob storage policies</strong> you can create on <code>data2</code>?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User answered "0", assuming that an active Legal Hold blocks adding further immutability policies, or conflating the limit with stored access policies.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Azure Blob Storage immutable policies (WORM storage) prevent data modification and deletion.</li>
+<li><strong>Two Types of Immutable Policies:</strong><ol>
+<li><strong>Time-Based Retention Policy:</strong> Locks data for a specified duration.</li>
+<li><strong>Legal Hold:</strong> Retains data indefinitely until explicitly cleared with a tag.</li>
+</ol>
+</li>
+<li><strong>Container Immutability Policy Limits:</strong><ul>
+<li>A blob container supports a <strong>maximum of TWO immutable policies total</strong>:</li>
+<li>Exactly <strong>ONE</strong> Time-Based Retention policy.</li>
+<li>Exactly <strong>ONE</strong> Legal Hold.</li>
+</ul>
+</li>
+<li>Container <code>data2</code> currently has 1 Legal Hold and 0 Time-Based Retention policies.</li>
+<li>Therefore, exactly <strong>1 additional immutable policy</strong> (the Time-Based Retention policy) can still be created.</li>
+<li><em>(Stored access policies for SAS have a limit of 5 per container and are completely separate from immutable policies).</em></li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>0 additional policies:</em> A Legal Hold does not prevent adding a Time-Based Retention policy.</li>
+<li><em>2 additional policies:</em> 1 slot is already consumed by the existing Legal Hold.</li>
+<li><em>5 additional policies:</em> 5 is the limit for SAS Stored Access Policies, not immutable WORM policies.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Container Immutability Limit = Exactly 2 policies total (1 Legal Hold + 1 Time-Based Retention policy). If 1 exists, 1 remains."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 3: Compute] Azure App Service Key Vault Certificate Import Format (SK PT01 Q57)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: TlsCert1, TlsCert2, TlsCert3, or TlsCert4; Correct Answer: TlsCert1 or TlsCert2 only)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Web app <code>AppSvc1</code> requires custom domain TLS/SSL binding using a certificate imported directly from Azure Key Vault <code>SecVault1</code>.</li>
+<li>Context: <code>SecVault1</code> stores <code>TlsCert1</code> &amp; <code>TlsCert2</code> (PKCS#12 / .pfx format) and <code>TlsCert3</code> &amp; <code>TlsCert4</code> (PEM format).</li>
+<li>Question: Which certificate(s) can be imported directly into <code>AppSvc1</code> for TLS binding?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed App Service supports importing both PEM and PKCS#12 certificates directly from Key Vault.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Azure App Service requires certificates to contain the full certificate chain and private key bundled into a password-protected cryptographic archive.</li>
+<li>When App Service imports a certificate from Azure Key Vault:<ul>
+<li><strong>App Service strictly supports PKCS#12 (.pfx) format certificates</strong>.</li>
+<li>Certificates stored in <strong>PEM format cannot be imported directly into App Service from Key Vault</strong> for TLS binding.</li>
+</ul>
+</li>
+<li>Therefore, only <code>TlsCert1</code> and <code>TlsCert2</code> can be imported.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>TlsCert3 or TlsCert4 (PEM):</em> PEM format is rejected during App Service Key Vault certificate import.</li>
+<li><em>All four certificates:</em> Ignores the strict PKCS#12 container format requirement enforced by App Service.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"App Service TLS Certificate Import from Key Vault = Strictly PKCS#12 (.pfx) format. PEM format is unsupported for direct App Service KV import."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 5: Monitor] Data Collection Rule (DCR) Event Log Filtering Query Syntax (SK PT01 Q58)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: KQL; Correct Answer: XPath)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Configure Data Collection Rule <code>CollectRule1</code> with Azure Monitor Agent (AMA) to collect only Windows System events with Event ID <code>4648</code> from <code>Node2</code> and <code>Node4</code>.</li>
+<li>Question: Which query syntax must be used inside the DCR definition to filter events before transmission?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User selected KQL, assuming all Azure Monitor filtering and querying uses Kusto Query Language.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>Source Filtering vs. Workspace Querying:</strong><ul>
+<li><strong>Data Collection Rules (DCR):</strong> Define collection streams for the <strong>Azure Monitor Agent (AMA)</strong> running locally on VM guest operating systems.</li>
+<li>To prevent unnecessary telemetry upload and ingestion costs, AMA filters Windows Event Logs locally at the source before sending data to Azure.</li>
+<li>Local Windows Event Log filtering inside DCR data sources uses standard <strong>XPath queries</strong> (e.g., <code>System!*[System[(EventID=4648)]]</code>).</li>
+<li><strong>KQL (Kusto Query Language)</strong> is used <strong>AFTER</strong> logs are ingested into Log Analytics tables, not inside the collection-stage DCR definition.</li>
+</ul>
+</li>
+<li>Therefore, the DCR definition strictly requires an <strong>XPath</strong> query.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>KQL:</em> Used for querying ingested logs in Log Analytics workspaces, never for AMA client-side Windows event filtering.</li>
+<li><em>SQL / JSONPath:</em> Unsupported for Windows Event Log collection filters in DCRs.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"DCR / AMA Windows Event Log filtering at collection = XPath query (<code>System!*[System[(EventID=x)]]</code>). Log Analytics workspace searching = KQL."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 2: Storage] Azure Storage Encryption Scopes Resource Scope (SK PT01 Q61)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: containers, blobs, file shares, queues, tables; Correct Answer: containers and blobs in datastore2 only)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: In storage account <code>datastore2</code>, configure encryption scope <code>EncScope1</code>.</li>
+<li>Question: Which resources within <code>datastore2</code> can be encrypted using <code>EncScope1</code>?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed Storage Encryption Scopes apply across all four Azure Storage sub-services (Blobs, Files, Queues, Tables) uniformly.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Storage Encryption Scopes allow cryptographic segregation <em>within</em> a single storage account by enabling different keys (Microsoft-managed or Customer-Managed Keys) for different data subsets.</li>
+<li><strong>Service Scope Limitation:</strong><ul>
+<li>Encryption scopes are supported <strong>EXCLUSIVELY for Blob Storage</strong>.</li>
+<li>An encryption scope can be configured as the default on a <strong>container</strong>, or specified individually when uploading a <strong>blob</strong>.</li>
+<li><strong>Azure Files, Azure Queues, and Azure Tables DO NOT support Encryption Scopes</strong>. They can only be encrypted using the account-level root encryption key.</li>
+</ul>
+</li>
+<li>Therefore, <code>EncScope1</code> can encrypt <strong>containers and blobs in datastore2 only</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>File shares, queues, tables:</em> Unsupported; encryption scopes are strictly a Blob service capability.</li>
+<li><em>Entire storage account:</em> The account uses standard Server-Side Encryption (SSE); encryption scopes operate at container/blob level.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Azure Storage Encryption Scopes = BLOB STORAGE ONLY (Containers &amp; Blobs). Never Azure Files, Queues, or Tables."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] RBAC Additive Permissions Across Scopes (SK PT01 Q64)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: False; Correct Answer: True)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Determine whether user <code>Priya</code> can create a new storage account in resource group <code>rg-network</code>.</li>
+<li>Context:<ul>
+<li>Subscription scope: <code>Priya</code> is assigned <code>Reader</code>.</li>
+<li>Resource Group scope (<code>rg-network</code>): <code>Priya</code> is assigned <code>Storage Account Contributor</code>.</li>
+<li>Resource scope (<code>nsg-web01</code> in <code>rg-network</code>): <code>Priya</code> is assigned <code>Contributor</code>.</li>
+</ul>
+</li>
+<li>Question: True/False: Can <code>Priya</code> create a storage account in <code>rg-network</code>?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User answered "False", believing that having <code>Reader</code> at the Subscription level restricts permissions below it, or that holding <code>Contributor</code> on an NSG limits storage permissions.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>Azure RBAC is Strictly Additive:</strong><ul>
+<li>Azure evaluates all role assignments granted across all applicable scopes (Management Group -&gt; Subscription -&gt; Resource Group -&gt; Resource).</li>
+<li>If <strong>ANY</strong> role assignment permits the operation, and no explicit <code>Deny Assignment</code> blocks it, access is granted.</li>
+<li>Permissions at a broader scope (Subscription <code>Reader</code>) do not subtract from or override higher permissions granted at a narrower scope (Resource Group <code>Storage Account Contributor</code>).</li>
+</ul>
+</li>
+<li><code>Storage Account Contributor</code> on <code>rg-network</code> grants <code>Microsoft.Storage/storageAccounts/write</code>, permitting storage account creation anywhere within <code>rg-network</code>.</li>
+<li>Answer is strictly <strong>True</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>False (Subscription Reader overrides RG roles):</em> Azure RBAC has no restrictive inheritance; roles are purely cumulative.</li>
+<li><em>False (Requires Contributor at Subscription level):</em> Resource Group scope is completely sufficient to provision resources inside that specific RG.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Azure RBAC is strictly additive. Roles at child scopes (RG) ADD to parent roles (Subscription). <code>Storage Account Contributor</code> at RG = CAN deploy storage accounts in that RG."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] Custom Security Attribute Assignment Targets (SK PT01 Q72)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: UserA, SecGroup01, and AppPrincipal01; Correct Answer: UserA and AppPrincipal01 only)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: In a Microsoft Entra ID tenant, custom security attribute <code>Attr1</code> must be assigned to directory objects.</li>
+<li>Context: Tenant contains <code>UserA</code> (User), <code>SecGroup01</code> (Security group), and <code>AppPrincipal01</code> (Service Principal / Enterprise App).</li>
+<li>Question: To which of these identities can <code>Attr1</code> be assigned?</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User assumed Security Groups are valid recipients of custom security attributes.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li>Reinforces Q49/Q51:</li>
+<li>Microsoft Entra Custom Security Attributes support <strong>EXCLUSIVELY three identity object types</strong>:<ol>
+<li><strong>Users</strong> (<code>UserA</code>)</li>
+<li><strong>Service Principals / Enterprise Applications</strong> (<code>AppPrincipal01</code>)</li>
+<li><strong>Managed Identities</strong></li>
+</ol>
+</li>
+<li>Groups of any type (<code>SecGroup01</code>, M365 groups) <strong>CANNOT be assigned Custom Security Attributes</strong>.</li>
+<li>While Custom Security Attributes can be evaluated in ABAC rules to regulate group access, they cannot be assigned directly to group objects.</li>
+<li>Therefore, <code>Attr1</code> can only be assigned to <code>UserA</code> and <code>AppPrincipal01</code>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>SecGroup01:</em> Groups cannot hold custom security attributes under Microsoft Entra ID.</li>
+<li><em>UserA only:</em> Overlooks that Service Principals natively support custom security attributes.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Custom Security Attributes targets = Users &amp; Service Principals (Enterprise Apps / Managed Identities) ONLY. Never Groups."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 1: Identity &amp; Governance] Least Privilege for Reading All Storage Data Types (SK PT01 Q73)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: Storage Blob Data Reader; Correct Answer: Reader and Data Access)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: User <code>Priya</code> must be able to view and read data inside <strong>ANY storage account service (Blobs, File shares, Queues, and Tables)</strong> in subscription <code>CorpSub1</code>.</li>
+<li>Constraint: Follow the principle of <strong>least privilege</strong>.</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User selected <code>Storage Blob Data Reader</code>, overlooking that the requirement spans all four storage services, not just Blob containers.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>Storage RBAC Role Breakdown:</strong><ul>
+<li><code>Storage Blob Data Reader</code>: Grants read access to <strong>Blobs ONLY</strong>. Provides zero access to Azure Files, Queues, or Tables.</li>
+<li><strong><code>Reader and Data Access</code></strong>:<ul>
+<li>Grants ARM <code>Reader</code> permissions to browse storage account properties.</li>
+<li>Includes permission to execute <code>Microsoft.Storage/storageAccounts/listkeys/action</code>.</li>
+<li>Listing keys allows viewing and browsing data across <strong>all storage services</strong> (Blobs, Files, Queues, Tables) in the Azure Portal or Storage Explorer, while granting <strong>zero write, modify, or delete permissions</strong> on the management or data planes.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Thus, <code>Reader and Data Access</code> fulfills the multi-service read requirement with least privilege.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>Storage Blob Data Reader:</em> Incomplete; cannot read Files, Queues, or Tables.</li>
+<li><em>Storage Account Contributor:</em> Excessive; grants full management plane control and key regeneration.</li>
+<li><em>Contributor / Owner:</em> Massive over-privileging.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"View data across ALL storage account services (Blobs + Files + Queues + Tables) with least privilege = <code>Reader and Data Access</code>."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 2: Storage] Storage Services Supporting RBAC Role Assignment Conditions (SK PT01 Q76)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: containers only; Correct Answer: containers and queues only)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: In storage account <code>StorageA</code>, determine which storage sub-services support configuring Azure RBAC role assignments with <strong>conditions</strong> (Attribute-Based Access Control / ABAC).</li>
+<li>Context: Storage account contains Containers (Blobs), File shares, Queues, and Tables.</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User selected "containers only", assuming ABAC conditions are strictly limited to Blob storage.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>Azure RBAC Role Assignment Conditions (ABAC):</strong><ul>
+<li>Enable conditional logic (e.g., checking blob index tags, resource attributes, or request attributes) on Azure role assignments.</li>
+<li><strong>Supported Azure Storage Services:</strong><ol>
+<li><strong>Azure Blob Storage (Containers):</strong> Conditions based on blob index tags, blob paths, container names, and encryption scopes.</li>
+<li><strong>Azure Queue Storage (Queues):</strong> Supported! Conditions can be applied based on queue names or request actions.</li>
+</ol>
+</li>
+<li><strong>Unsupported Storage Services:</strong><ul>
+<li><strong>Azure Files</strong> and <strong>Azure Tables</strong> do <strong>NOT</strong> support RBAC role assignment conditions.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Therefore, conditions can be configured for <strong>containers and queues only</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>Containers only:</em> Overlooks Queue storage, which fully supports RBAC conditions.</li>
+<li><em>Containers, file shares, queues, tables:</em> Files and Tables do not support RBAC conditions.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Azure Storage RBAC Conditions (ABAC) support = Containers (Blobs) AND Queues. Never Files or Tables."</strong></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>[Domain 4: Virtual Networking] Service Endpoint Policies vs Default Subnet Egress (SK PT01 Q88)</h3>
+<ul>
+<li><strong>1. Diagnostic Verdict:</strong> ❌ Incorrect (User Answer: True; Correct Answer: False)</li>
+<li><strong>2. The Scenario Trigger &amp; Hidden Constraints:</strong><ul>
+<li>Requirement: Evaluate storage account egress accessibility from virtual network <code>VNet-US</code> (in <code>South Central US</code>).</li>
+<li>Context:<ul>
+<li><code>Subnet-C</code>: Has <code>Microsoft.Storage</code> service endpoint enabled and <code>StoragePolicy01</code> attached. <code>StoragePolicy01</code> allows access to all storage accounts in the subscription (<code>storagewest01</code>, <code>storageus01</code>, <code>storageasia01</code>).</li>
+<li><code>Subnet-D</code>: Has <strong>NO</strong> service endpoint and no endpoint policy attached.</li>
+</ul>
+</li>
+<li>Question: True/False: "Only <code>storageus01</code> can be accessed from <code>VNet-US</code>."</li>
+</ul>
+</li>
+<li><strong>3. Flawed Mental Model:</strong><ul>
+<li>User answered "True", assuming service endpoint policies or regional affinity prevent VNet workloads from reaching other storage accounts outside the region.</li>
+</ul>
+</li>
+<li><strong>4. The Core Azure Mechanic (2026 Standard):</strong><ul>
+<li><strong>1. Behavior on <code>Subnet-C</code> (Service Endpoint Policy):</strong><ul>
+<li><code>StoragePolicy01</code> explicitly allows access to <strong>all storage accounts in the subscription</strong>.</li>
+<li>This includes <code>storagewest01</code>, <code>storageus01</code>, and <code>storageasia01</code>. Access from <code>Subnet-C</code> is not restricted to <code>storageus01</code>.</li>
+</ul>
+</li>
+<li><strong>2. Behavior on <code>Subnet-D</code> (No Service Endpoint):</strong><ul>
+<li>Subnets without service endpoints route outbound traffic to Azure public storage endpoints via the <strong>default Azure Internet routing path</strong> (<code>0.0.0.0/0 -&gt; Internet</code>).</li>
+<li>Workloads in <code>Subnet-D</code> can reach <strong>ANY</strong> storage account with public endpoint access enabled.</li>
+</ul>
+</li>
+<li>Because multiple storage accounts can be accessed from both subnets, the statement "Only storageus01 can be accessed from VNet-US" is completely false.</li>
+<li>Answer is strictly <strong>False</strong>.</li>
+</ul>
+</li>
+<li><strong>5. Distractor Killers:</strong><ul>
+<li><em>True (Service endpoints block non-regional storage):</em> Service endpoints route over Azure backbone to any regional or cross-region storage account unless restricted by policy.</li>
+<li><em>True (Subnet-D traffic is blocked):</em> Without a service endpoint, traffic simply exits via default internet routing to public endpoints.</li>
+</ul>
+</li>
+<li><strong>6. Exam Heuristic:</strong><ul>
+<li><strong>"Subnets WITHOUT service endpoints route to storage public endpoints over the internet. Subnets WITH Service Endpoint Policies allow whatever storage accounts the policy scopes."</strong></li>
 </ul>
 </li>
 </ul>
