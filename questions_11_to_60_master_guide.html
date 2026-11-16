@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0284c7">
+  <title>AZ-104 Master Guide: Questions 11 to 60 Comprehensive Breakdown</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1.5rem 1rem 4rem;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin-top: 2.2rem; margin-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; color: var(--accent-indigo); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    h4 { font-size: 0.95rem; font-weight: 700; color: #334155; margin-top: 1.2rem; margin-bottom: 0.35rem; }
+    p { margin-bottom: 1rem; font-size: 0.925rem; color: #334155; }
+    ul, ol { margin-left: 1.5rem; margin-bottom: 1.2rem; font-size: 0.925rem; color: #334155; }
+    li { margin-bottom: 0.4rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1.2rem 0; overflow-x: auto; display: block; }
+    th, td { padding: 0.65rem 0.85rem; text-align: left; border: 1px solid var(--border); }
+    th { background: #f8fafc; font-weight: 700; color: #1e293b; }
+    tr:nth-child(even) { background: #fbfcfe; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; color: #0f172a; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85rem; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 1.15rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1.2rem; }
+    pre code { background: transparent; color: inherit; padding: 0; font-size: 0.85rem; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+    .callout-blue { border-left: 4px solid var(--accent-blue); background: #f0f9ff; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .callout-green { border-left: 4px solid var(--accent-green); background: #f0fdf4; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .callout-amber { border-left: 4px solid var(--accent-amber); background: #fffbeb; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .callout-red { border-left: 4px solid var(--accent-red); background: #fef2f2; padding: 0.85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: 0.85rem; }
+    .question-card { background: #f8fafc; border: 1px solid var(--border); border-left: 4px solid var(--accent-indigo); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .question-title { font-weight: 800; font-size: 1rem; color: #0f172a; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .core-rule { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.75rem 1rem; margin-top: 0.75rem; font-size: 0.875rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Back to Master Command Hub</a>
+      <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">AZ-104 Exam Review Series (50 Questions)</span>
+      <a href="#toc">Jump to Index ↓</a>
+    </div>
+
+    <div class="content">
+      <span class="badge badge-purple">Comprehensive Exam Analysis</span>
+      <h1>AZ-104 Master Guide: Questions 11 to 60</h1>
+      <p style="font-size:0.95rem; color:var(--text-muted);">
+        A complete, verified, plain-English breakdown of all 50 questions from Shireen Khan Practice Test #1 (including the full 14-question ApexCore Case Study). Organized into 9 high-yield thematic modules.
+      </p>
+
+      <div class="callout-green" id="toc">
+        <strong>📚 Navigation Index:</strong><br>
+        • <a href="#mod1" style="color:var(--accent-indigo); font-weight:700;">Module 1: Blob Types &amp; Object Replication (Q11–Q14)</a><br>
+        • <a href="#mod2" style="color:var(--accent-indigo); font-weight:700;">Module 2: Container Ecosystem — ACR &amp; ACI (Q15–Q18, Q29–Q31)</a><br>
+        • <a href="#mod3" style="color:var(--accent-indigo); font-weight:700;">Module 3: Storage Account Key Management &amp; Least Privilege (Q19–Q22)</a><br>
+        • <a href="#mod4" style="color:var(--accent-indigo); font-weight:700;">Module 4: Virtual Machine Operations &amp; Host Maintenance (Q23–Q28)</a><br>
+        • <a href="#mod5" style="color:var(--accent-indigo); font-weight:700;">Module 5: Entra ID Governance, Group Licensing &amp; SSPR (Q32, Q38, Q39)</a><br>
+        • <a href="#mod6" style="color:var(--accent-indigo); font-weight:700;">Module 6: Azure RBAC Hierarchy &amp; Scope Inheritance (Q33–Q35, Q45, Q46)</a><br>
+        • <a href="#mod7" style="color:var(--accent-indigo); font-weight:700;">Module 7: Virtual Networking &amp; User-Defined Routing (Q40, Q43)</a><br>
+        • <a href="#mod8" style="color:var(--accent-indigo); font-weight:700;">Module 8: Storage Architecture, Vaults &amp; Key Vault (Q36, Q37, Q41, Q42, Q44)</a><br>
+        • <a href="#mod9" style="color:var(--accent-indigo); font-weight:700;">Module 9: ApexCore Consulting Case Study Deep Dive (Q47–Q60)</a>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 1 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod1">Module 1: Blob Types &amp; Object Replication (Q11–Q14)</h2>
+      <p>
+        Azure Storage provides three distinct blob formats and advanced cross-account replication capabilities. Microsoft frequently tests the precise technical boundaries between them.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q11: Blob Inventory Rule — Blob Types Selection</span>
+          <span class="badge badge-green">Correct Answer: blockBlob</span>
+        </div>
+        <p><strong>The Scenario:</strong> You manage storage account <code>dataarchive01</code> containing thousands of images in container <code>images</code>. You deploy an ARM template to generate a daily CSV inventory of files starting with "finance". What blob type should you specify?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (The 3 Blob Types):</strong>
+          <ul>
+            <li><strong>Block Blobs (<code>blockBlob</code>):</strong> Used for unstructured general files (images, documents, videos, backups, CSVs). Stored in blocks up to 190.7 TB. <em>Always choose this for standard files.</em></li>
+            <li><strong>Page Blobs (<code>pageBlob</code>):</strong> 512-byte aligned for random read/write access. Exclusively used for <strong>virtual machine VHD hard disks</strong>.</li>
+            <li><strong>Append Blobs (<code>appendBlob</code>):</strong> Optimized exclusively for appending new blocks to the end. Used for <strong>application logging and audit trails</strong>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q12: Blob Inventory Rule — Prefix Filter Syntax</span>
+          <span class="badge badge-green">Correct Answer: images/finance</span>
+        </div>
+        <p><strong>The Scenario:</strong> What prefix match string must be defined to inventory blobs starting with "finance" inside container <code>images</code>?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Prefix Matching):</strong>
+          In Azure Blob Inventory and Lifecycle Management rules, the prefix path <strong>must always include the container name</strong>: <code>&lt;container-name&gt;/&lt;blob-prefix&gt;</code>.<br>
+          • <code>finance</code> fails because it omits the container.<br>
+          • <code>images/*</code> is invalid wildcard syntax for exact prefix matching.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q13 &amp; Q14: Object Replication — Target Object &amp; Account Requirements</span>
+          <span class="badge badge-green">Q13: Container | Q14: StorageV2 or BlobStorage only</span>
+        </div>
+        <p><strong>The Scenario:</strong> Replicate image blobs from <code>mediafiles01</code> to a new storage account. What target object must you create? What account type must you deploy?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Object Replication Rules):</strong>
+          <ul>
+            <li><strong>Target Object:</strong> <strong>Container</strong>. Object Replication is strictly a feature of Blob Storage. It replicates block blobs between containers. It does NOT replicate File shares, Tables, or Queues.</li>
+            <li><strong>Eligible Account Types:</strong> <strong>General-purpose v2 (<code>StorageV2</code>)</strong> or <strong>Premium Block Blobs (<code>BlobStorage</code>)</strong>. <code>FileStorage</code> accounts only support Azure Files and are strictly excluded.</li>
+            <li><strong>Mandatory Prerequisites:</strong> Both source and destination accounts must have <strong>Blob Versioning</strong> and <strong>Blob Change Feed</strong> enabled.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 2 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod2">Module 2: Container Ecosystem — ACR &amp; ACI (Q15–Q18, Q29–Q31)</h2>
+      <p>
+        Azure Container Registry (ACR) hosts container images, while Azure Container Instances (ACI) runs serverless containers. Connecting them reliably under security constraints is heavily tested.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q15–Q18: ACI Deployment Failure Pulling from ACR</span>
+          <span class="badge badge-amber">Missed Q17 &amp; Q18</span>
+        </div>
+        <p><strong>The Scenario:</strong> Deploying an ACI container using image <code>webappimage</code> from private ACR <code>corpRegistry</code> fails with an authentication error. Which solutions solve this?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (ACR Authentication Matrix):</strong>
+          <ul>
+            <li><strong>Q15 (Private Endpoint $\to$ No):</strong> Secures network transport, but does not provide credentials. The container still cannot authenticate.</li>
+            <li><strong>Q16 (Dedicated Data Endpoint $\to$ No):</strong> Optimizes data-plane routing; does not grant pull rights.</li>
+            <li><strong>Q17 (AcrPull to ACR-Tasks $\to$ No):</strong> <em>The Trap!</em> <code>ACR-Tasks</code> is the internal build agent inside ACR. Assigning it <code>AcrPull</code> does not help an external ACI instance. The role must be assigned to the ACI's Managed Identity!</li>
+            <li><strong>Q18 (Enable Admin User $\to$ Yes):</strong> Enabling the Admin user generates a static username and password on the registry. Passing these into ACI lets it authenticate and pull the image immediately. (Valid answer to "Does it work?").</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q29 &amp; Q30: CLI Commands for ACR Provisioning &amp; Image Push</span>
+          <span class="badge badge-green">Q29: az acr create | Q30: docker push</span>
+        </div>
+        <p><strong>The Scenario:</strong> You build <code>invoiceservice-img</code> locally on a workstation with Docker and Azure CLI. What command creates the registry? What command uploads the image?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (CLI Tooling Division):</strong>
+          <ul>
+            <li>To provision the cloud registry: <code>az acr create --resource-group &lt;rg&gt; --name &lt;name&gt; --sku Basic</code>. (Note: <code>az acr build</code> builds an image in the cloud; it does not provision the registry).</li>
+            <li>To upload local image bytes to ACR: <code>docker push &lt;registry-login-server&gt;/invoiceservice-img:tag</code>. (<code>docker tag</code> only labels the image; it does not transfer bits).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q31: ACI CPU Contention in Multi-Container Groups</span>
+          <span class="badge badge-red">Missed: Container Limits</span>
+        </div>
+        <p><strong>The Scenario:</strong> Container group <code>PodGroup1</code> hosts <code>svc-api</code> (Request: 2 CPU, Limit: 2 CPU) and <code>svc-worker</code> (Request: 3 CPU, Limit: 4 CPU). Total allocated = 5 CPUs. Ensure <code>svc-worker</code> cannot consume CPU at the expense of <code>svc-api</code> without changing group architecture.</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (ACI Resource Requests vs Limits):</strong>
+          In an Azure Container Instance group, the hypervisor allocates total CPU based on the <strong>sum of container resource requests</strong> ($2 + 3 = 5\text{ CPUs}$).<br>
+          • If a container has a <em>limit higher than its request</em> (like 4 CPUs for worker), it is allowed to burst into unused pooled capacity, starving neighboring containers.<br>
+          • <strong>The Fix:</strong> If you <strong>remove the resource limit</strong> on containers, their maximum CPU is automatically capped <strong>exactly at their resource request</strong> ($2\text{ and }3$). Neither container can burst into the other's share.
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 3 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod3">Module 3: Storage Account Key Management &amp; Least Privilege (Q19–Q22)</h2>
+      <p>
+        Managing access keys (Shared Keys) vs data access vs control plane operations is one of the most tested governance topics in AZ-104.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q19–Q22: Granting UserA Rights to List and Regenerate Storage Keys</span>
+          <span class="badge badge-amber">Missed Q21</span>
+        </div>
+        <p><strong>The Scenario:</strong> UserA must be granted permissions to view (list) storage account access keys and regenerate them when necessary for <code>datastore01</code>. Which roles achieve this?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Storage Key Permission Matrix):</strong>
+          <ul>
+            <li><strong>Q19 (Encryption Scope Contributor $\to$ No):</strong> Manages customer-managed keys for blob encryption scopes; cannot view or rotate account root keys.</li>
+            <li><strong>Q20 (Storage Account Key Operator Service Role $\to$ Yes):</strong> The dedicated least-privilege role designed strictly for key listing and regeneration without full management rights.</li>
+            <li><strong>Q21 (Storage Account Contributor $\to$ Yes):</strong> <em>The Trap!</em> While not least-privilege, <code>Storage Account Contributor</code> has full control plane management over the storage account, including <code>listkeys/action</code> and <code>regeneratekey/action</code>. It <strong>does achieve the objective</strong>.</li>
+            <li><strong>Q22 (Reader and Data Access $\to$ No):</strong> Allows listing keys to read data, but strictly lacks permission to <strong>regenerate (write)</strong> keys.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 4 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod4">Module 4: Virtual Machine Operations &amp; Host Maintenance (Q23–Q28)</h2>
+      <p>
+        Azure runs scheduled platform maintenance on underlying physical hypervisors. When proactive relocation is required, only specific operations move the VM to new hardware.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q23–Q28: Immediately Relocating ShireenVM to Avoid Scheduled Maintenance</span>
+          <span class="badge badge-amber">Missed Q27</span>
+        </div>
+        <p><strong>The Scenario:</strong> You receive an alert stating <code>ShireenVM</code> will be impacted by scheduled host maintenance. You must immediately relocate the VM to a different physical host. Which action works?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (VM Redeployment vs Metadata Moves):</strong>
+          <ul>
+            <li><strong>Q23 &amp; Q26 (Updates Blade $\to$ No):</strong> Applies guest OS or host patches in place; does not proactively relocate the VM to fresh hardware.</li>
+            <li><strong>Q24, Q25, Q28 (Move Resource Group / Subscription $\to$ No):</strong> Moving a VM between resource groups or subscriptions is purely a <strong>logical ARM metadata update</strong>. The VM remains pinned to the exact same physical blade in the datacenter.</li>
+            <li><strong>Q27 (Redeploy Blade $\to$ YES):</strong> Clicking <strong>Redeploy</strong> instructs Azure to shut down the VM, migrate the compute instance to an entirely different healthy physical host within the same Azure region, and restart it. OS and data disks are preserved. This immediately clears the maintenance window!</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 5 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod5">Module 5: Entra ID Governance, Group Licensing &amp; SSPR (Q32, Q38, Q39)</h2>
+      <p>
+        User administration, group naming conventions, licensing tiers, and self-service password reset rules.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q32: Microsoft Entra ID Group Naming Policy Setup</span>
+          <span class="badge badge-green">Correct Sequence: 2 - 3 - 6</span>
+        </div>
+        <p><strong>The Scenario:</strong> Enforce naming format <code>&lt;Office&gt;&lt;RequestedName&gt;</code> automatically when new M365 groups are created. What is the ordered sequence of actions?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Naming Policy Workflow):</strong>
+          1. <strong>Step 1 (Action 2):</strong> Create a group naming policy in Microsoft Entra admin center.<br>
+          2. <strong>Step 2 (Action 3):</strong> Set <em>Add prefix</em> to <strong>Attribute</strong>.<br>
+          3. <strong>Step 3 (Action 6):</strong> Set <em>Select type</em> to <strong>Office</strong> (maps user's office attribute as prefix).
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q38: License Assignment on Microsoft Entra ID Free Tier</span>
+          <span class="badge badge-red">Missed: License Assignment</span>
+        </div>
+        <p><strong>The Scenario:</strong> Tenant has Free tier license. Identities: <code>UserA</code> (User), <code>SecGroup01</code> (Security group), <code>M365Group01</code> (M365 group). Who can be assigned a Microsoft Fabric license?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Group-Based Licensing Tier Requirement):</strong>
+          Assigning licenses to groups (Security or M365 groups) is an advanced feature that <strong>strictly requires Microsoft Entra ID P1 or P2</strong>.<br>
+          • On the <strong>Free tier</strong>, licenses can <strong>ONLY</strong> be assigned directly to individual users (<code>UserA only</code>).
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q39: Self-Service Password Reset (SSPR) Scope Assignment</span>
+          <span class="badge badge-red">Missed: SSPR Scoping</span>
+        </div>
+        <p><strong>The Scenario:</strong> You plan to enable Self-Service Password Reset (SSPR) in the Azure Portal. For which identities can SSPR be enabled?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (SSPR Portal Scopes):</strong>
+          In the Azure Portal SSPR configuration blade, the assignment options are strictly:
+          <code>None</code>, <code>Selected</code>, or <code>All</code>.<br>
+          • Under <strong>Selected</strong>, the interface <strong>ONLY allows selecting Groups</strong> (Security groups or Microsoft 365 groups). You <strong>CANNOT</strong> select individual user accounts directly!<br>
+          • Correct Answer: <strong><code>SecGroup01 and M365Group01 only</code></strong>.
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 6 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod6">Module 6: Azure RBAC Hierarchy &amp; Scope Inheritance (Q33–Q35, Q45, Q46)</h2>
+      <p>
+        Permissions inherit downward through the management hierarchy. Control plane roles do not grant data plane rights, and child scopes cannot restrict inherited parent permissions.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q33–Q35: Management Group Hierarchy Permissions</span>
+          <span class="badge badge-green">Q33: True | Q34: False | Q35: True</span>
+        </div>
+        <p><strong>The Scenario:</strong> Tenant Root Group contains <code>Global-MG1</code> (has <code>AtlasSub</code>) and <code>Global-MG2</code> (has <code>ZenithSub</code> with <code>vm-prod1</code>). <code>NovaSub</code> has no parent MG.</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (RBAC Hierarchy Downward Cascade):</strong>
+          <ul>
+            <li><strong>Q33 (Morgan can resize vm-prod1 $\to$ True):</strong> Morgan has <code>Contributor</code> at <code>Global-MG2</code>. This cascades down through <code>ZenithSub</code> and <code>rg-vm</code> to <code>vm-prod1</code>. Contributor allows resizing VMs.</li>
+            <li><strong>Q34 (Riley can create storage account in rg-data $\to$ False):</strong> Riley has <code>Storage Account Contributor</code> assigned strictly to <code>storeA1</code> (resource scope). Riley has zero permissions on the parent resource group <code>rg-data</code> to create new storage accounts.</li>
+            <li><strong>Q35 (Casey can assign Morgan Owner on rg-vm $\to$ True):</strong> Casey has <code>User Access Administrator</code> at the <strong>Tenant Root Group</strong>. This gives role assignment power across every subscription and resource group in the entire tenant.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q45 &amp; Q46: Subnet Creation vs Role Assignment on Virtual Networks</span>
+          <span class="badge badge-green">Q45: Dana and Sam | Q46: Dana only</span>
+        </div>
+        <p><strong>The Scenario:</strong> VNet <code>vnet-hub1</code>. Dana (Owner), Priya (Security Admin), Sam (Network Contributor). Who can create a subnet? Who can assign another user Reader?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Network RBAC Roles):</strong>
+          <ul>
+            <li><strong>Creating Subnets:</strong> Managed via <code>Microsoft.Network/virtualNetworks/subnets/write</code>. Both <strong>Owner (Dana)</strong> and <strong>Network Contributor (Sam)</strong> have full network management rights. (Security Admin only manages Defender/security policies).</li>
+            <li><strong>Assigning Roles:</strong> Strictly an IAM action (<code>Microsoft.Authorization/roleAssignments/write</code>). <strong>Owner (Dana)</strong> has this. Network Contributor does not!</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 7 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod7">Module 7: Virtual Networking &amp; User-Defined Routing (Q40, Q43)</h2>
+      <p>
+        Forcing network traffic through firewalls and Network Virtual Appliances (NVAs) requires custom route tables.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q40 &amp; Q43: Forcing Inter-VNet Traffic Through an NVA &amp; Next Hop Types</span>
+          <span class="badge badge-green">Q40: Route table with custom routes | Q43: Virtual appliance</span>
+        </div>
+        <p><strong>The Scenario:</strong> Route traffic between peered VNets through NVA <code>fw-appliance1</code>. Which component redirects traffic? Which next hop type requires specifying an IP address?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (User-Defined Routes &amp; Next Hop Types):</strong>
+          <ul>
+            <li><strong>Traffic Redirection:</strong> NSGs can only <em>Allow</em> or <em>Deny</em> traffic; they cannot reroute packets. To force traffic through an NVA, you must attach a <strong>Route Table (UDR)</strong> with a custom route (e.g., <code>10.2.0.0/16 -> NVA IP</code>).</li>
+            <li><strong>Next Hop Types:</strong>
+              <ul>
+                <li><strong>Virtual appliance:</strong> The <strong>ONLY</strong> next hop type where you must manually supply a target IP address (the private IP of your firewall/NVA).</li>
+                <li><strong>Virtual network gateway:</strong> Routes to VPN/ExpressRoute (no IP specified).</li>
+                <li><strong>Internet:</strong> Routes directly out to public internet (no IP specified).</li>
+                <li><strong>None:</strong> Blackholes / drops traffic.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 8 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod8">Module 8: Storage Architecture, Vaults &amp; Key Vault (Q36, Q37, Q41, Q42, Q44)</h2>
+      <p>
+        Backup Vaults vs Recovery Services Vaults, Key Vault regional flexibility, and Data Lake Storage options.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q36 &amp; Q37: Azure Backup Vault vs. Recovery Services Vault (RSV)</span>
+          <span class="badge badge-green">Q36: Disk01 | Q37: VM01</span>
+        </div>
+        <p><strong>The Scenario:</strong> You have Backup vault <code>VaultA</code> and Recovery Services vault <code>VaultB</code>. Resources: <code>VM01</code>, <code>Disk01</code>, <code>WebApp01</code>, <code>SQLDB01</code>. Which protects which?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (The Vault Split Matrix):</strong>
+          <ul>
+            <li><strong>Recovery Services Vault (VaultB):</strong> The classic vault for <strong>Azure Virtual Machines (VM01)</strong>, SQL Server in Azure VMs, and Azure Backup Server (MARS agent).</li>
+            <li><strong>Azure Backup Vault (VaultA):</strong> The modern vault designed for newer workloads: <strong>Azure Managed Disks (Disk01)</strong>, Azure Blobs, Azure Files (vaulted), and AKS.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q41 &amp; Q42: Key Vault Authentication &amp; Regional Boundaries</span>
+          <span class="badge badge-amber">Missed Q42</span>
+        </div>
+        <p><strong>The Scenario:</strong> Container app <code>checkout-app</code> in West US needs a secret from Key Vault. <code>kv-primary</code> is in West US; <code>kv-secondary</code> and <code>kv-archive</code> are in East US and Central US. What authentication is used? Which Key Vault can be accessed?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Key Vault Regional Independence):</strong>
+          <ul>
+            <li><strong>Authentication:</strong> <strong>Managed Identity</strong>. Provides an automatic Entra ID token with zero embedded credentials.</li>
+            <li><strong>Which Key Vault can be used?</strong> <strong><code>kv-primary, kv-secondary, or kv-archive</code></strong>. Azure Key Vaults are public HTTPS endpoints. There are <strong>zero regional or resource group boundaries</strong> blocking an app in West US from querying a Key Vault in East US. (Best practice recommends same region for latency, but Azure does not restrict cross-region access).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q44: Azure Data Lake Storage Configuration Options</span>
+          <span class="badge badge-green">Options: hierarchical namespace, Cool tier, GRS</span>
+        </div>
+        <p><strong>The Scenario:</strong> Provision storage account <code>storage1</code>: Must be compatible with Azure Data Lake Storage, optimized for infrequent access cost, and automatically replicate to another Azure region.</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (ADLS Gen2 Settings):</strong>
+          1. <strong>Hierarchical Namespace (HNS):</strong> The mandatory feature that transforms standard Blob Storage into Azure Data Lake Storage Gen2 (enables true directory file trees and atomic renames).<br>
+          2. <strong>Cool Access Tier:</strong> Lowest storage cost for infrequently accessed data (30-day minimum retention).<br>
+          3. <strong>Geo-Redundant Storage (GRS):</strong> Asynchronously replicates data 3x locally + 3x to a paired secondary region.
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MODULE 9 -->
+      <!-- ========================================================================= -->
+      <h2 id="mod9">Module 9: ApexCore Consulting Case Study Deep Dive (Q47–Q60)</h2>
+      <p>
+        The 14-question ApexCore Case Study tests intricate real-world enterprise constraints across Azure Files, Custom Security Attributes, Disk Encryption (ADE/KEK), Immutability, App Service TLS, and Log Analytics.
+      </p>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q47 &amp; Q48: Azure Backup Maximum Frequency — Blobs vs. Azure Files</span>
+          <span class="badge badge-amber">Missed Q48</span>
+        </div>
+        <p><strong>The Scenario:</strong> Technical requirement: <code>data1</code> (Blob container) and <code>docs1</code> (Azure file share) must be backed up as frequently as Azure Backup allows.</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Backup Frequency Limits):</strong>
+          <ul>
+            <li><strong>Azure Blob Storage (data1):</strong> Vaulted blob backup only supports <strong>Daily</strong> or Weekly scheduled backups. Hourly is unsupported.</li>
+            <li><strong>Azure Files (docs1):</strong> Azure Backup for file shares supports up to <strong>24 snapshot backups per day</strong>! Therefore, it can run as frequently as <strong>Every 1 hour</strong>. (You chose Every 4 hours).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q49, Q50 &amp; Q51: Microsoft Entra Custom Security Attributes</span>
+          <span class="badge badge-red">Missed Q49 &amp; Q51</span>
+        </div>
+        <p><strong>The Scenario:</strong> Tenant has custom security attribute <code>AttribTag1</code>. Priya Shah (Global Admin), Derek Nguyen (Attribute Definition Admin), Lena Osei (Attribute Assignment Admin). Groups: <code>Cohort1</code> (Security group), <code>Cohort2</code> (M365 group). Can Priya or Lena assign the attribute to groups? Can Derek assign to a user?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Custom Security Attributes Target Boundaries):</strong>
+          <ul>
+            <li><strong>Target Objects:</strong> Custom Security Attributes can <strong>ONLY</strong> be applied to <strong>Users, Service Principals, and Managed Identities</strong>. They can <strong>NEVER be assigned to Groups</strong> (neither Security nor M365 groups). Both Q49 and Q51 are strictly <strong>False</strong>!</li>
+            <li><strong>Role Separation:</strong>
+              <ul>
+                <li><strong>Attribute Definition Administrator (Derek):</strong> Can create and manage attribute sets and keys. <em>Cannot assign them to users!</em> (Q50 is False).</li>
+                <li><strong>Attribute Assignment Administrator (Lena):</strong> Can assign defined attributes to supported objects (users, service principals).</li>
+                <li><strong>Global Administrator (Priya):</strong> By default, has <strong>zero permissions</strong> to read, define, or assign custom security attributes without explicit role assignment!</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q52 &amp; Q53: Azure Disk Encryption (ADE) with Key Encryption Key (KEK)</span>
+          <span class="badge badge-amber">Missed Q52</span>
+        </div>
+        <p><strong>The Scenario:</strong> Encrypt VMs using Azure Disk Encryption paired with a KEK in <code>SecVault1</code>. <code>Key1</code> is RSA 4096; <code>Key2</code> is EC P-256. Which cmdlet and key? Which VMs qualify?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (ADE &amp; KEK Requirements):</strong>
+          <ul>
+            <li><strong>KEK Algorithm:</strong> Azure Disk Encryption KEK <strong>strictly requires an RSA key</strong> (2048, 3072, or 4096). Elliptic Curve (EC) keys are completely unsupported for ADE. Use <strong>Key1</strong>.</li>
+            <li><strong>PowerShell Cmdlet:</strong> <strong><code>Set-AzVMDiskEncryptionExtension</code></strong>. (<code>Set-AzDiskEncryptionKey</code> is a fake cmdlet).</li>
+            <li><strong>VM Eligibility:</strong>
+              <ul>
+                <li>✅ <strong>Node2</strong> (Windows Server 2022, Basic Volume) &amp; <strong>Node3</strong> (Ubuntu 22.04 LTS, Standard SSD) $\to$ Fully supported.</li>
+                <li>❌ <strong>Node1</strong> (Ephemeral OS disk) $\to$ Unsupported for ADE.</li>
+                <li>❌ <strong>Node4</strong> (Write Accelerator disks) $\to$ Unsupported for ADE.</li>
+                <li>❌ <strong>Node5</strong> (Dynamic Volume) $\to$ Unsupported for ADE.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q54 &amp; Q55: Storage Policy Limits — Stored Access Policies vs. Immutability</span>
+          <span class="badge badge-amber">Missed Q55</span>
+        </div>
+        <p><strong>The Scenario:</strong> Container <code>data2</code> has 3 stored access policies and 1 legal hold. What is the maximum number of additional stored access policies? Additional immutable policies?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Storage Policy Capacity Caps):</strong>
+          <ul>
+            <li><strong>Stored Access Policies (SAS):</strong> Maximum limit is <strong>5 per container</strong>. Since 3 exist, $5 - 3 =$ <strong>2 additional policies</strong> can be created.</li>
+            <li><strong>Immutable Blob Storage Policies:</strong> Maximum limit is <strong>2 per container</strong>: exactly <strong>1 Legal Hold</strong> + <strong>1 Time-Based Retention Policy</strong>. Since <code>data2</code> already has a Legal Hold, exactly <strong>1 additional policy</strong> (time-based) can be created!</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q56: Organizing Content into Hierarchical Directories</span>
+          <span class="badge badge-green">Correct: data1, docs1, and docs2 only</span>
+        </div>
+        <p><strong>The Scenario:</strong> Organize content into directories wherever achievable across <code>datastore1</code> (HNS enabled: <code>data1</code> blob, <code>docs1</code> file share) and <code>datastore2</code> (HNS disabled: <code>data2</code> blob, <code>docs2</code> file share).</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (Hierarchical Directories in Storage):</strong>
+          <ul>
+            <li><strong>Azure Files (docs1 &amp; docs2):</strong> File shares <strong>natively support directories</strong> regardless of storage account settings. Both qualify.</li>
+            <li><strong>Blob Storage:</strong> Blobs only support true directories if <strong>Hierarchical Namespace (HNS) is enabled</strong> (<code>data1</code>). <code>data2</code> has HNS disabled, so it only has virtual folder paths, not true directories.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q57: App Service TLS Certificates from Key Vault</span>
+          <span class="badge badge-red">Missed: PKCS#12 vs PEM</span>
+        </div>
+        <p><strong>The Scenario:</strong> <code>AppSvc1</code> needs a TLS certificate from <code>SecVault1</code>. <code>TlsCert1</code> &amp; <code>TlsCert2</code> are PKCS#12 (PFX); <code>TlsCert3</code> &amp; <code>TlsCert4</code> are PEM format. Which certificates can be used?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (App Service Key Vault Certificate Import):</strong>
+          When Azure App Service imports certificates directly from Azure Key Vault, it <strong>strictly requires PKCS#12 (.pfx) format</strong> containing the private key.<br>
+          • <strong>PEM format certificates cannot be imported directly</strong> into App Service from Key Vault.<br>
+          • Correct Answer: <strong><code>TlsCert1 or TlsCert2 only</code></strong>.
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q58: Data Collection Rules (DCR) Event Filtering Query Language</span>
+          <span class="badge badge-red">Missed: XPath vs KQL</span>
+        </div>
+        <p><strong>The Scenario:</strong> DCR <code>CollectRule1</code> gathers only system events carrying Event ID 4648 from Windows VMs <code>Node2</code> and <code>Node4</code>. Which query type must be configured in the DCR?</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (DCR Ingestion vs Log Analytics Search):</strong>
+          <ul>
+            <li><strong>At the Agent / Ingestion Level (DCR):</strong> Filtering Windows Event Logs inside the Azure Monitor Agent uses <strong>XPath queries</strong> (e.g., <code>System!*[System[(EventID=4648)]]</code>).</li>
+            <li><strong>In Log Analytics Workspace:</strong> Querying data <em>after</em> ingestion uses <strong>KQL (Kusto Query Language)</strong>. KQL is not used inside the DCR event log filter.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-title">
+          <span>Q59 &amp; Q60: Linking Private DNS Zones to Virtual Networks</span>
+          <span class="badge badge-green">Q59: Network Contributor + Private DNS Zone Contributor | Q60: NetVnet1 & corezone1.com only</span>
+        </div>
+        <p><strong>The Scenario:</strong> Carlos Vega needs permissions to link Private DNS zone <code>corezone1.com</code> (in <code>CoreRG3</code>) to virtual network <code>NetVnet1</code> (in <code>CoreRG2</code>) with least privilege.</p>
+        <div class="core-rule">
+          <strong>🎯 Core Rule (DNS Virtual Network Link Permissions):</strong>
+          Creating a virtual network link bridges two resources, requiring rights on both:
+          1. <strong>Private DNS Zone Contributor:</strong> Scoped to <code>corezone1.com</code> (to create the link object).<br>
+          2. <strong>Network Contributor:</strong> Scoped to <code>NetVnet1</code> (provides <code>Microsoft.Network/virtualNetworks/join/action</code>).<br>
+          • <strong>Least Privilege Scope:</strong> Assign roles strictly at the resource level (<code>corezone1.com</code> and <code>NetVnet1</code>), <em>never</em> at the parent Resource Group level!
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
