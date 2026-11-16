@@ -1,4 +1,4 @@
-const CACHE_NAME = 'az104-hub-v6';
+const CACHE_NAME = 'az104-hub-v7';
 const ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS = [
   './app_service_deployment_and_auth_master_guide.html',
   './azure_abac_role_assignment_conditions_master_guide.html',
   './questions_11_to_60_master_guide.html',
+  './questions_11_to_90_fast_track_guide.html',
   './council-report-20261112-120650.html',
   './azure_placement_and_boundary_matrix.html',
   './azcopy_master_guide.html',

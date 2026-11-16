@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0284c7">
+  <title>AZ-104 Fast-Track Master Cheat Sheet: Q11 to Q90 (Zero Redundancy)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-indigo: #4f46e5;
+      --accent-red: #e11d48;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 1.5rem 1rem 4rem;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .nav-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .nav-bar a {
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .nav-bar a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    h2 { font-size: 1.3rem; font-weight: 750; color: var(--accent-indigo); margin: 2rem 0 1rem; border-bottom: 2px solid #e0e7ff; padding-bottom: 0.4rem; }
+    h3 { font-size: 1.05rem; font-weight: 700; color: #1e293b; margin: 1.25rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; font-size: 0.95rem; }
+    ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; font-size: 0.95rem; }
+    li { margin-bottom: 0.35rem; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85em; color: #0f172a; font-weight: 600; }
+    
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-purple { background: #e0e7ff; color: #4338ca; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+
+    .toc {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .toc ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.5rem; }
+    .toc a { color: var(--accent-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+    .toc a:hover { text-decoration: underline; }
+
+    .topic-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-indigo);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .topic-card.missed {
+      border-left-color: var(--accent-red);
+      background: #fffafa;
+    }
+    .topic-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .topic-title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #0f172a;
+    }
+    .solved-tags {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: #e0f2fe;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+    .solved-tags.contains-missed {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+    .rule-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+    }
+    .trigger-formula {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin: 0.75rem 0;
+      font-size: 0.875rem;
+      color: #065f46;
+    }
+    .trap-box {
+      background: #fffbeb;
+      border-left: 3px solid var(--accent-amber);
+      padding: 0.6rem 0.9rem;
+      border-radius: 4px;
+      margin-top: 0.6rem;
+      font-size: 0.85rem;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+      <a href="index.html">← Master Command Hub</a>
+      <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">AZ-104 Fast-Track (Q11–Q90)</span>
+      <a href="#toc">Jump to Index ↓</a>
+    </div>
+
+    <div class="content">
+      <span class="badge badge-purple">High-Yield Deduplicated Synthesis</span>
+      <h1>AZ-104 Fast-Track Guide: Questions 11 to 90</h1>
+      <p style="font-size:0.95rem; color:var(--text-muted);">
+        <strong>Zero redundancy. Zero repetitive fluff.</strong> 80 questions (Q11 through Q90, including the full 17-question ApexCore Case Study) condensed into <strong>12 Atomic Mental Models</strong>. Designed for high-speed review when your schedule is packed.
+      </p>
+
+      <div class="toc" id="toc">
+        <strong style="display:block; margin-bottom:0.6rem; font-size:0.9rem; color:#334155;">⚡ 12 High-Yield Core Modules:</strong>
+        <ul>
+          <li><a href="#t1">1. Blob Types, Replication &amp; AzCopy (Q11–14, 44, 56, 70, 75)</a></li>
+          <li><a href="#t2">2. Container Ecosystem: ACR &amp; ACI (Q15–18, 29–31, 62–63)</a></li>
+          <li><a href="#t3">3. Storage Keys, ABAC &amp; Data Plane (Q19–22, 73, 74, 76)</a></li>
+          <li><a href="#t4">4. VM Host Maintenance &amp; Operations (Q23–28, 71)</a></li>
+          <li><a href="#t5">5. Entra ID Licensing, SSPR &amp; Attributes (Q32, 38, 39, 72)</a></li>
+          <li><a href="#t6">6. RBAC Cascades &amp; Custom Roles (Q33–35, 64, 67, 68, 78–80, 89–90)</a></li>
+          <li><a href="#t7">7. Networking, Routing &amp; Peering (Q40, 43, 45, 46, 83–88)</a></li>
+          <li><a href="#t8">8. Vault Architecture &amp; Backup Cadence (Q36–37, 47–48, 81)</a></li>
+          <li><a href="#t9">9. Key Vault, ADE Disk Encryption &amp; TLS (Q41–42, 52–53, 57, 82)</a></li>
+          <li><a href="#t10">10. Governance: Policy, Locks &amp; Moves (Q69, 77)</a></li>
+          <li><a href="#t11">11. Monitoring DCR &amp; Private DNS Links (Q58, 59, 60)</a></li>
+          <li><a href="#t12">12. ApexCore Specifics: Policies &amp; Scopes (Q54, 55, 61)</a></li>
+        </ul>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 1 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card" id="t1">
+        <div class="topic-header">
+          <span class="topic-title">1. Blob Storage Architecture, Replication &amp; AzCopy</span>
+          <span class="solved-tags">Solves Q11, Q12, Q13, Q14, Q44, Q56, Q70, Q75</span>
+        </div>
+        <p><strong>The Mechanics:</strong> Azure Storage provides 3 blob types, cross-account replication, and optimized routing. You must know what operates at the container vs blob level.</p>
+        
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>The 3 Blob Types:</strong>
+              <ul>
+                <li><code>blockBlob</code>: Unstructured general files (images, documents, videos, CSVs). Up to 190.7 TB. <em>Standard answer for data files.</em></li>
+                <li><code>pageBlob</code>: 512-byte aligned for random read/write. Exclusively for <strong>Virtual Machine VHD disks</strong>.</li>
+                <li><code>appendBlob</code>: Append-only. Exclusively for <strong>audit logs and diagnostics</strong>.</li>
+              </ul>
+            </li>
+            <li><strong>Blob Inventory Prefix Syntax:</strong> The prefix string <strong>MUST include the container name</strong>: <code>&lt;container-name&gt;/&lt;blob-prefix&gt;</code> (e.g. <code>images/finance</code>). Omitting the container fails.</li>
+            <li><strong>Object Replication:</strong> Replicates block blobs between <strong>Containers</strong> only. Accounts must be <strong>StorageV2</strong> or <strong>BlobStorage</strong> (never <code>FileStorage</code>) with <strong>Blob Versioning</strong> and <strong>Blob Change Feed</strong> enabled on both source and target.</li>
+            <li><strong>Hierarchical Namespace (HNS):</strong> Enabling HNS transforms Blob Storage into <strong>Azure Data Lake Storage Gen2 (ADLS Gen2)</strong>. It enables true file directories and atomic renames. Azure Files natively supports directories without HNS.</li>
+            <li><strong>AzCopy Container Creation:</strong> To create a container via CLI before uploading, use <code>azcopy make 'https://&lt;acct&gt;.blob.core.windows.net/&lt;container&gt;'</code>. (<code>azcopy copy</code> transfers files; <code>azcopy sync</code> synchronizes directories).</li>
+            <li><strong>Routing Preference:</strong>
+              <ul>
+                <li><strong>Microsoft Network Routing (Cold Potato):</strong> Traverses Microsoft's global fiber backbone entering at the POP closest to the user. Lowest latency.</li>
+                <li><strong>Internet Routing (Hot Potato):</strong> Traverses public transit ISP networks and enters Microsoft's network at the POP closest to the storage account. Cheaper egress.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Inventory CSV of images" $	o$ <code>blockBlob</code> + <code>&lt;container&gt;/&lt;prefix&gt;</code><br>
+          • "Replicate blobs across accounts" $	o$ Target: <strong>Container</strong> | Account: <strong>StorageV2 / BlobStorage</strong><br>
+          • "Route users through closest POP" $	o$ <strong>Routing preference</strong> (Microsoft network routing)<br>
+          • "AzCopy create container" $	o$ <strong><code>azcopy make</code></strong>
+        </div>
+
+        <div class="trap-box">
+          ⚠️ <strong>Exam Trap:</strong> <code>FileStorage</code> accounts only support Azure Files (SMB/NFS). If an option suggests deploying <code>FileStorage</code> for Object Replication, eliminate it immediately.
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 2 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t2">
+        <div class="topic-header">
+          <span class="topic-title">2. Container Ecosystem: ACR Authentication, CLI &amp; ACI Allocation</span>
+          <span class="solved-tags contains-missed">Solves Q15–Q18, Q29–Q31, Q62, Q63 (Missed Q17, Q18, Q31)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> How Azure Container Instances (ACI) pull from private Azure Container Registry (ACR), and how multi-container groups allocate CPU.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>Pulling Images from Private ACR:</strong>
+              <ul>
+                <li>❌ <strong>Private Endpoint:</strong> Protects network traffic, but provides zero credentials. Pull still fails.</li>
+                <li>❌ <strong>ACR-Tasks with AcrPull:</strong> <code>ACR-Tasks</code> is the internal build agent within ACR. Giving it <code>AcrPull</code> does not authorize external ACI containers.</li>
+                <li>✅ <strong>Admin User:</strong> Enabling the registry Admin user provides static username/password credentials. (Valid solution in yes/no questions).</li>
+                <li>✅ <strong>Managed Identity:</strong> The production best practice. Assign a User-Assigned Managed Identity to ACI and grant it <code>AcrPull</code> on the ACR.</li>
+              </ul>
+            </li>
+            <li><strong>ACI Multi-Container CPU Contention:</strong>
+              In an ACI container group, total group CPU = sum of container CPU <em>requests</em>. If a container has a <em>limit</em> higher than its request, it bursts into the pooled quota, starving other containers.
+              <strong>The Fix:</strong> <strong>Remove the container resource limit</strong>. This strictly caps maximum CPU usage at each container's resource request.
+            </li>
+            <li><strong>CLI Workflow for ACR:</strong>
+              <ul>
+                <li>Create registry in Azure: <code>az acr create --resource-group &lt;rg&gt; --name &lt;name&gt; --sku Basic</code>.</li>
+                <li>Push image from local Docker host: <code>docker push &lt;login-server&gt;/&lt;image&gt;:&lt;tag&gt;</code>.</li>
+              </ul>
+            </li>
+            <li><strong>OS Container Support Matrix (ApexCore):</strong>
+              <ul>
+                <li><strong>Windows Containers (WinImg1):</strong> Supported on <strong>Azure App Service</strong> and <strong>Azure Container Instances (ACI)</strong>. <em>NOT supported on Azure Container Apps (ACA)!</em></li>
+                <li><strong>Linux Containers (LinuxImg1):</strong> Supported on <strong>App Service, ACA, and ACI</strong>.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "ACI pull error from ACR" $	o$ Enable <strong>Admin user</strong> OR Managed Identity with <strong>AcrPull</strong><br>
+          • "Prevent container from consuming more than allocated CPU" $	o$ <strong>Remove resource limits</strong><br>
+          • "Run Windows container image" $	o$ <strong>App Service or ACI only</strong> (eliminate Container Apps)
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 3 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t3">
+        <div class="topic-header">
+          <span class="topic-title">3. Storage Key Management, ABAC &amp; Least Privilege Data Access</span>
+          <span class="solved-tags contains-missed">Solves Q19–Q22, Q73, Q74, Q76 (Missed Q21, Q73, Q76)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> Splitting management control-plane permissions from data-plane access, and where Azure ABAC applies.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>Account Key Viewing &amp; Regeneration:</strong>
+              <ul>
+                <li><code>Storage Account Key Operator Service Role</code>: The dedicated least-privilege role to view and regenerate access keys.</li>
+                <li><code>Storage Account Contributor</code>: Has full management permissions over the account, which includes <code>listkeys</code> and <code>regeneratekey</code> actions. (It works, even if not least-privilege).</li>
+                <li><code>Reader and Data Access</code>: Can view metadata and list keys to read data, but <strong>CANNOT regenerate keys</strong>.</li>
+              </ul>
+            </li>
+            <li><strong>Viewing Data in Any Storage Account with Least Privilege:</strong>
+              Assign <strong><code>Reader and Data Access</code></strong> at the subscription scope. It allows reading data across all storage services (Blobs, Files, Queues, Tables) without granting destructive write or manage permissions. (<code>Storage Blob Data Reader</code> only covers Blobs, failing the "any storage account" requirement).
+            </li>
+            <li><strong>Delegating Role Assignment Power with Least Privilege:</strong>
+              Assign <strong><code>Role Based Access Control Administrator</code></strong>. It permits creating/deleting role assignments without the broad resource management powers of <code>Owner</code>.
+            </li>
+            <li><strong>Azure Role Assignment Conditions (ABAC):</strong>
+              ABAC conditional expressions can <strong>ONLY be configured on Blob Containers and Queues</strong>. Azure Files and Table Storage do NOT support ABAC conditions!
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Least privilege to view and rotate storage keys" $	o$ <strong>Storage Account Key Operator Service Role</strong><br>
+          • "View data in ANY storage account with least privilege" $	o$ <strong>Reader and Data Access</strong><br>
+          • "Assign roles without full Owner rights" $	o$ <strong>Role Based Access Control Administrator</strong><br>
+          • "Storage services that support conditional role assignments" $	o$ <strong>containers and queues only</strong>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 4 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t4">
+        <div class="topic-header">
+          <span class="topic-title">4. Virtual Machine Maintenance &amp; Configuration Management</span>
+          <span class="solved-tags contains-missed">Solves Q23–Q28, Q71 (Missed Q27)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> What actually moves a running VM instance to fresh physical hypervisor hardware, and prerequisite state for configuration management.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>Avoiding Scheduled Host Maintenance:</strong>
+              When an underlying physical hypervisor blade is scheduled for maintenance:
+              <ul>
+                <li>❌ Moving the VM to another Resource Group or Subscription is purely an <strong>ARM metadata update</strong>. The VM stays running on the exact same physical blade.</li>
+                <li>❌ Guest OS updates blade applies software patches in place; it does not move the VM.</li>
+                <li>✅ <strong>Redeploy:</strong> Clicking <strong>Redeploy</strong> in the VM blade shuts down the VM, provisions it on a fresh, healthy physical host in the datacenter, and restarts it while preserving OS and data disks. Maintenance cleared immediately!</li>
+              </ul>
+            </li>
+            <li><strong>Desired State Configuration (DSC) Prerequisite:</strong>
+              To apply an Azure Automation DSC extension to a VM (such as ShireenVM), the virtual machine <strong>must be powered on and running</strong> so the VM agent can execute the extension script.
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Immediately relocate VM to different physical host" $	o$ <strong>Redeploy</strong><br>
+          • "Move VM to another Resource Group" $	o$ <strong>No physical relocation</strong> (metadata move only)<br>
+          • "First action to enable DSC on stopped VM" $	o$ <strong>Power on the VM</strong>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 5 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t5">
+        <div class="topic-header">
+          <span class="topic-title">5. Microsoft Entra ID Governance: Licensing, SSPR &amp; Custom Attributes</span>
+          <span class="solved-tags contains-missed">Solves Q32, Q38, Q39, Q72 (Missed Q38, Q39, Q72)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> License tier boundaries, self-service scoping, and the strict identity boundaries of Custom Security Attributes.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>Group-Based Licensing Tiers:</strong>
+              Assigning licenses to groups (Security groups or M365 groups) strictly requires <strong>Microsoft Entra ID P1 or P2</strong>.
+              On the <strong>Free tier</strong>, licenses can <strong>ONLY be assigned directly to individual users</strong> (e.g. <code>UserA only</code>).
+            </li>
+            <li><strong>Self-Service Password Reset (SSPR) Scope:</strong>
+              In the Azure Portal SSPR blade, scope options are <code>None</code>, <code>Selected</code>, and <code>All</code>.
+              Under <strong>Selected</strong>, the portal UI <strong>ONLY allows choosing Groups</strong>. You cannot select individual users! (Correct: <code>SecGroup01 and M365Group01 only</code>).
+            </li>
+            <li><strong>Custom Security Attributes Supported Objects:</strong>
+              Custom Security Attributes can <strong>ONLY be assigned to Users, Service Principals, and Managed Identities</strong>.
+              They can <strong>NEVER be assigned to Groups</strong>! (Neither Security nor M365 groups).
+            </li>
+            <li><strong>Group Naming Policy Setup:</strong>
+              1. Admin center $	o$ 2. Add prefix: <strong>Attribute</strong> $	o$ 3. Select type: <strong>Office</strong>.
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Assign license to group on Free tier" $	o$ <strong>Impossible</strong> (assign to individual user only)<br>
+          • "Enable SSPR for Selected scope" $	o$ <strong>Groups only</strong> (cannot select users)<br>
+          • "Identities supporting Custom Security Attributes" $	o$ <strong>Users &amp; Service Principals only</strong> (eliminate Groups!)
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 6 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t6">
+        <div class="topic-header">
+          <span class="topic-title">6. RBAC Hierarchy Cascades, Scope Boundaries &amp; Custom Role JSON</span>
+          <span class="solved-tags contains-missed">Solves Q33–Q35, Q64, Q67, Q68, Q78–Q80, Q89–Q90 (Missed Q64)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> How Azure IAM permissions inherit downward, how resource group scope overrides resource blade confusion, and how custom roles are structured.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>The Downward Inheritance Hierarchy:</strong>
+              Management Group $	o$ Subscription $	o$ Resource Group $	o$ Resource.
+              Permissions cascade downwards. Permissions CANNOT be blocked or overridden at a child scope.
+            </li>
+            <li><strong>Resource Scope vs. Resource Group Scope (The Priya Trap - Q64):</strong>
+              If a user has <code>Storage Account Contributor</code> assigned at the <strong>Resource Group</strong> scope, they can create and manage storage accounts anywhere in that RG—even if you are viewing role assignments on a child resource (like an NSG or NIC)! Broader inherited scope always empowers the user.
+            </li>
+            <li><strong>Narrow Resource Scope (The Riley Trap - Q34):</strong>
+              If a user has <code>Storage Account Contributor</code> assigned strictly to a single <strong>Storage Account</strong> (`storeA1`), they have zero permissions on the parent Resource Group to create new storage accounts.
+            </li>
+            <li><strong>Custom Role JSON Structure:</strong>
+              <ul>
+                <li><code>actions</code>: Allowed control plane operations.</li>
+                <li><code>notActions</code>: Subtracted control plane operations.</li>
+                <li><code>dataActions</code>: Allowed data plane operations (e.g., reading blob bytes, reading message queues).</li>
+                <li><code>assignableScopes</code>: Management Groups, Subscriptions, or Resource Groups where the role can be assigned.</li>
+                <li>Least privilege VNet management wildcard: <code>"Microsoft.Network/virtualNetworks/*"</code>.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Role assigned at Resource Group scope" $	o$ <strong>Applies to entire RG</strong> (can create resources in RG)<br>
+          • "Role assigned at Resource scope" $	o$ <strong>Applies to that object only</strong> (cannot create new siblings)<br>
+          • "Custom role property for data-plane access" $	o$ <strong><code>dataActions</code></strong><br>
+          • "Custom role property defining where role can be used" $	o$ <strong><code>assignableScopes</code></strong>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 7 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t7">
+        <div class="topic-header">
+          <span class="topic-title">7. Virtual Networking: UDR Next Hops, Peering &amp; Service Endpoints</span>
+          <span class="solved-tags contains-missed">Solves Q40, Q43, Q45, Q46, Q83–Q88 (Missed Q88)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> Routing packets through firewalls, NSG/ASG filtering logic, non-transitive peering, and service endpoint policy scoping.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>UDR Next Hop Types:</strong>
+              NSGs only allow or deny; they cannot reroute packets. To send traffic to an NVA/Firewall, attach a <strong>Route Table (UDR)</strong>.
+              The <strong>Virtual appliance</strong> next hop is the <strong>ONLY</strong> type that requires typing an IP address.
+            </li>
+            <li><strong>VNet Role Separation:</strong>
+              Creating subnets requires network write permissions (<code>Owner</code> and <code>Network Contributor</code> can both do this).
+              Assigning roles on a VNet requires IAM permissions (<code>Owner</code> only; <code>Network Contributor</code> cannot assign roles).
+            </li>
+            <li><strong>Application Security Groups (ASGs):</strong>
+              ASGs let you group VMs (NICs) logically (e.g. `ASG-Web`, `ASG-DB`) and reference them as source/destination in NSG rules without knowing or updating IP addresses.
+            </li>
+            <li><strong>VNet Peering is Non-Transitive:</strong>
+              If VNet-A peers with VNet-B, and VNet-B peers with VNet-C: VNet-A <strong>cannot talk to VNet-C</strong> unless you configure an NVA with route tables or a VPN Gateway with Gateway Transit.
+            </li>
+            <li><strong>Service Endpoint Policies Scope (The Q88 Trap):</strong>
+              A Service Endpoint Policy restricts outbound traffic from a subnet to specific allowed storage accounts.
+              <strong>The Trap:</strong> It ONLY affects subnets that have the service endpoint enabled! A sibling subnet without the service endpoint enabled can still access all storage accounts via public internet endpoints!
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Next hop type requiring an IP address" $	o$ <strong>Virtual appliance</strong><br>
+          • "Allow VM subnet to reach Key Vault through deny-all NSG" $	o$ Add outbound rule with <strong>AzureKeyVault Service Tag</strong><br>
+          • "Service endpoint policy blocks all access?" $	o$ <strong>False</strong> (subnets without endpoint route normally)
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 8 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t8">
+        <div class="topic-header">
+          <span class="topic-title">8. Vault Architecture &amp; Backup Cadence</span>
+          <span class="solved-tags contains-missed">Solves Q36, Q37, Q47, Q48, Q81 (Missed Q48)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> Recovery Services Vault vs Backup Vault, backup frequencies for Files vs Blobs, and ITSM integration.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>The Vault Division:</strong>
+              <ul>
+                <li><strong>Recovery Services Vault (RSV):</strong> Classic IaaS workloads: <strong>Virtual Machines (VM01)</strong>, SQL Server in Azure VMs, SAP HANA, Azure Backup Server (MARS).</li>
+                <li><strong>Azure Backup Vault:</strong> Modern cloud-native workloads: <strong>Azure Managed Disks (Disk01)</strong>, Azure Blobs, Azure Files (vaulted), AKS.</li>
+              </ul>
+            </li>
+            <li><strong>Maximum Backup Frequency:</strong>
+              <ul>
+                <li><strong>Azure Blob Storage:</strong> Vaulted blob backup only supports <strong>Daily</strong> or Weekly scheduled backups.</li>
+                <li><strong>Azure Files:</strong> Supports up to <strong>24 snapshot backups per day</strong> (runnable <strong>Every 1 hour</strong>!).</li>
+              </ul>
+            </li>
+            <li><strong>System Center Service Manager Integration:</strong>
+              To trigger automated tickets/alerts in on-premises System Center Service Manager from Azure VM metrics, deploy the <strong>IT Service Management Connector (ITSM)</strong> in Azure Monitor.
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Backup Azure Virtual Machine" $	o$ <strong>Recovery Services Vault</strong><br>
+          • "Backup Managed Disk / Blob" $	o$ <strong>Azure Backup Vault</strong><br>
+          • "Highest backup frequency for Azure Files" $	o$ <strong>Every 1 hour</strong> (24x daily)<br>
+          • "Highest backup frequency for Blobs" $	o$ <strong>Daily</strong>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 9 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t9">
+        <div class="topic-header">
+          <span class="topic-title">9. Azure Key Vault, Azure Disk Encryption (ADE) &amp; TLS Certificates</span>
+          <span class="solved-tags contains-missed">Solves Q41, Q42, Q52, Q53, Q57, Q82 (Missed Q42, Q52, Q57)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> Key Vault's cross-region reach, ADE algorithm constraints, and App Service certificate import format.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>Key Vault Has No Regional Boundary for Data/Secrets:</strong>
+              A Key Vault can be located in any region and any resource group. Any VM with an identity and RBAC permissions can access secrets from it across regions!
+            </li>
+            <li><strong>Azure Disk Encryption (ADE) with KEK:</strong>
+              <ul>
+                <li><strong>Algorithm:</strong> KEK <strong>strictly requires an RSA key</strong> (2048, 3072, 4096). Elliptic Curve (EC) keys are completely unsupported for ADE.</li>
+                <li><strong>Cmdlet:</strong> <code>Set-AzVMDiskEncryptionExtension</code>.</li>
+                <li><strong>Unsupported Disks:</strong> Ephemeral OS disks, Write Accelerator disks, and Windows Dynamic Volumes CANNOT be encrypted with ADE.</li>
+              </ul>
+            </li>
+            <li><strong>App Service TLS Certificate Import:</strong>
+              Importing certificates directly from Key Vault into Azure App Service <strong>strictly requires PKCS#12 (.pfx) format</strong> containing the private key. <strong>PEM certificates are rejected</strong>.
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "VM in RegionA fetching secret from Key Vault in RegionB" $	o$ <strong>Fully supported</strong> (RBAC + Managed Identity)<br>
+          • "Key Vault key for ADE KEK" $	o$ <strong>RSA only</strong> (eliminate EC)<br>
+          • "Certificate format for App Service import" $	o$ <strong>PKCS#12 (.pfx) only</strong> (eliminate PEM)
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 10 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card" id="t10">
+        <div class="topic-header">
+          <span class="topic-title">10. Governance: Azure Policy Exclusions &amp; Resource Move Mechanics</span>
+          <span class="solved-tags">Solves Q69, Q77</span>
+        </div>
+        <p><strong>The Mechanics:</strong> How policy exclusions work and what actually happens when moving App Service resources between Resource Groups.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>Azure Policy Exclusions:</strong>
+              If a policy assigned at the Subscription denies creating Storage Accounts, but excludes <code>rg-finance</code>, storage accounts can <strong>ONLY be created in `rg-finance`</strong>.
+            </li>
+            <li><strong>Moving Web Apps Across Resource Groups:</strong>
+              When moving a Web App from <code>ResGrp1</code> to <code>ResGrp2</code>:
+              1. The App Service plan and physical deployment <strong>remain in their original region</strong> (West Europe remains West Europe).
+              2. Any Azure Policies assigned to the destination Resource Group (`Pol2`) <strong>now apply to the moved Web App</strong>.
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Policy denies resource type on Sub, excludes RG1" $	o$ Can create resource in <strong>RG1 only</strong><br>
+          • "Move Web App to RG in another region" $	o$ App Service Plan <strong>remains in original region</strong>, new RG policies apply
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 11 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t11">
+        <div class="topic-header">
+          <span class="topic-title">11. Monitoring DCR Event Filtering &amp; Private DNS Zone VNet Linking</span>
+          <span class="solved-tags contains-missed">Solves Q58, Q59, Q60 (Missed Q58)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> Filtering Windows events at the agent level vs query time, and least-privilege DNS link permissions.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>DCR Ingestion Filtering vs Log Analytics Search:</strong>
+              <ul>
+                <li><strong>At the Agent / Ingestion level (Data Collection Rule):</strong> Filtering Windows Event Logs uses <strong>XPath queries</strong> (e.g. <code>System!*[System[(EventID=4648)]]</code>).</li>
+                <li><strong>In Log Analytics Workspace:</strong> Querying data <em>after</em> ingestion uses <strong>KQL (Kusto Query Language)</strong>.</li>
+              </ul>
+            </li>
+            <li><strong>Linking Private DNS Zones to Virtual Networks:</strong>
+              Creating a virtual network link bridges two resources. Under least privilege, assign roles strictly at the resource level:
+              1. <strong>Private DNS Zone Contributor</strong> on the DNS zone (to create the link).
+              2. <strong>Network Contributor</strong> on the Virtual Network (to grant <code>join/action</code>).
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Query language inside DCR to filter Windows events" $	o$ <strong>XPath</strong> (not KQL!)<br>
+          • "Least privilege roles to link Private DNS zone to VNet" $	o$ <strong>Private DNS Zone Contributor (on Zone) + Network Contributor (on VNet)</strong>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TOPIC 12 -->
+      <!-- ========================================================================= -->
+      <div class="topic-card missed" id="t12">
+        <div class="topic-header">
+          <span class="topic-title">12. ApexCore Specifics: Storage Policy Limits &amp; Encryption Scopes</span>
+          <span class="solved-tags contains-missed">Solves Q54, Q55, Q61 (Missed Q55, Q61)</span>
+        </div>
+        <p><strong>The Mechanics:</strong> Hard caps on container access policies and the exact boundary of customer-managed encryption scopes.</p>
+
+        <div class="rule-box">
+          <strong>🎯 Core Mental Models:</strong>
+          <ul>
+            <li><strong>Storage Policy Capacity Caps:</strong>
+              <ul>
+                <li><strong>Stored Access Policies (SAS):</strong> Maximum limit is <strong>5 per container</strong>. If 3 exist, you can add $5 - 3 =$ <strong>2 more</strong>.</li>
+                <li><strong>Immutable Blob Storage Policies:</strong> Maximum limit is <strong>2 per container</strong>: exactly <strong>1 Legal Hold</strong> + <strong>1 Time-Based Retention</strong> policy. If a Legal Hold exists, you can add <strong>1 more</strong>.</li>
+              </ul>
+            </li>
+            <li><strong>Encryption Scopes Scope Boundary (`EncScope1`):</strong>
+              Encryption Scopes are a feature designed exclusively for <strong>Blob Storage</strong>.
+              They can encrypt <strong>containers and blobs only</strong>. They CANNOT be applied to File shares, Queues, or Tables.
+            </li>
+          </ul>
+        </div>
+
+        <div class="trigger-formula">
+          ⚡ <strong>Exam Trigger Formula:</strong><br>
+          • "Maximum additional immutable policies when Legal Hold exists" $	o$ <strong>1</strong><br>
+          • "Resources that can be encrypted using an Encryption Scope" $	o$ <strong>containers and blobs only</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
