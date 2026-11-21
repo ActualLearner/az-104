@@ -225,10 +225,10 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Inventory CSV of images" $	o$ <code>blockBlob</code> + <code>&lt;container&gt;/&lt;prefix&gt;</code><br>
-          • "Replicate blobs across accounts" $	o$ Target: <strong>Container</strong> | Account: <strong>StorageV2 / BlobStorage</strong><br>
-          • "Route users through closest POP" $	o$ <strong>Routing preference</strong> (Microsoft network routing)<br>
-          • "AzCopy create container" $	o$ <strong><code>azcopy make</code></strong>
+          • "Inventory CSV of images" → <code>blockBlob</code> + <code>&lt;container&gt;/&lt;prefix&gt;</code><br>
+          • "Replicate blobs across accounts" → Target: <strong>Container</strong> | Account: <strong>StorageV2 / BlobStorage</strong><br>
+          • "Route users through closest POP" → <strong>Routing preference</strong> (Microsoft network routing)<br>
+          • "AzCopy create container" → <strong><code>azcopy make</code></strong>
         </div>
 
         <div class="trap-box">
@@ -278,9 +278,9 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "ACI pull error from ACR" $	o$ Enable <strong>Admin user</strong> OR Managed Identity with <strong>AcrPull</strong><br>
-          • "Prevent container from consuming more than allocated CPU" $	o$ <strong>Remove resource limits</strong><br>
-          • "Run Windows container image" $	o$ <strong>App Service or ACI only</strong> (eliminate Container Apps)
+          • "ACI pull error from ACR" → Enable <strong>Admin user</strong> OR Managed Identity with <strong>AcrPull</strong><br>
+          • "Prevent container from consuming more than allocated CPU" → <strong>Remove resource limits</strong><br>
+          • "Run Windows container image" → <strong>App Service or ACI only</strong> (eliminate Container Apps)
         </div>
       </div>
 
@@ -318,10 +318,10 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Least privilege to view and rotate storage keys" $	o$ <strong>Storage Account Key Operator Service Role</strong><br>
-          • "View data in ANY storage account with least privilege" $	o$ <strong>Reader and Data Access</strong><br>
-          • "Assign roles without full Owner rights" $	o$ <strong>Role Based Access Control Administrator</strong><br>
-          • "Storage services that support conditional role assignments" $	o$ <strong>containers and queues only</strong>
+          • "Least privilege to view and rotate storage keys" → <strong>Storage Account Key Operator Service Role</strong><br>
+          • "View data in ANY storage account with least privilege" → <strong>Reader and Data Access</strong><br>
+          • "Assign roles without full Owner rights" → <strong>Role Based Access Control Administrator</strong><br>
+          • "Storage services that support conditional role assignments" → <strong>containers and queues only</strong>
         </div>
       </div>
 
@@ -354,9 +354,9 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Immediately relocate VM to different physical host" $	o$ <strong>Redeploy</strong><br>
-          • "Move VM to another Resource Group" $	o$ <strong>No physical relocation</strong> (metadata move only)<br>
-          • "First action to enable DSC on stopped VM" $	o$ <strong>Power on the VM</strong>
+          • "Immediately relocate VM to different physical host" → <strong>Redeploy</strong><br>
+          • "Move VM to another Resource Group" → <strong>No physical relocation</strong> (metadata move only)<br>
+          • "First action to enable DSC on stopped VM" → <strong>Power on the VM</strong>
         </div>
       </div>
 
@@ -386,16 +386,16 @@
               They can <strong>NEVER be assigned to Groups</strong>! (Neither Security nor M365 groups).
             </li>
             <li><strong>Group Naming Policy Setup:</strong>
-              1. Admin center $	o$ 2. Add prefix: <strong>Attribute</strong> $	o$ 3. Select type: <strong>Office</strong>.
+              1. Admin center → 2. Add prefix: <strong>Attribute</strong> → 3. Select type: <strong>Office</strong>.
             </li>
           </ul>
         </div>
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Assign license to group on Free tier" $	o$ <strong>Impossible</strong> (assign to individual user only)<br>
-          • "Enable SSPR for Selected scope" $	o$ <strong>Groups only</strong> (cannot select users)<br>
-          • "Identities supporting Custom Security Attributes" $	o$ <strong>Users &amp; Service Principals only</strong> (eliminate Groups!)
+          • "Assign license to group on Free tier" → <strong>Impossible</strong> (assign to individual user only)<br>
+          • "Enable SSPR for Selected scope" → <strong>Groups only</strong> (cannot select users)<br>
+          • "Identities supporting Custom Security Attributes" → <strong>Users &amp; Service Principals only</strong> (eliminate Groups!)
         </div>
       </div>
 
@@ -413,7 +413,7 @@
           <strong>🎯 Core Mental Models:</strong>
           <ul>
             <li><strong>The Downward Inheritance Hierarchy:</strong>
-              Management Group $	o$ Subscription $	o$ Resource Group $	o$ Resource.
+              Management Group → Subscription → Resource Group → Resource.
               Permissions cascade downwards. Permissions CANNOT be blocked or overridden at a child scope.
             </li>
             <li><strong>Resource Scope vs. Resource Group Scope (The Priya Trap - Q64):</strong>
@@ -436,10 +436,10 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Role assigned at Resource Group scope" $	o$ <strong>Applies to entire RG</strong> (can create resources in RG)<br>
-          • "Role assigned at Resource scope" $	o$ <strong>Applies to that object only</strong> (cannot create new siblings)<br>
-          • "Custom role property for data-plane access" $	o$ <strong><code>dataActions</code></strong><br>
-          • "Custom role property defining where role can be used" $	o$ <strong><code>assignableScopes</code></strong>
+          • "Role assigned at Resource Group scope" → <strong>Applies to entire RG</strong> (can create resources in RG)<br>
+          • "Role assigned at Resource scope" → <strong>Applies to that object only</strong> (cannot create new siblings)<br>
+          • "Custom role property for data-plane access" → <strong><code>dataActions</code></strong><br>
+          • "Custom role property defining where role can be used" → <strong><code>assignableScopes</code></strong>
         </div>
       </div>
 
@@ -479,9 +479,9 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Next hop type requiring an IP address" $	o$ <strong>Virtual appliance</strong><br>
-          • "Allow VM subnet to reach Key Vault through deny-all NSG" $	o$ Add outbound rule with <strong>AzureKeyVault Service Tag</strong><br>
-          • "Service endpoint policy blocks all access?" $	o$ <strong>False</strong> (subnets without endpoint route normally)
+          • "Next hop type requiring an IP address" → <strong>Virtual appliance</strong><br>
+          • "Allow VM subnet to reach Key Vault through deny-all NSG" → Add outbound rule with <strong>AzureKeyVault Service Tag</strong><br>
+          • "Service endpoint policy blocks all access?" → <strong>False</strong> (subnets without endpoint route normally)
         </div>
       </div>
 
@@ -500,8 +500,8 @@
           <ul>
             <li><strong>The Vault Division:</strong>
               <ul>
-                <li><strong>Recovery Services Vault (RSV):</strong> Classic IaaS workloads: <strong>Virtual Machines (VM01)</strong>, SQL Server in Azure VMs, SAP HANA, Azure Backup Server (MARS).</li>
-                <li><strong>Azure Backup Vault:</strong> Modern cloud-native workloads: <strong>Azure Managed Disks (Disk01)</strong>, Azure Blobs, Azure Files (vaulted), AKS.</li>
+                <li><strong>Recovery Services Vault (RSV):</strong> Workloads: <strong>Azure Virtual Machines (VM01)</strong>, <strong>Azure Files (File Shares)</strong>, SQL Server in Azure VMs, SAP HANA, Azure Backup Server (MARS).</li>
+                <li><strong>Azure Backup Vault:</strong> Modern cloud-native workloads: <strong>Azure Managed Disks (Disk01)</strong>, Azure Blobs, Azure Database for PostgreSQL, AKS.</li>
               </ul>
             </li>
             <li><strong>Maximum Backup Frequency:</strong>
@@ -518,10 +518,11 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Backup Azure Virtual Machine" $	o$ <strong>Recovery Services Vault</strong><br>
-          • "Backup Managed Disk / Blob" $	o$ <strong>Azure Backup Vault</strong><br>
-          • "Highest backup frequency for Azure Files" $	o$ <strong>Every 1 hour</strong> (24x daily)<br>
-          • "Highest backup frequency for Blobs" $	o$ <strong>Daily</strong>
+          • "Backup Azure Virtual Machine" → <strong>Recovery Services Vault</strong><br>
+          • "Backup Azure Files (File Share)" → <strong>Recovery Services Vault</strong><br>
+          • "Backup Managed Disk / Blob" → <strong>Azure Backup Vault</strong><br>
+          • "Highest backup frequency for Azure Files" → <strong>Every 1 hour</strong> (24x daily)<br>
+          • "Highest backup frequency for Blobs" → <strong>Daily</strong>
         </div>
       </div>
 
@@ -556,9 +557,9 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "VM in RegionA fetching secret from Key Vault in RegionB" $	o$ <strong>Fully supported</strong> (RBAC + Managed Identity)<br>
-          • "Key Vault key for ADE KEK" $	o$ <strong>RSA only</strong> (eliminate EC)<br>
-          • "Certificate format for App Service import" $	o$ <strong>PKCS#12 (.pfx) only</strong> (eliminate PEM)
+          • "VM in RegionA fetching secret from Key Vault in RegionB" → <strong>Fully supported</strong> (RBAC + Managed Identity)<br>
+          • "Key Vault key for ADE KEK" → <strong>RSA only</strong> (eliminate EC)<br>
+          • "Certificate format for App Service import" → <strong>PKCS#12 (.pfx) only</strong> (eliminate PEM)
         </div>
       </div>
 
@@ -588,8 +589,8 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Policy denies resource type on Sub, excludes RG1" $	o$ Can create resource in <strong>RG1 only</strong><br>
-          • "Move Web App to RG in another region" $	o$ App Service Plan <strong>remains in original region</strong>, new RG policies apply
+          • "Policy denies resource type on Sub, excludes RG1" → Can create resource in <strong>RG1 only</strong><br>
+          • "Move Web App to RG in another region" → App Service Plan <strong>remains in original region</strong>, new RG policies apply
         </div>
       </div>
 
@@ -622,8 +623,8 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Query language inside DCR to filter Windows events" $	o$ <strong>XPath</strong> (not KQL!)<br>
-          • "Least privilege roles to link Private DNS zone to VNet" $	o$ <strong>Private DNS Zone Contributor (on Zone) + Network Contributor (on VNet)</strong>
+          • "Query language inside DCR to filter Windows events" → <strong>XPath</strong> (not KQL!)<br>
+          • "Least privilege roles to link Private DNS zone to VNet" → <strong>Private DNS Zone Contributor (on Zone) + Network Contributor (on VNet)</strong>
         </div>
       </div>
 
@@ -655,8 +656,8 @@
 
         <div class="trigger-formula">
           ⚡ <strong>Exam Trigger Formula:</strong><br>
-          • "Maximum additional immutable policies when Legal Hold exists" $	o$ <strong>1</strong><br>
-          • "Resources that can be encrypted using an Encryption Scope" $	o$ <strong>containers and blobs only</strong>
+          • "Maximum additional immutable policies when Legal Hold exists" → <strong>1</strong><br>
+          • "Resources that can be encrypted using an Encryption Scope" → <strong>containers and blobs only</strong>
         </div>
       </div>
 

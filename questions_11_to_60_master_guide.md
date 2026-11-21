@@ -73,10 +73,10 @@ Azure Container Registry (ACR) hosts container images, while Azure Container Ins
 
 > [!IMPORTANT]
 > - **🎯 Core Rule (ACR Authentication Matrix):**
-> - **Q15 (Private Endpoint $\to$ No):** Secures network transport, but does not provide credentials. The container still cannot authenticate.
-> - **Q16 (Dedicated Data Endpoint $\to$ No):** Optimizes data-plane routing; does not grant pull rights.
-> - **Q17 (AcrPull to ACR-Tasks $\to$ No):** *The Trap!* `ACR-Tasks` is the internal build agent inside ACR. Assigning it `AcrPull` does not help an external ACI instance. The role must be assigned to the ACI's Managed Identity!
-> - **Q18 (Enable Admin User $\to$ Yes):** Enabling the Admin user generates a static username and password on the registry. Passing these into ACI lets it authenticate and pull the image immediately. (Valid answer to "Does it work?").
+> - **Q15 (Private Endpoint → No):** Secures network transport, but does not provide credentials. The container still cannot authenticate.
+> - **Q16 (Dedicated Data Endpoint → No):** Optimizes data-plane routing; does not grant pull rights.
+> - **Q17 (AcrPull to ACR-Tasks → No):** *The Trap!* `ACR-Tasks` is the internal build agent inside ACR. Assigning it `AcrPull` does not help an external ACI instance. The role must be assigned to the ACI's Managed Identity!
+> - **Q18 (Enable Admin User → Yes):** Enabling the Admin user generates a static username and password on the registry. Passing these into ACI lets it authenticate and pull the image immediately. (Valid answer to "Does it work?").
 
 ### Q29 & Q30: CLI Commands for ACR Provisioning & Image Push
 
@@ -115,10 +115,10 @@ Managing access keys (Shared Keys) vs data access vs control plane operations is
 
 > [!IMPORTANT]
 > - **🎯 Core Rule (Storage Key Permission Matrix):**
-> - **Q19 (Encryption Scope Contributor $\to$ No):** Manages customer-managed keys for blob encryption scopes; cannot view or rotate account root keys.
-> - **Q20 (Storage Account Key Operator Service Role $\to$ Yes):** The dedicated least-privilege role designed strictly for key listing and regeneration without full management rights.
-> - **Q21 (Storage Account Contributor $\to$ Yes):** *The Trap!* While not least-privilege, `Storage Account Contributor` has full control plane management over the storage account, including `listkeys/action` and `regeneratekey/action` . It **does achieve the objective** .
-> - **Q22 (Reader and Data Access $\to$ No):** Allows listing keys to read data, but strictly lacks permission to **regenerate (write)** keys.
+> - **Q19 (Encryption Scope Contributor → No):** Manages customer-managed keys for blob encryption scopes; cannot view or rotate account root keys.
+> - **Q20 (Storage Account Key Operator Service Role → Yes):** The dedicated least-privilege role designed strictly for key listing and regeneration without full management rights.
+> - **Q21 (Storage Account Contributor → Yes):** *The Trap!* While not least-privilege, `Storage Account Contributor` has full control plane management over the storage account, including `listkeys/action` and `regeneratekey/action` . It **does achieve the objective** .
+> - **Q22 (Reader and Data Access → No):** Allows listing keys to read data, but strictly lacks permission to **regenerate (write)** keys.
 
 ---
 
@@ -135,9 +135,9 @@ Azure runs scheduled platform maintenance on underlying physical hypervisors. Wh
 
 > [!IMPORTANT]
 > - **🎯 Core Rule (VM Redeployment vs Metadata Moves):**
-> - **Q23 & Q26 (Updates Blade $\to$ No):** Applies guest OS or host patches in place; does not proactively relocate the VM to fresh hardware.
-> - **Q24, Q25, Q28 (Move Resource Group / Subscription $\to$ No):** Moving a VM between resource groups or subscriptions is purely a **logical ARM metadata update** . The VM remains pinned to the exact same physical blade in the datacenter.
-> - **Q27 (Redeploy Blade $\to$ YES):** Clicking **Redeploy** instructs Azure to shut down the VM, migrate the compute instance to an entirely different healthy physical host within the same Azure region, and restart it. OS and data disks are preserved. This immediately clears the maintenance window!
+> - **Q23 & Q26 (Updates Blade → No):** Applies guest OS or host patches in place; does not proactively relocate the VM to fresh hardware.
+> - **Q24, Q25, Q28 (Move Resource Group / Subscription → No):** Moving a VM between resource groups or subscriptions is purely a **logical ARM metadata update** . The VM remains pinned to the exact same physical blade in the datacenter.
+> - **Q27 (Redeploy Blade → YES):** Clicking **Redeploy** instructs Azure to shut down the VM, migrate the compute instance to an entirely different healthy physical host within the same Azure region, and restart it. OS and data disks are preserved. This immediately clears the maintenance window!
 
 ---
 
@@ -191,9 +191,9 @@ Permissions inherit downward through the management hierarchy. Control plane rol
 
 > [!IMPORTANT]
 > - **🎯 Core Rule (RBAC Hierarchy Downward Cascade):**
-> - **Q33 (Morgan can resize vm-prod1 $\to$ True):** Morgan has `Contributor` at `Global-MG2` . This cascades down through `ZenithSub` and `rg-vm` to `vm-prod1` . Contributor allows resizing VMs.
-> - **Q34 (Riley can create storage account in rg-data $\to$ False):** Riley has `Storage Account Contributor` assigned strictly to `storeA1` (resource scope). Riley has zero permissions on the parent resource group `rg-data` to create new storage accounts.
-> - **Q35 (Casey can assign Morgan Owner on rg-vm $\to$ True):** Casey has `User Access Administrator` at the **Tenant Root Group** . This gives role assignment power across every subscription and resource group in the entire tenant.
+> - **Q33 (Morgan can resize vm-prod1 → True):** Morgan has `Contributor` at `Global-MG2` . This cascades down through `ZenithSub` and `rg-vm` to `vm-prod1` . Contributor allows resizing VMs.
+> - **Q34 (Riley can create storage account in rg-data → False):** Riley has `Storage Account Contributor` assigned strictly to `storeA1` (resource scope). Riley has zero permissions on the parent resource group `rg-data` to create new storage accounts.
+> - **Q35 (Casey can assign Morgan Owner on rg-vm → True):** Casey has `User Access Administrator` at the **Tenant Root Group** . This gives role assignment power across every subscription and resource group in the entire tenant.
 
 ### Q45 & Q46: Subnet Creation vs Role Assignment on Virtual Networks
 
@@ -239,8 +239,8 @@ Backup Vaults vs Recovery Services Vaults, Key Vault regional flexibility, and D
 
 > [!IMPORTANT]
 > - **🎯 Core Rule (The Vault Split Matrix):**
-> - **Recovery Services Vault (VaultB):** The classic vault for **Azure Virtual Machines (VM01)** , SQL Server in Azure VMs, and Azure Backup Server (MARS agent).
-> - **Azure Backup Vault (VaultA):** The modern vault designed for newer workloads: **Azure Managed Disks (Disk01)** , Azure Blobs, Azure Files (vaulted), and AKS.
+> - **Recovery Services Vault (VaultB):** The classic vault for **Azure Virtual Machines (VM01)**, **Azure Files (File Shares)**, SQL Server in Azure VMs, and Azure Backup Server (MARS agent).
+> - **Azure Backup Vault (VaultA):** The modern vault designed for newer workloads: **Azure Managed Disks (Disk01)**, Azure Blobs, Azure Database for PostgreSQL, and AKS.
 
 ### Q41 & Q42: Key Vault Authentication & Regional Boundaries
 
@@ -301,7 +301,7 @@ The 14-question ApexCore Case Study tests intricate real-world enterprise constr
 > - **🎯 Core Rule (ADE & KEK Requirements):**
 > - **KEK Algorithm:** Azure Disk Encryption KEK **strictly requires an RSA key** (2048, 3072, or 4096). Elliptic Curve (EC) keys are completely unsupported for ADE. Use **Key1** .
 > - **PowerShell Cmdlet:** **`Set-AzVMDiskEncryptionExtension`** . ( `Set-AzDiskEncryptionKey` is a fake cmdlet).
-> - **VM Eligibility:** ✅ **Node2** (Windows Server 2022, Basic Volume) & **Node3** (Ubuntu 22.04 LTS, Standard SSD) $\to$ Fully supported. ❌ **Node1** (Ephemeral OS disk) $\to$ Unsupported for ADE. ❌ **Node4** (Write Accelerator disks) $\to$ Unsupported for ADE. ❌ **Node5** (Dynamic Volume) $\to$ Unsupported for ADE.
+> - **VM Eligibility:** ✅ **Node2** (Windows Server 2022, Basic Volume) & **Node3** (Ubuntu 22.04 LTS, Standard SSD) → Fully supported. ❌ **Node1** (Ephemeral OS disk) → Unsupported for ADE. ❌ **Node4** (Write Accelerator disks) → Unsupported for ADE. ❌ **Node5** (Dynamic Volume) → Unsupported for ADE.
 
 ### Q54 & Q55: Storage Policy Limits — Stored Access Policies vs. Immutability
 

@@ -168,7 +168,7 @@ The Mechanics: License tier boundaries, self-service scoping, and the strict ide
 - **Group-Based Licensing Tiers: Assigning licenses to groups (Security groups or M365 groups) strictly requires Microsoft Entra ID P1 or P2. On the Free tier, licenses can ONLY be assigned directly to individual users (e.g. UserA only).**
 - **Self-Service Password Reset (SSPR) Scope: In the Azure Portal SSPR blade, scope options are None, Selected, and All. Under Selected, the portal UI ONLY allows choosing Groups. You cannot select individual users! (Correct: SecGroup01 and M365Group01 only).**
 - **Custom Security Attributes Supported Objects: Custom Security Attributes can ONLY be assigned to Users, Service Principals, and Managed Identities. They can NEVER be assigned to Groups! (Neither Security nor M365 groups).**
-- **Group Naming Policy Setup: 1. Admin center $ o$ 2. Add prefix: Attribute $ o$ 3. Select type: Office.**
+- **Group Naming Policy Setup: 1. Admin center → 2. Add prefix: Attribute → 3. Select type: Office.**
 
 > [!TIP]
 > **⚡ Exam Trigger Formula:**
@@ -193,7 +193,7 @@ The Mechanics: How Azure IAM permissions inherit downward, how resource group sc
 
 ### 🎯 Core Mental Models
 
-- **The Downward Inheritance Hierarchy: Management Group $ o$ Subscription $ o$ Resource Group $ o$ Resource. Permissions cascade downwards. Permissions CANNOT be blocked or overridden at a child scope.**
+- **The Downward Inheritance Hierarchy: Management Group → Subscription → Resource Group → Resource. Permissions cascade downwards. Permissions CANNOT be blocked or overridden at a child scope.**
 - **Resource Scope vs. Resource Group Scope (The Priya Trap - Q64): If a user has Storage Account Contributor assigned at the Resource Group scope, they can create and manage storage accounts anywhere in that RG—even if you are viewing role assignments on a child resource (like an NSG or NIC)! Broader inherited scope always empowers the user.**
 - **Narrow Resource Scope (The Riley Trap - Q34): If a user has Storage Account Contributor assigned strictly to a single Storage Account (`storeA1`), they have zero permissions on the parent Resource Group to create new storage accounts.**
 - **Custom Role JSON Structure:**
@@ -255,8 +255,8 @@ The Mechanics: Recovery Services Vault vs Backup Vault, backup frequencies for F
 ### 🎯 Core Mental Models
 
 - **The Vault Division:**
-  - Recovery Services Vault (RSV): Classic IaaS workloads: Virtual Machines (VM01), SQL Server in Azure VMs, SAP HANA, Azure Backup Server (MARS).
-  - Azure Backup Vault: Modern cloud-native workloads: Azure Managed Disks (Disk01), Azure Blobs, Azure Files (vaulted), AKS.
+  - Recovery Services Vault (RSV): Workloads: Virtual Machines (VM01), Azure Files (File Shares), SQL Server in Azure VMs, SAP HANA, Azure Backup Server (MARS).
+  - Azure Backup Vault: Modern cloud-native workloads: Azure Managed Disks (Disk01), Azure Blobs, Azure Database for PostgreSQL, AKS.
 - **Maximum Backup Frequency:**
   - Azure Blob Storage: Vaulted blob backup only supports Daily or Weekly scheduled backups.
   - Azure Files: Supports up to 24 snapshot backups per day (runnable Every 1 hour!).

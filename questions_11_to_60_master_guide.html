@@ -186,10 +186,10 @@
         <div class="core-rule">
           <strong>🎯 Core Rule (ACR Authentication Matrix):</strong>
           <ul>
-            <li><strong>Q15 (Private Endpoint $\to$ No):</strong> Secures network transport, but does not provide credentials. The container still cannot authenticate.</li>
-            <li><strong>Q16 (Dedicated Data Endpoint $\to$ No):</strong> Optimizes data-plane routing; does not grant pull rights.</li>
-            <li><strong>Q17 (AcrPull to ACR-Tasks $\to$ No):</strong> <em>The Trap!</em> <code>ACR-Tasks</code> is the internal build agent inside ACR. Assigning it <code>AcrPull</code> does not help an external ACI instance. The role must be assigned to the ACI's Managed Identity!</li>
-            <li><strong>Q18 (Enable Admin User $\to$ Yes):</strong> Enabling the Admin user generates a static username and password on the registry. Passing these into ACI lets it authenticate and pull the image immediately. (Valid answer to "Does it work?").</li>
+            <li><strong>Q15 (Private Endpoint → No):</strong> Secures network transport, but does not provide credentials. The container still cannot authenticate.</li>
+            <li><strong>Q16 (Dedicated Data Endpoint → No):</strong> Optimizes data-plane routing; does not grant pull rights.</li>
+            <li><strong>Q17 (AcrPull to ACR-Tasks → No):</strong> <em>The Trap!</em> <code>ACR-Tasks</code> is the internal build agent inside ACR. Assigning it <code>AcrPull</code> does not help an external ACI instance. The role must be assigned to the ACI's Managed Identity!</li>
+            <li><strong>Q18 (Enable Admin User → Yes):</strong> Enabling the Admin user generates a static username and password on the registry. Passing these into ACI lets it authenticate and pull the image immediately. (Valid answer to "Does it work?").</li>
           </ul>
         </div>
       </div>
@@ -240,10 +240,10 @@
         <div class="core-rule">
           <strong>🎯 Core Rule (Storage Key Permission Matrix):</strong>
           <ul>
-            <li><strong>Q19 (Encryption Scope Contributor $\to$ No):</strong> Manages customer-managed keys for blob encryption scopes; cannot view or rotate account root keys.</li>
-            <li><strong>Q20 (Storage Account Key Operator Service Role $\to$ Yes):</strong> The dedicated least-privilege role designed strictly for key listing and regeneration without full management rights.</li>
-            <li><strong>Q21 (Storage Account Contributor $\to$ Yes):</strong> <em>The Trap!</em> While not least-privilege, <code>Storage Account Contributor</code> has full control plane management over the storage account, including <code>listkeys/action</code> and <code>regeneratekey/action</code>. It <strong>does achieve the objective</strong>.</li>
-            <li><strong>Q22 (Reader and Data Access $\to$ No):</strong> Allows listing keys to read data, but strictly lacks permission to <strong>regenerate (write)</strong> keys.</li>
+            <li><strong>Q19 (Encryption Scope Contributor → No):</strong> Manages customer-managed keys for blob encryption scopes; cannot view or rotate account root keys.</li>
+            <li><strong>Q20 (Storage Account Key Operator Service Role → Yes):</strong> The dedicated least-privilege role designed strictly for key listing and regeneration without full management rights.</li>
+            <li><strong>Q21 (Storage Account Contributor → Yes):</strong> <em>The Trap!</em> While not least-privilege, <code>Storage Account Contributor</code> has full control plane management over the storage account, including <code>listkeys/action</code> and <code>regeneratekey/action</code>. It <strong>does achieve the objective</strong>.</li>
+            <li><strong>Q22 (Reader and Data Access → No):</strong> Allows listing keys to read data, but strictly lacks permission to <strong>regenerate (write)</strong> keys.</li>
           </ul>
         </div>
       </div>
@@ -265,9 +265,9 @@
         <div class="core-rule">
           <strong>🎯 Core Rule (VM Redeployment vs Metadata Moves):</strong>
           <ul>
-            <li><strong>Q23 &amp; Q26 (Updates Blade $\to$ No):</strong> Applies guest OS or host patches in place; does not proactively relocate the VM to fresh hardware.</li>
-            <li><strong>Q24, Q25, Q28 (Move Resource Group / Subscription $\to$ No):</strong> Moving a VM between resource groups or subscriptions is purely a <strong>logical ARM metadata update</strong>. The VM remains pinned to the exact same physical blade in the datacenter.</li>
-            <li><strong>Q27 (Redeploy Blade $\to$ YES):</strong> Clicking <strong>Redeploy</strong> instructs Azure to shut down the VM, migrate the compute instance to an entirely different healthy physical host within the same Azure region, and restart it. OS and data disks are preserved. This immediately clears the maintenance window!</li>
+            <li><strong>Q23 &amp; Q26 (Updates Blade → No):</strong> Applies guest OS or host patches in place; does not proactively relocate the VM to fresh hardware.</li>
+            <li><strong>Q24, Q25, Q28 (Move Resource Group / Subscription → No):</strong> Moving a VM between resource groups or subscriptions is purely a <strong>logical ARM metadata update</strong>. The VM remains pinned to the exact same physical blade in the datacenter.</li>
+            <li><strong>Q27 (Redeploy Blade → YES):</strong> Clicking <strong>Redeploy</strong> instructs Azure to shut down the VM, migrate the compute instance to an entirely different healthy physical host within the same Azure region, and restart it. OS and data disks are preserved. This immediately clears the maintenance window!</li>
           </ul>
         </div>
       </div>
@@ -339,9 +339,9 @@
         <div class="core-rule">
           <strong>🎯 Core Rule (RBAC Hierarchy Downward Cascade):</strong>
           <ul>
-            <li><strong>Q33 (Morgan can resize vm-prod1 $\to$ True):</strong> Morgan has <code>Contributor</code> at <code>Global-MG2</code>. This cascades down through <code>ZenithSub</code> and <code>rg-vm</code> to <code>vm-prod1</code>. Contributor allows resizing VMs.</li>
-            <li><strong>Q34 (Riley can create storage account in rg-data $\to$ False):</strong> Riley has <code>Storage Account Contributor</code> assigned strictly to <code>storeA1</code> (resource scope). Riley has zero permissions on the parent resource group <code>rg-data</code> to create new storage accounts.</li>
-            <li><strong>Q35 (Casey can assign Morgan Owner on rg-vm $\to$ True):</strong> Casey has <code>User Access Administrator</code> at the <strong>Tenant Root Group</strong>. This gives role assignment power across every subscription and resource group in the entire tenant.</li>
+            <li><strong>Q33 (Morgan can resize vm-prod1 → True):</strong> Morgan has <code>Contributor</code> at <code>Global-MG2</code>. This cascades down through <code>ZenithSub</code> and <code>rg-vm</code> to <code>vm-prod1</code>. Contributor allows resizing VMs.</li>
+            <li><strong>Q34 (Riley can create storage account in rg-data → False):</strong> Riley has <code>Storage Account Contributor</code> assigned strictly to <code>storeA1</code> (resource scope). Riley has zero permissions on the parent resource group <code>rg-data</code> to create new storage accounts.</li>
+            <li><strong>Q35 (Casey can assign Morgan Owner on rg-vm → True):</strong> Casey has <code>User Access Administrator</code> at the <strong>Tenant Root Group</strong>. This gives role assignment power across every subscription and resource group in the entire tenant.</li>
           </ul>
         </div>
       </div>
@@ -408,8 +408,8 @@
         <div class="core-rule">
           <strong>🎯 Core Rule (The Vault Split Matrix):</strong>
           <ul>
-            <li><strong>Recovery Services Vault (VaultB):</strong> The classic vault for <strong>Azure Virtual Machines (VM01)</strong>, SQL Server in Azure VMs, and Azure Backup Server (MARS agent).</li>
-            <li><strong>Azure Backup Vault (VaultA):</strong> The modern vault designed for newer workloads: <strong>Azure Managed Disks (Disk01)</strong>, Azure Blobs, Azure Files (vaulted), and AKS.</li>
+            <li><strong>Recovery Services Vault (VaultB):</strong> The classic vault for <strong>Azure Virtual Machines (VM01)</strong>, <strong>Azure Files (File Shares)</strong>, SQL Server in Azure VMs, and Azure Backup Server (MARS agent).</li>
+            <li><strong>Azure Backup Vault (VaultA):</strong> The modern vault designed for newer workloads: <strong>Azure Managed Disks (Disk01)</strong>, Azure Blobs, Azure Database for PostgreSQL, and AKS.</li>
           </ul>
         </div>
       </div>
@@ -500,10 +500,10 @@
             <li><strong>PowerShell Cmdlet:</strong> <strong><code>Set-AzVMDiskEncryptionExtension</code></strong>. (<code>Set-AzDiskEncryptionKey</code> is a fake cmdlet).</li>
             <li><strong>VM Eligibility:</strong>
               <ul>
-                <li>✅ <strong>Node2</strong> (Windows Server 2022, Basic Volume) &amp; <strong>Node3</strong> (Ubuntu 22.04 LTS, Standard SSD) $\to$ Fully supported.</li>
-                <li>❌ <strong>Node1</strong> (Ephemeral OS disk) $\to$ Unsupported for ADE.</li>
-                <li>❌ <strong>Node4</strong> (Write Accelerator disks) $\to$ Unsupported for ADE.</li>
-                <li>❌ <strong>Node5</strong> (Dynamic Volume) $\to$ Unsupported for ADE.</li>
+                <li>✅ <strong>Node2</strong> (Windows Server 2022, Basic Volume) &amp; <strong>Node3</strong> (Ubuntu 22.04 LTS, Standard SSD) → Fully supported.</li>
+                <li>❌ <strong>Node1</strong> (Ephemeral OS disk) → Unsupported for ADE.</li>
+                <li>❌ <strong>Node4</strong> (Write Accelerator disks) → Unsupported for ADE.</li>
+                <li>❌ <strong>Node5</strong> (Dynamic Volume) → Unsupported for ADE.</li>
               </ul>
             </li>
           </ul>
